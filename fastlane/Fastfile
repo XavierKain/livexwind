@@ -45,7 +45,7 @@ def ensure_app_record_exists
   # le pipeline devient 100 % autonome. Sinon on retombe sur la création manuelle.
   begin
     bundle = Spaceship::ConnectAPI::BundleId.all.find { |b| b.identifier == APP_ID }
-    Spaceship::ConnectAPI.client.post(
+    Spaceship::ConnectAPI.client.tunes_request_client.post(
       "apps",
       {
         data: {

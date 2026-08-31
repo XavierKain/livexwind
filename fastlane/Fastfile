@@ -72,38 +72,47 @@ platform :ios do
     connect_token
     app = Spaceship::ConnectAPI::App.find(APP_ID)
     UI.user_error!("App introuvable") unless app
-
     UI.important("App : #{app.name} (#{app.bundle_id})")
 
-    builds = app.get_builds(includes: "preReleaseVersion,buildBetaDetail,betaGroups")
+    builds = app.get_builds(includes: "preReleaseVersion,buildBetaDetail")
     builds.first(3).each do |b|
-      detail = begin
-        b.build_beta_detail
-      rescue StandardError
-        nil
+      detail = b.build_beta_detail rescue nil
+      UI.message("Build #{b.version} — processing #{b.processing_state} — " \
+                 "interne #{detail&.internal_build_state} — expiré #{b.expired}")
+      begin
+        groups = b.get_beta_groups
+        UI.message("  groupes : #{groups.empty? ? 'AUCUN' : groups.map(&:name).join(', ')}")
+      rescue StandardError => e
+        UI.message("  groupes : lecture impossible (#{e.class}: #{e.message})")
       end
-      UI.message("Build #{b.version} — processing: #{b.processing_state} — " \
-                 "interne: #{detail&.internal_build_state} — externe: #{detail&.external_build_state} — " \
-                 "expiré: #{b.expired}")
-      groups = begin
-        b.get_beta_groups.map(&:name)
-      rescue StandardError
-        []
-      end
-      UI.message("  groupes : #{groups.empty? ? 'AUCUN' : groups.join(', ')}")
     end
 
-    groups = Spaceship::ConnectAPI::BetaGroup.all(filter: { app: app.id })
-    groups.each do |g|
-      testers = begin
-        Spaceship::ConnectAPI::BetaTester.all(filter: { betaGroups: g.id })
-      rescue StandardError
-        []
+    begin
+      app.get_beta_groups.each do |g|
+        UI.message("Groupe « #{g.name} » — interne #{g.is_internal_group} — " \
+                   "tous les builds #{g.has_access_to_all_builds}")
       end
-      UI.message("Groupe « #{g.name} » — interne: #{g.is_internal_group} — " \
-                 "auto: #{g.has_access_to_all_builds} — testeurs: #{testers.size}")
-      testers.each do |t|
-        UI.message("  testeur #{t.email} — état: #{t.state}")
+    rescue StandardError => e
+      UI.message("Groupes : lecture impossible (#{e.class}: #{e.message})")
+    end
+  end
+
+  desc "Rattache le dernier build à tous les groupes internes"
+  lane :distribute do
+    connect_token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    build = app.get_builds(includes: "preReleaseVersion").first
+    UI.user_error!("Aucun build") unless build
+
+    groups = app.get_beta_groups.select(&:is_internal_group)
+    UI.user_error!("Aucun groupe interne — crée-le dans App Store Connect") if groups.empty?
+
+    groups.each do |g|
+      begin
+        build.add_beta_groups(beta_groups: [g])
+        UI.success("Build #{build.version} rattaché au groupe « #{g.name} »")
+      rescue StandardError => e
+        UI.important("Rattachement à « #{g.name} » : #{e.class}: #{e.message}")
       end
     end
   end

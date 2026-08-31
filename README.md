@@ -4,8 +4,9 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Ce que ça fait
 
-- **Plusieurs balises** : ajoute n'importe quelle balise FFVL en collant son URL (ou son numéro),
-  bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
+- **Plusieurs balises, deux sources** : la FFVL (balisemeteo.com, toute la France, ajout par URL)
+  et Wind Morbihan (windmorbihan.com, baie de Quiberon, choix dans une liste de capteurs).
+  On bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
   seule celle qui est sélectionnée déclenche l'activité en direct et les alertes.
 - **Relevé live** : vent moyen, rafales, mini, direction (rose des vents + degrés), température.
 - **Graphe d'évolution** : force moyenne, rafales, et flèches de direction sur 3 / 6 / 12 / 24 h,
@@ -15,6 +16,10 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 - **Activité en direct** : vent sur l'écran verrouillé et l'île dynamique, avec mini-courbe.
 - **Alertes de seuil** : notification quand le vent franchit un seuil haut (ça monte) ou retombe sous
   un seuil bas, au choix sur le vent moyen ou les rafales, avec plage horaire et anti-spam.
+  Les seuils sont comparés sur la valeur **affichée** (13 nds réglés = 13 nds lus), sinon un arrondi
+  suffit à rater une alerte.
+- **Alerte de direction** : notification au moment où le vent bascule dans un secteur choisi
+  (relèvement ± ouverture), pour ne pas surveiller une rotation attendue.
   Elles sont évaluées à chaque relevé lu par l'app et à chaque réveil `BGAppRefreshTask` —
   iOS fixe la cadence de ces réveils, une alerte peut donc arriver au relevé suivant.
 
@@ -24,6 +29,25 @@ La balise publie un relevé **toutes les 10 minutes**. L'app lit l'heure du dern
 sur cette grille : prochaine lecture à `dernier relevé + 10 min + 45 s`, donc au plus tard une minute
 après la publication. Le widget demande le même horaire à WidgetKit (iOS peut espacer davantage
 si le widget est peu consulté — c'est un plafond système, pas un choix de l'app).
+
+## Les deux sources
+
+**FFVL / balisemeteo.com** masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas de
+session PHP : on fait une requête d'amorçage sur l'accueil pour obtenir le cookie, puis on lit la
+fiche balise et on parse le tableau HTML.
+
+**windmorbihan.com** est une SPA sans URL par balise, mais expose une vraie API JSON (repérée en
+écoutant le réseau avec `tools/probe_windmorbihan.py`) :
+
+```
+backend.windmorbihan.com/capteurs/list.json            30 capteurs de vent
+private2.windmorbihan.com/mesures/getlastalljson.json  dernier relevé de tous (15 Ko)
+private2.windmorbihan.com/mesures/history.json         historique 48 h (~6 Mo)
+```
+
+Les vitesses y sont en nœuds, converties en km/h (l'unité interne). Le téléphone ne télécharge que
+les deux premiers fichiers ; `history.json` n'est lu qu'une fois par le serveur, au premier suivi
+d'un capteur, puis l'historique s'accumule à partir des relevés courants.
 
 ## Comment la donnée est récupérée
 
@@ -59,7 +83,7 @@ Le JWT ES256 est signé directement avec `cryptography` — pas de dépendance P
 App/        app SwiftUI (dial, graphe, activité en direct, réveil BGTask)
 Widget/     extension WidgetKit + activité en direct
 Shared/     modèles, client balise, vues partagées, intent de configuration
-feed/       scraper Python partagé (GitHub Actions + serveur)
+feed/       sources de données Python (scrape.py = FFVL, windmorbihan.py = API JSON)
 server/     API d'enregistrement + pousseur APNs (systemd)
 fastlane/   build signé + upload TestFlight
 docs/       flux JSON publié sur GitHub Pages

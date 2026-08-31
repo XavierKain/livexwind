@@ -67,53 +67,24 @@ def ensure_app_record_exists
 end
 
 platform :ios do
-  desc "État du build et des testeurs TestFlight"
+  desc "État du build et des groupes TestFlight"
   lane :status do
     connect_token
     app = Spaceship::ConnectAPI::App.find(APP_ID)
     UI.user_error!("App introuvable") unless app
     UI.important("App : #{app.name} (#{app.bundle_id})")
 
-    builds = app.get_builds(includes: "preReleaseVersion,buildBetaDetail")
-    builds.first(3).each do |b|
+    app.get_builds(includes: "preReleaseVersion,buildBetaDetail").first(3).each do |b|
       detail = b.build_beta_detail rescue nil
       UI.message("Build #{b.version} — processing #{b.processing_state} — " \
                  "interne #{detail&.internal_build_state} — expiré #{b.expired}")
-      begin
-        groups = b.get_beta_groups
-        UI.message("  groupes : #{groups.empty? ? 'AUCUN' : groups.map(&:name).join(', ')}")
-      rescue StandardError => e
-        UI.message("  groupes : lecture impossible (#{e.class}: #{e.message})")
-      end
     end
 
-    begin
-      app.get_beta_groups.each do |g|
-        UI.message("Groupe « #{g.name} » — interne #{g.is_internal_group} — " \
-                   "tous les builds #{g.has_access_to_all_builds}")
-      end
-    rescue StandardError => e
-      UI.message("Groupes : lecture impossible (#{e.class}: #{e.message})")
-    end
-  end
-
-  desc "Rattache le dernier build à tous les groupes internes"
-  lane :distribute do
-    connect_token
-    app = Spaceship::ConnectAPI::App.find(APP_ID)
-    build = app.get_builds(includes: "preReleaseVersion").first
-    UI.user_error!("Aucun build") unless build
-
-    groups = app.get_beta_groups.select(&:is_internal_group)
-    UI.user_error!("Aucun groupe interne — crée-le dans App Store Connect") if groups.empty?
-
-    groups.each do |g|
-      begin
-        build.add_beta_groups(beta_groups: [g])
-        UI.success("Build #{build.version} rattaché au groupe « #{g.name} »")
-      rescue StandardError => e
-        UI.important("Rattachement à « #{g.name} » : #{e.class}: #{e.message}")
-      end
+    # Un groupe interne avec has_access_to_all_builds reçoit chaque build sans
+    # rattachement explicite — c'est pour ça que la lane beta n'en fait pas.
+    app.get_beta_groups.each do |g|
+      UI.message("Groupe « #{g.name} » — interne #{g.is_internal_group} — " \
+                 "reçoit tous les builds #{g.has_access_to_all_builds}")
     end
   end
 

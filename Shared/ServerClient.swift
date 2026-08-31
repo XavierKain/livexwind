@@ -70,6 +70,8 @@ struct ServerClient: Sendable {
         let lat: Double?
         let lon: Double?
         let altitude: Int?
+        /// Distance au point cherché, présente seulement en recherche par proximité.
+        let km: Double?
     }
 
     struct SensorSearch: Decodable {
@@ -82,13 +84,24 @@ struct ServerClient: Sendable {
         let index: IndexProgress?
     }
 
-    /// Recherche dans le catalogue d'une source (index tenu par le serveur).
-    func searchSensors(provider: BaliseProvider, query: String) async throws -> SensorSearch {
+    /// Recherche dans le catalogue d'une source (index tenu par le serveur),
+    /// par nom ou autour d'un point.
+    func searchSensors(provider: BaliseProvider,
+                       query: String = "",
+                       near: (lat: Double, lon: Double)? = nil,
+                       radiusKm: Double = 60) async throws -> SensorSearch {
         guard let baseURL else { throw ServerError.notConfigured }
         var components = URLComponents(url: baseURL.appendingPathComponent("api/sensors"),
                                        resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "provider", value: provider.rawValue),
-                                  URLQueryItem(name: "q", value: query)]
+        var items = [URLQueryItem(name: "provider", value: provider.rawValue)]
+        if let near {
+            items.append(URLQueryItem(name: "lat", value: String(near.lat)))
+            items.append(URLQueryItem(name: "lon", value: String(near.lon)))
+            items.append(URLQueryItem(name: "radius", value: String(Int(radiusKm))))
+        } else {
+            items.append(URLQueryItem(name: "q", value: query))
+        }
+        components?.queryItems = items
         guard let url = components?.url else { throw ServerError.notConfigured }
         var request = URLRequest(url: url)
         request.timeoutInterval = 10

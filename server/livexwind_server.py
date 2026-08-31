@@ -290,8 +290,16 @@ def sensors():
     query = (request.args.get("q") or "").strip()
 
     if provider == "wg":
-        return jsonify({"provider": "wg",
-                        "sensors": windguru.search(query) if query else [],
+        lat, lon = request.args.get("lat"), request.args.get("lon")
+        if lat and lon:
+            try:
+                hits = windguru.nearby(float(lat), float(lon),
+                                       radius_km=float(request.args.get("radius", 60)))
+            except (TypeError, ValueError):
+                hits = []
+        else:
+            hits = windguru.search(query) if query else []
+        return jsonify({"provider": "wg", "sensors": hits,
                         "index": windguru.index_progress()})
 
     if provider != "wm":

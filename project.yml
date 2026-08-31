@@ -52,6 +52,8 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        NSLocationWhenInUseUsageDescription: "Pour proposer les balises autour de toi quand tu ajoutes un spot."
+
     dependencies:
       - target: LiveXWindWidget
         embed: true

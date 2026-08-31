@@ -18,7 +18,9 @@ struct BalisesView: View {
     @State private var isLoadingSensors = false
     @State private var search = ""
     @State private var results: [Balise] = []
+    @State private var distances: [Int: Double] = [:]
     @State private var indexNote: String?
+    @StateObject private var location = LocationProvider()
 
     private var filteredSensors: [Balise] {
         let query = search.trimmingCharacters(in: .whitespaces)
@@ -149,6 +151,24 @@ struct BalisesView: View {
                     .disabled(search.trimmingCharacters(in: .whitespaces).count < 2 || isLoadingSensors)
             }
 
+            HStack(spacing: 14) {
+                Button {
+                    Task { await searchNearMe() }
+                } label: {
+                    Label("Autour de moi", systemImage: "location.fill")
+                }
+                if let lat = store.balise.latitude, let lon = store.balise.longitude {
+                    Button {
+                        Task { await searchNear(lat: lat, lon: lon) }
+                    } label: {
+                        Label("Autour de \(store.balise.name)", systemImage: "mappin.and.ellipse")
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .font(.caption)
+            .buttonStyle(.borderless)
+
             if isLoadingSensors {
                 HStack {
                     ProgressView().controlSize(.small)
@@ -167,9 +187,15 @@ struct BalisesView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(station.name).foregroundStyle(.primary)
-                            if let alt = station.altitude {
-                                Text("\(alt) m").font(.caption).foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                if let km = distances[station.id] {
+                                    Text("\(Int(km)) km")
+                                }
+                                if let alt = station.altitude {
+                                    Text("\(alt) m")
+                                }
                             }
+                            .font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         if store.catalog.balises.contains(where: { $0.key == station.key }) {
@@ -266,27 +292,45 @@ struct BalisesView: View {
     private func runSearch() {
         let query = search.trimmingCharacters(in: .whitespaces)
         guard query.count >= 2 else { return }
+        Task { await perform(query: query, near: nil, emptyMessage: "Aucune station trouvée pour « \(query) »") }
+    }
+
+    private func searchNearMe() async {
+        do {
+            let here = try await location.current()
+            await searchNear(lat: here.latitude, lon: here.longitude)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func searchNear(lat: Double, lon: Double) async {
+        await perform(query: "", near: (lat, lon),
+                      emptyMessage: "Aucune station indexée dans un rayon de 60 km pour l'instant")
+    }
+
+    private func perform(query: String, near: (lat: Double, lon: Double)?, emptyMessage: String) async {
         isLoadingSensors = true
         errorMessage = nil
         indexNote = nil
-        Task {
-            do {
-                let found = try await ServerClient.shared.searchSensors(provider: .windguru, query: query)
-                results = found.sensors.map {
-                    Balise(id: $0.id, name: $0.name, altitude: $0.altitude,
-                           latitude: $0.lat, longitude: $0.lon, provider: .windguru)
-                }
-                if let index = found.index, index.scanned < index.total {
-                    indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés. En attendant, tu peux coller un lien windguru."
-                }
-                if results.isEmpty && errorMessage == nil {
-                    errorMessage = "Aucune station trouvée pour « \(query) »"
-                }
-            } catch {
-                errorMessage = "Recherche indisponible — le serveur doit être joignable (Tailscale)."
+        do {
+            let found = try await ServerClient.shared.searchSensors(
+                provider: .windguru, query: query, near: near)
+            results = found.sensors.map {
+                Balise(id: $0.id, name: $0.name, altitude: $0.altitude,
+                       latitude: $0.lat, longitude: $0.lon, provider: .windguru)
             }
-            isLoadingSensors = false
+            distances = Dictionary(uniqueKeysWithValues: found.sensors.compactMap { hit in
+                hit.km.map { (hit.id, $0) }
+            })
+            if let index = found.index, index.scanned < index.total {
+                indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés. En attendant, coller un lien windguru fonctionne déjà."
+            }
+            if results.isEmpty { errorMessage = emptyMessage }
+        } catch {
+            errorMessage = "Recherche indisponible — le serveur doit être joignable (Tailscale)."
         }
+        isLoadingSensors = false
     }
 
     private func loadSensors() async {

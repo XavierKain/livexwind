@@ -1,0 +1,2329 @@
+{
+ "generatedAt": "2026-08-31T17:50:46Z",
+ "balise": {
+  "id": 73091265,
+  "name": "Isthme",
+  "lat": 47.550833,
+  "lon": -3.134722,
+  "altitude": null,
+  "url": "https://www.windmorbihan.com/?spot=isthme"
+ },
+ "current": {
+  "t": "2026-08-31T17:49:00Z",
+  "dir": 280,
+  "dirLabel": "O",
+  "avg": 31.5,
+  "gust": 33.3,
+  "gustDir": null,
+  "min": null,
+  "temp": null,
+  "lum": null,
+  "stale": false
+ },
+ "history": [
+  {
+   "t": "2026-08-29T18:00:00Z",
+   "dir": 266,
+   "avg": 24.1,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T18:10:00Z",
+   "dir": 265,
+   "avg": 24.1,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T18:20:00Z",
+   "dir": 265,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T18:30:00Z",
+   "dir": 263,
+   "avg": 24.1,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T18:40:00Z",
+   "dir": 262,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T18:50:00Z",
+   "dir": 259,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:00:00Z",
+   "dir": 260,
+   "avg": 24.1,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:10:00Z",
+   "dir": 264,
+   "avg": 25.9,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:20:00Z",
+   "dir": 277,
+   "avg": 27.8,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:30:00Z",
+   "dir": 244,
+   "avg": 18.5,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:40:00Z",
+   "dir": 233,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T19:50:00Z",
+   "dir": 225,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:00:00Z",
+   "dir": 228,
+   "avg": 18.5,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:10:00Z",
+   "dir": 230,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:20:00Z",
+   "dir": 241,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:30:00Z",
+   "dir": 242,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:40:00Z",
+   "dir": 242,
+   "avg": 18.5,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T20:50:00Z",
+   "dir": 256,
+   "avg": 25.9,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:00:00Z",
+   "dir": 259,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:10:00Z",
+   "dir": 259,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:20:00Z",
+   "dir": 264,
+   "avg": 24.1,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:30:00Z",
+   "dir": 266,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:40:00Z",
+   "dir": 260,
+   "avg": 18.5,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T21:50:00Z",
+   "dir": 260,
+   "avg": 22.2,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:00:00Z",
+   "dir": 270,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:10:00Z",
+   "dir": 276,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:20:00Z",
+   "dir": 281,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:30:00Z",
+   "dir": 275,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:40:00Z",
+   "dir": 272,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T22:50:00Z",
+   "dir": 272,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:00:00Z",
+   "dir": 265,
+   "avg": 20.4,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:10:00Z",
+   "dir": 269,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:20:00Z",
+   "dir": 273,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:30:00Z",
+   "dir": 273,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:40:00Z",
+   "dir": 272,
+   "avg": 24.1,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-29T23:50:00Z",
+   "dir": 273,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:00:00Z",
+   "dir": 277,
+   "avg": 22.2,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:10:00Z",
+   "dir": 279,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:20:00Z",
+   "dir": 275,
+   "avg": 18.5,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:30:00Z",
+   "dir": 273,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:40:00Z",
+   "dir": 270,
+   "avg": 14.8,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T00:50:00Z",
+   "dir": 269,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:00:00Z",
+   "dir": 275,
+   "avg": 16.7,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:10:00Z",
+   "dir": 274,
+   "avg": 18.5,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:20:00Z",
+   "dir": 272,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:30:00Z",
+   "dir": 271,
+   "avg": 14.8,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:40:00Z",
+   "dir": 267,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T01:50:00Z",
+   "dir": 265,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:00:00Z",
+   "dir": 256,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:10:00Z",
+   "dir": 254,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:20:00Z",
+   "dir": 244,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:30:00Z",
+   "dir": 236,
+   "avg": 11.1,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:40:00Z",
+   "dir": 252,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T02:50:00Z",
+   "dir": 261,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:00:00Z",
+   "dir": 265,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:10:00Z",
+   "dir": 278,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:20:00Z",
+   "dir": 280,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:30:00Z",
+   "dir": 284,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:40:00Z",
+   "dir": 262,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T03:50:00Z",
+   "dir": 230,
+   "avg": 14.8,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:00:00Z",
+   "dir": 209,
+   "avg": 16.7,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:10:00Z",
+   "dir": 189,
+   "avg": 11.1,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:20:00Z",
+   "dir": 190,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:30:00Z",
+   "dir": 190,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:40:00Z",
+   "dir": 185,
+   "avg": 7.4,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T04:50:00Z",
+   "dir": 231,
+   "avg": 16.7,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:00:00Z",
+   "dir": 247,
+   "avg": 20.4,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:10:00Z",
+   "dir": 244,
+   "avg": 20.4,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:20:00Z",
+   "dir": 248,
+   "avg": 18.5,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:30:00Z",
+   "dir": 257,
+   "avg": 24.1,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:40:00Z",
+   "dir": 244,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T05:50:00Z",
+   "dir": 233,
+   "avg": 18.5,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:00:00Z",
+   "dir": 240,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:10:00Z",
+   "dir": 233,
+   "avg": 16.7,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:20:00Z",
+   "dir": 229,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:30:00Z",
+   "dir": 229,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:40:00Z",
+   "dir": 234,
+   "avg": 13.0,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T06:50:00Z",
+   "dir": 248,
+   "avg": 14.8,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:00:00Z",
+   "dir": 254,
+   "avg": 18.5,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:10:00Z",
+   "dir": 253,
+   "avg": 14.8,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:20:00Z",
+   "dir": 255,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:30:00Z",
+   "dir": 247,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:40:00Z",
+   "dir": 240,
+   "avg": 13.0,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T07:50:00Z",
+   "dir": 236,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:00:00Z",
+   "dir": 238,
+   "avg": 14.8,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:10:00Z",
+   "dir": 231,
+   "avg": 18.5,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:20:00Z",
+   "dir": 255,
+   "avg": 27.8,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:30:00Z",
+   "dir": 256,
+   "avg": 13.0,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:40:00Z",
+   "dir": 253,
+   "avg": 11.1,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T08:50:00Z",
+   "dir": 242,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:00:00Z",
+   "dir": 245,
+   "avg": 13.0,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:10:00Z",
+   "dir": 237,
+   "avg": 13.0,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:20:00Z",
+   "dir": 229,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:30:00Z",
+   "dir": 224,
+   "avg": 14.8,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:40:00Z",
+   "dir": 229,
+   "avg": 16.7,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T09:50:00Z",
+   "dir": 235,
+   "avg": 20.4,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:00:00Z",
+   "dir": 236,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:10:00Z",
+   "dir": 236,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:20:00Z",
+   "dir": 240,
+   "avg": 20.4,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:30:00Z",
+   "dir": 236,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:40:00Z",
+   "dir": 241,
+   "avg": 22.2,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T10:50:00Z",
+   "dir": 243,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:00:00Z",
+   "dir": 246,
+   "avg": 24.1,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:10:00Z",
+   "dir": 255,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:20:00Z",
+   "dir": 257,
+   "avg": 18.5,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:30:00Z",
+   "dir": 252,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:40:00Z",
+   "dir": 241,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T11:50:00Z",
+   "dir": 252,
+   "avg": 14.8,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:00:00Z",
+   "dir": 260,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:10:00Z",
+   "dir": 255,
+   "avg": 16.7,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:20:00Z",
+   "dir": 262,
+   "avg": 31.5,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:30:00Z",
+   "dir": 260,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:40:00Z",
+   "dir": 258,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T12:50:00Z",
+   "dir": 256,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:00:00Z",
+   "dir": 254,
+   "avg": 31.5,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:10:00Z",
+   "dir": 256,
+   "avg": 31.5,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:20:00Z",
+   "dir": 255,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:30:00Z",
+   "dir": 259,
+   "avg": 33.3,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:40:00Z",
+   "dir": 260,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T13:50:00Z",
+   "dir": 268,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:00:00Z",
+   "dir": 278,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:10:00Z",
+   "dir": 275,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:20:00Z",
+   "dir": 265,
+   "avg": 18.5,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:30:00Z",
+   "dir": 257,
+   "avg": 20.4,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:40:00Z",
+   "dir": 255,
+   "avg": 18.5,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T14:50:00Z",
+   "dir": 239,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:00:00Z",
+   "dir": 225,
+   "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:10:00Z",
+   "dir": 226,
+   "avg": 20.4,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:20:00Z",
+   "dir": 237,
+   "avg": 27.8,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:30:00Z",
+   "dir": 238,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:40:00Z",
+   "dir": 234,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T15:50:00Z",
+   "dir": 233,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:00:00Z",
+   "dir": 234,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:10:00Z",
+   "dir": 235,
+   "avg": 31.5,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:20:00Z",
+   "dir": 230,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:30:00Z",
+   "dir": 227,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:40:00Z",
+   "dir": 230,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T16:50:00Z",
+   "dir": 241,
+   "avg": 40.7,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:00:00Z",
+   "dir": 242,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:10:00Z",
+   "dir": 233,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:20:00Z",
+   "dir": 234,
+   "avg": 33.3,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:30:00Z",
+   "dir": 242,
+   "avg": 37.0,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:40:00Z",
+   "dir": 238,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T17:50:00Z",
+   "dir": 245,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:00:00Z",
+   "dir": 247,
+   "avg": 35.2,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:10:00Z",
+   "dir": 252,
+   "avg": 35.2,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:20:00Z",
+   "dir": 253,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:30:00Z",
+   "dir": 258,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:40:00Z",
+   "dir": 271,
+   "avg": 38.9,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T18:50:00Z",
+   "dir": 262,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:00:00Z",
+   "dir": 256,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:10:00Z",
+   "dir": 254,
+   "avg": 24.1,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:20:00Z",
+   "dir": 254,
+   "avg": 24.1,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:30:00Z",
+   "dir": 252,
+   "avg": 22.2,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:40:00Z",
+   "dir": 258,
+   "avg": 27.8,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T19:50:00Z",
+   "dir": 268,
+   "avg": 37.0,
+   "gust": 50.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:00:00Z",
+   "dir": 268,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:10:00Z",
+   "dir": 269,
+   "avg": 37.0,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:20:00Z",
+   "dir": 269,
+   "avg": 35.2,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:30:00Z",
+   "dir": 267,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:40:00Z",
+   "dir": 266,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T20:50:00Z",
+   "dir": 262,
+   "avg": 33.3,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:00:00Z",
+   "dir": 261,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:10:00Z",
+   "dir": 267,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:20:00Z",
+   "dir": 263,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:30:00Z",
+   "dir": 259,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:40:00Z",
+   "dir": 257,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T21:50:00Z",
+   "dir": 258,
+   "avg": 37.0,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:00:00Z",
+   "dir": 259,
+   "avg": 40.7,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:10:00Z",
+   "dir": 267,
+   "avg": 42.6,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:20:00Z",
+   "dir": 275,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:30:00Z",
+   "dir": 268,
+   "avg": 37.0,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:40:00Z",
+   "dir": 262,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T22:50:00Z",
+   "dir": 260,
+   "avg": 31.5,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:00:00Z",
+   "dir": 259,
+   "avg": 35.2,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:10:00Z",
+   "dir": 261,
+   "avg": 35.2,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:20:00Z",
+   "dir": 265,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:30:00Z",
+   "dir": 262,
+   "avg": 40.7,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:40:00Z",
+   "dir": 261,
+   "avg": 38.9,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-30T23:50:00Z",
+   "dir": 260,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:00:00Z",
+   "dir": 258,
+   "avg": 33.3,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:10:00Z",
+   "dir": 264,
+   "avg": 38.9,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:20:00Z",
+   "dir": 265,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:30:00Z",
+   "dir": 268,
+   "avg": 38.9,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:40:00Z",
+   "dir": 269,
+   "avg": 38.9,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T00:50:00Z",
+   "dir": 270,
+   "avg": 42.6,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:00:00Z",
+   "dir": 270,
+   "avg": 44.4,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:10:00Z",
+   "dir": 269,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:20:00Z",
+   "dir": 269,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:30:00Z",
+   "dir": 266,
+   "avg": 38.9,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:40:00Z",
+   "dir": 271,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T01:50:00Z",
+   "dir": 272,
+   "avg": 40.7,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:00:00Z",
+   "dir": 274,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:10:00Z",
+   "dir": 271,
+   "avg": 38.9,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:20:00Z",
+   "dir": 270,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:30:00Z",
+   "dir": 269,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:40:00Z",
+   "dir": 273,
+   "avg": 37.0,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T02:50:00Z",
+   "dir": 275,
+   "avg": 38.9,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:00:00Z",
+   "dir": 273,
+   "avg": 38.9,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:10:00Z",
+   "dir": 273,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:20:00Z",
+   "dir": 275,
+   "avg": 35.2,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:30:00Z",
+   "dir": 274,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:40:00Z",
+   "dir": 273,
+   "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T03:50:00Z",
+   "dir": 280,
+   "avg": 38.9,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:00:00Z",
+   "dir": 278,
+   "avg": 40.7,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:10:00Z",
+   "dir": 280,
+   "avg": 37.0,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:20:00Z",
+   "dir": 282,
+   "avg": 37.0,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:30:00Z",
+   "dir": 284,
+   "avg": 35.2,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:40:00Z",
+   "dir": 286,
+   "avg": 31.5,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T04:50:00Z",
+   "dir": 283,
+   "avg": 35.2,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:00:00Z",
+   "dir": 281,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:10:00Z",
+   "dir": 280,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:20:00Z",
+   "dir": 283,
+   "avg": 31.5,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:30:00Z",
+   "dir": 285,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:40:00Z",
+   "dir": 285,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T05:50:00Z",
+   "dir": 287,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:00:00Z",
+   "dir": 286,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:10:00Z",
+   "dir": 285,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:20:00Z",
+   "dir": 284,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:30:00Z",
+   "dir": 285,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:40:00Z",
+   "dir": 285,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T06:50:00Z",
+   "dir": 288,
+   "avg": 31.5,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:00:00Z",
+   "dir": 287,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:10:00Z",
+   "dir": 287,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:20:00Z",
+   "dir": 285,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:30:00Z",
+   "dir": 284,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:40:00Z",
+   "dir": 281,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T07:50:00Z",
+   "dir": 285,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:00:00Z",
+   "dir": 283,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:10:00Z",
+   "dir": 287,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:20:00Z",
+   "dir": 286,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:30:00Z",
+   "dir": 285,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:40:00Z",
+   "dir": 284,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T08:50:00Z",
+   "dir": 280,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:00:00Z",
+   "dir": 280,
+   "avg": 25.9,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:10:00Z",
+   "dir": 278,
+   "avg": 25.9,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:20:00Z",
+   "dir": 280,
+   "avg": 25.9,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:30:00Z",
+   "dir": 282,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:40:00Z",
+   "dir": 283,
+   "avg": 24.1,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T09:50:00Z",
+   "dir": 279,
+   "avg": 25.9,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:00:00Z",
+   "dir": 280,
+   "avg": 25.9,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:10:00Z",
+   "dir": 279,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:20:00Z",
+   "dir": 277,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:30:00Z",
+   "dir": 275,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:40:00Z",
+   "dir": 274,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T10:50:00Z",
+   "dir": 274,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:00:00Z",
+   "dir": 274,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:10:00Z",
+   "dir": 277,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:20:00Z",
+   "dir": 278,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:30:00Z",
+   "dir": 276,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:40:00Z",
+   "dir": 275,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T11:50:00Z",
+   "dir": 276,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:00:00Z",
+   "dir": 279,
+   "avg": 31.5,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:10:00Z",
+   "dir": 279,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:20:00Z",
+   "dir": 276,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:30:00Z",
+   "dir": 276,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:40:00Z",
+   "dir": 276,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T12:50:00Z",
+   "dir": 276,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:00:00Z",
+   "dir": 273,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:10:00Z",
+   "dir": 271,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:20:00Z",
+   "dir": 269,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:30:00Z",
+   "dir": 270,
+   "avg": 27.8,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:40:00Z",
+   "dir": 269,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T13:50:00Z",
+   "dir": 269,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:00:00Z",
+   "dir": 268,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:10:00Z",
+   "dir": 269,
+   "avg": 29.6,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:20:00Z",
+   "dir": 266,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:30:00Z",
+   "dir": 269,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:40:00Z",
+   "dir": 271,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T14:50:00Z",
+   "dir": 271,
+   "avg": 29.6,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:00:00Z",
+   "dir": 269,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:10:00Z",
+   "dir": 271,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:20:00Z",
+   "dir": 272,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:30:00Z",
+   "dir": 275,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:40:00Z",
+   "dir": 275,
+   "avg": 33.3,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T15:50:00Z",
+   "dir": 277,
+   "avg": 33.3,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:00:00Z",
+   "dir": 275,
+   "avg": 31.5,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:10:00Z",
+   "dir": 274,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:20:00Z",
+   "dir": 276,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:30:00Z",
+   "dir": 275,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:40:00Z",
+   "dir": 277,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T16:50:00Z",
+   "dir": 277,
+   "avg": 27.8,
+   "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:00:00Z",
+   "dir": 279,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:11:00Z",
+   "dir": 278,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:21:00Z",
+   "dir": 274,
+   "avg": 33.3,
+   "gust": 37.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:31:00Z",
+   "dir": 274,
+   "avg": 29.6,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:37:00Z",
+   "dir": 274,
+   "avg": 31.5,
+   "gust": 35.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-08-31T17:49:00Z",
+   "dir": 280,
+   "avg": 31.5,
+   "gust": 33.3,
+   "min": null,
+   "temp": null
+  }
+ ]
+}

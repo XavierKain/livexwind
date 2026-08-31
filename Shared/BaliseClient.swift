@@ -53,6 +53,8 @@ struct BaliseClient: Sendable {
         switch balise.provider {
         case .windMorbihan:
             return try await WindMorbihanClient.shared.latest(id: baliseID)
+        case .windguru:
+            return try await WindguruClient.shared.latest(id: baliseID)
         case .ffvl:
             guard let reading = BaliseParser.parse(html: try await fetchPage()) else {
                 throw WindError.masked
@@ -61,15 +63,21 @@ struct BaliseClient: Sendable {
         }
     }
 
-    /// Vérifie qu'une balise FFVL existe et renvoie sa fiche — utilisé à l'ajout.
+    /// Vérifie qu'une balise existe et renvoie sa fiche — utilisé à l'ajout.
     /// (Les capteurs windmorbihan sont choisis dans une liste, déjà décrite.)
     func fetchBalise() async throws -> Balise {
-        guard balise.provider == .ffvl else { return balise }
-        let html = try await fetchPage()
-        guard let found = BaliseParser.parseBalise(html: html, id: baliseID) else {
-            throw WindError.unknownBalise
+        switch balise.provider {
+        case .windMorbihan:
+            return balise
+        case .windguru:
+            return try await WindguruClient.shared.station(id: baliseID)
+        case .ffvl:
+            let html = try await fetchPage()
+            guard let found = BaliseParser.parseBalise(html: html, id: baliseID) else {
+                throw WindError.unknownBalise
+            }
+            return found
         }
-        return found
     }
 
     // MARK: - Historique
@@ -152,7 +160,7 @@ enum WindError: Error, LocalizedError {
         switch self {
         case .decoding: return "Page illisible"
         case .masked: return "Relevé masqué par balisemeteo.com"
-        case .unknownBalise: return "Cette balise n'existe pas sur balisemeteo.com"
+        case .unknownBalise: return "Aucune balise ne correspond à ce lien"
         }
     }
 }

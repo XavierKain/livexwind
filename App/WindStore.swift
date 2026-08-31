@@ -38,6 +38,8 @@ final class WindStore: ObservableObject {
     @Published var serverReachable: Bool?
     @Published var serverDetail: String?
     @Published private(set) var catalog: BaliseCatalog
+    /// Instantané par balise suivie, pour la vue d'ensemble.
+    @Published private(set) var overview: [String: WindSnapshot] = [:]
     @Published var notificationsAuthorized = false
     @Published var lastAlert: AlertEvent?
 
@@ -77,6 +79,31 @@ final class WindStore: ObservableObject {
 
     var balise: Balise { catalog.selected }
 
+    /// Recharge toutes les balises suivies en parallèle. Le serveur ayant déjà
+    /// leurs relevés, c'est presque instantané sur Tailscale.
+    func refreshOverview(force: Bool = false) async {
+        let balises = catalog.balises
+        var fresh: [String: WindSnapshot] = [:]
+
+        await withTaskGroup(of: (String, WindSnapshot).self) { group in
+            for balise in balises {
+                if !force, let cached = overview[balise.key],
+                   Date().timeIntervalSince(cached.fetchedAt) < 120 {
+                    fresh[balise.key] = cached
+                    continue
+                }
+                group.addTask {
+                    (balise.key, await BaliseClient(balise: balise).loadSnapshot())
+                }
+            }
+            for await (key, snapshot) in group {
+                fresh[key] = snapshot
+            }
+        }
+        overview = fresh
+        if let mine = fresh[catalog.selectedKey] { snapshot = mine }
+    }
+
     func select(baliseID: Int) async {
         guard catalog.selectedID != baliseID else { return }
         catalog.selectedID = baliseID
@@ -87,11 +114,14 @@ final class WindStore: ObservableObject {
         await refresh(force: true)
     }
 
-    /// Ajoute une balise FFVL depuis une URL balisemeteo.com collée, ou un numéro.
+    /// Ajoute une balise depuis un lien collé (ou un numéro). La source est
+    /// déduite du lien ; `fallback` tranche quand on n'a qu'un numéro.
     @discardableResult
-    func addBalise(from input: String) async throws -> Balise {
-        guard let id = Balise.parseID(from: input) else { throw WindError.unknownBalise }
-        let candidate = Balise(id: id, name: "Balise \(id)", provider: .ffvl)
+    func addBalise(from input: String, fallback: BaliseProvider = .ffvl) async throws -> Balise {
+        guard let parsed = Balise.parseLink(input, fallback: fallback) else {
+            throw WindError.unknownBalise
+        }
+        let candidate = Balise(id: parsed.id, name: "Balise \(parsed.id)", provider: parsed.provider)
         return await install(try await BaliseClient(balise: candidate).fetchBalise())
     }
 
@@ -165,6 +195,7 @@ final class WindStore: ObservableObject {
         let fresh = await BaliseClient(balise: catalog.selected).loadSnapshot()
         let previous = snapshot
         snapshot = fresh
+        overview[catalog.selectedKey] = fresh
         lastError = fresh.current.averageKmh == nil ? "Relevé indisponible" : nil
         WidgetCenter.shared.reloadAllTimelines()
 

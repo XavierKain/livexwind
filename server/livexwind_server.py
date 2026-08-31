@@ -48,6 +48,7 @@ from flask import Flask, jsonify, request
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "feed"))
 import scrape  # noqa: E402  (source FFVL / balisemeteo.com)
 import windmorbihan  # noqa: E402  (source windmorbihan.com)
+import windguru  # noqa: E402  (source windguru.cz, mondiale)
 
 PORT = 7110
 HOME = Path.home()
@@ -59,7 +60,7 @@ STATE_PATH = DATA_DIR / "livexwind_state.json"
 APNS_HOST = "https://api.push.apple.com"   # production : l'environnement des builds TestFlight
 JWT_TTL = 40 * 60
 DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
-PROVIDERS = ("ffvl", "wm")
+PROVIDERS = ("ffvl", "wm", "wg")
 BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # cadence de guet sur la balise sélectionnée
 SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
@@ -260,7 +261,8 @@ def health():
                     "balises": [b["id"] for b in balises],
                     "selected": selected,
                     "last_reading": state.get("last_reading"),
-                    "last_push": state.get("last_push")})
+                    "last_push": state.get("last_push"),
+                    "windguru_index": windguru.index_progress()})
 
 
 @app.route("/api/wind")
@@ -279,10 +281,21 @@ def wind():
 
 @app.route("/api/sensors")
 def sensors():
-    """Capteurs disponibles chez une source, pour le sélecteur de l'app."""
+    """Capteurs d'une source, pour le sélecteur de l'app.
+
+    windmorbihan publie une liste complète ; windguru compte des milliers de
+    stations et n'ouvre pas sa recherche, alors on interroge notre propre index.
+    """
     provider = request.args.get("provider", "wm")
+    query = (request.args.get("q") or "").strip()
+
+    if provider == "wg":
+        return jsonify({"provider": "wg",
+                        "sensors": windguru.search(query) if query else [],
+                        "index": windguru.index_progress()})
+
     if provider != "wm":
-        return jsonify({"error": "seule la source windmorbihan expose une liste"}), 400
+        return jsonify({"error": "source inconnue"}), 400
     try:
         return jsonify({"provider": "wm", "sensors": windmorbihan.sensors()})
     except Exception as exc:
@@ -372,7 +385,11 @@ def index():
 def refresh_feed(balise: dict) -> dict | None:
     """Relève une balise et met son flux à jour, quelle que soit sa source."""
     provider = balise.get("provider", "ffvl")
-    return _refresh_wm(balise) if provider == "wm" else _refresh_ffvl(balise)
+    if provider == "wm":
+        return _refresh_wm(balise)
+    if provider == "wg":
+        return _refresh_wg(balise)
+    return _refresh_ffvl(balise)
 
 
 def _refresh_ffvl(balise: dict) -> dict | None:
@@ -416,6 +433,25 @@ def _refresh_wm(balise: dict) -> dict | None:
         backfill = windmorbihan.history(balise_id)
         if backfill:
             log.info("balise wm %s : historique initial (%d points)", balise_id, len(backfill))
+            old = {"history": backfill}
+
+    return _store_feed(path, info, reading, previous=old)
+
+
+def _refresh_wg(balise: dict) -> dict | None:
+    """windguru.cz : API JSON ouverte, plus l'historique au premier suivi."""
+    balise_id = balise["id"]
+    path = feed_path(balise_id, "wg")
+    reading = windguru.latest(balise_id)
+    info = windguru.station(balise_id)
+    if not reading or not info:
+        return load_json(path, None)
+
+    old = load_json(path, {})
+    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
+        backfill = windguru.history(balise_id)
+        if backfill:
+            log.info("balise wg %s : historique initial (%d points)", balise_id, len(backfill))
             old = {"history": backfill}
 
     return _store_feed(path, info, reading, previous=old)
@@ -671,7 +707,7 @@ def pusher_loop():
                     log.exception("échec du push : %s", exc)
                 state["last_reading"] = current_t
                 # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
-                period = 360 if balise.get("provider") == "wm" else 600
+                period = 600 if balise.get("provider") == "ffvl" else 360
                 sleep_for = max(60, min(iso_to_epoch(current_t) + period + 20 - time.time(), 700))
 
         if feeds:
@@ -681,10 +717,35 @@ def pusher_loop():
         time.sleep(sleep_for)
 
 
+def windguru_index_loop():
+    """Balaye lentement le catalogue windguru pour alimenter la recherche.
+
+    Volontairement peu pressé : quelques dizaines de fiches par minute, reprise
+    là où on s'était arrêté, et l'index sert dès le premier lot.
+    """
+    log.info("indexation windguru démarrée")
+    while True:
+        try:
+            progress = windguru.index_progress()
+            if progress["scanned"] >= progress["total"]:
+                time.sleep(24 * 3600)
+                continue
+            windguru.index_step()
+            progress = windguru.index_progress()
+            if progress["scanned"] % 500 < 40:
+                log.info("index windguru : %d stations sur %d identifiants balayés",
+                         progress["indexed"], progress["scanned"])
+        except Exception as exc:
+            log.warning("indexation windguru : %s", exc)
+            time.sleep(120)
+        time.sleep(5)
+
+
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     migrate_legacy_feed()
     threading.Thread(target=pusher_loop, daemon=True).start()
+    threading.Thread(target=windguru_index_loop, daemon=True).start()
     log.info("API LiveXWind sur le port %d", PORT)
     app.run(host="0.0.0.0", port=PORT, debug=False, use_reloader=False)
 

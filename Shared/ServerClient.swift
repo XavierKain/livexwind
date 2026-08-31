@@ -64,6 +64,39 @@ struct ServerClient: Sendable {
         let provider: String?
     }
 
+    struct SensorHit: Decodable {
+        let id: Int
+        let name: String
+        let lat: Double?
+        let lon: Double?
+        let altitude: Int?
+    }
+
+    struct SensorSearch: Decodable {
+        struct IndexProgress: Decodable {
+            let indexed: Int
+            let scanned: Int
+            let total: Int
+        }
+        let sensors: [SensorHit]
+        let index: IndexProgress?
+    }
+
+    /// Recherche dans le catalogue d'une source (index tenu par le serveur).
+    func searchSensors(provider: BaliseProvider, query: String) async throws -> SensorSearch {
+        guard let baseURL else { throw ServerError.notConfigured }
+        var components = URLComponents(url: baseURL.appendingPathComponent("api/sensors"),
+                                       resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "provider", value: provider.rawValue),
+                                  URLQueryItem(name: "q", value: query)]
+        guard let url = components?.url else { throw ServerError.notConfigured }
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(SensorSearch.self, from: data)
+    }
+
     func fetchBalises() async throws -> [RemoteBalise] {
         guard let baseURL else { throw ServerError.notConfigured }
         var request = URLRequest(url: baseURL.appendingPathComponent("api/balises"))

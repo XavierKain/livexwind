@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 struct ContentView: View {
-    @StateObject private var store = WindStore()
+    @ObservedObject var store: WindStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var range: HistoryRange = .sixHours
     @State private var showAlerts = false

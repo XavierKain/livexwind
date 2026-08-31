@@ -13,7 +13,7 @@ struct LiveXWindApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { BackgroundRefresh.schedule() }

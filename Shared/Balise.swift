@@ -6,13 +6,29 @@ import Foundation
 enum BaliseProvider: String, Codable, CaseIterable, Sendable {
     case ffvl
     case windMorbihan = "wm"
+    case windguru = "wg"
 
-    var label: String { self == .ffvl ? "FFVL" : "Wind Morbihan" }
-    var detail: String {
-        self == .ffvl
-        ? "balisemeteo.com — toute la France, relevé toutes les 10 min"
-        : "windmorbihan.com — baie de Quiberon, relevé toutes les ~6 min"
+    var label: String {
+        switch self {
+        case .ffvl: return "FFVL"
+        case .windMorbihan: return "Morbihan"
+        case .windguru: return "Windguru"
+        }
     }
+
+    var detail: String {
+        switch self {
+        case .ffvl:
+            return "balisemeteo.com — toute la France, relevé toutes les 10 min"
+        case .windMorbihan:
+            return "windmorbihan.com — baie de Quiberon, relevé toutes les ~6 min"
+        case .windguru:
+            return "windguru.cz — des milliers de stations dans le monde, dont Tarifa"
+        }
+    }
+
+    /// Vrai quand on peut ajouter une balise en collant un lien.
+    var acceptsLink: Bool { self != .windMorbihan }
 }
 
 /// Une balise météo suivie par l'app.
@@ -56,6 +72,8 @@ struct Balise: Codable, Hashable, Identifiable, Sendable {
             return URL(string: "https://www.balisemeteo.com/balise.php?idBalise=\(id)")!
         case .windMorbihan:
             return URL(string: "https://www.windmorbihan.com")!
+        case .windguru:
+            return URL(string: "https://www.windguru.cz/station/\(id)")!
         }
     }
 
@@ -68,24 +86,41 @@ struct Balise: Codable, Hashable, Identifiable, Sendable {
     static let pyla = Balise(id: 64, name: "Pyla Pilat", altitude: 55,
                              latitude: 44.5761111, longitude: -1.2247222, provider: .ffvl)
 
-    /// Accepte une URL balisemeteo.com collée depuis Safari, ou juste le numéro.
-    /// (Wind Morbihan ne publie pas d'URL par balise : on y choisit dans une liste.)
-    static func parseID(from input: String) -> Int? {
+    /// Reconnaît un lien collé depuis Safari et en déduit la source.
+    ///
+    /// - `balisemeteo.com/balise.php?idBalise=64` → FFVL 64
+    /// - `windguru.cz/station/2667`               → Windguru 2667
+    /// - un simple numéro                         → source proposée par défaut
+    ///
+    /// (Wind Morbihan n'a pas d'URL par capteur : on y choisit dans une liste.)
+    static func parseLink(_ input: String, fallback: BaliseProvider = .ffvl) -> (provider: BaliseProvider, id: Int)? {
         let text = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return nil }
 
-        if let direct = Int(text), direct > 0 { return direct }
-
-        let patterns = ["idBalise=(\\d+)", "balise[_-]?(\\d+)", "(\\d{1,5})"]
-        for pattern in patterns {
-            guard let re = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { continue }
-            let range = NSRange(text.startIndex..., in: text)
-            if let match = re.firstMatch(in: text, range: range), match.numberOfRanges > 1,
-               let r = Range(match.range(at: 1), in: text), let value = Int(text[r]), value > 0 {
-                return value
-            }
+        if let id = firstGroup("windguru\\.cz/station/(\\d+)", in: text) {
+            return (.windguru, id)
+        }
+        if let id = firstGroup("idBalise=(\\d+)", in: text) {
+            return (.ffvl, id)
+        }
+        if let id = firstGroup("balisemeteo\\.com[^0-9]{0,20}(\\d+)", in: text) {
+            return (.ffvl, id)
+        }
+        if let direct = Int(text), direct > 0 {
+            return (fallback, direct)
+        }
+        if let id = firstGroup("(\\d{1,7})", in: text) {
+            return (fallback, id)
         }
         return nil
+    }
+
+    private static func firstGroup(_ pattern: String, in text: String) -> Int? {
+        guard let re = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return nil }
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = re.firstMatch(in: text, range: range), match.numberOfRanges > 1,
+              let r = Range(match.range(at: 1), in: text), let value = Int(text[r]), value > 0 else { return nil }
+        return value
     }
 }
 

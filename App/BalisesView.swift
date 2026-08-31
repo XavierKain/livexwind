@@ -17,6 +17,8 @@ struct BalisesView: View {
     @State private var sensors: [Balise] = []
     @State private var isLoadingSensors = false
     @State private var search = ""
+    @State private var results: [Balise] = []
+    @State private var indexNote: String?
 
     private var filteredSensors: [Balise] {
         let query = search.trimmingCharacters(in: .whitespaces)
@@ -29,7 +31,11 @@ struct BalisesView: View {
             Form {
                 suivies
                 sourcePicker
-                if source == .ffvl { ajoutFFVL } else { ajoutWindMorbihan }
+                switch source {
+                case .ffvl: ajoutParLien
+                case .windguru: ajoutWindguru
+                case .windMorbihan: ajoutWindMorbihan
+                }
             }
             .navigationTitle("Balises")
             .navigationBarTitleDisplayMode(.inline)
@@ -94,7 +100,7 @@ struct BalisesView: View {
         }
     }
 
-    private var ajoutFFVL: some View {
+    private var ajoutParLien: some View {
         Section {
             TextField("balisemeteo.com/balise.php?idBalise=…", text: $input)
                 .textInputAutocapitalization(.never)
@@ -120,6 +126,67 @@ struct BalisesView: View {
             statusLines
         } footer: {
             Text("Colle l'adresse de la balise depuis balisemeteo.com, ou tape simplement son numéro. L'app vérifie qu'elle existe et récupère son nom et son altitude.")
+        }
+    }
+
+    private var ajoutWindguru: some View {
+        Section {
+            TextField("Rechercher (Tarifa, Leucate…) ou coller un lien", text: $search)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .onSubmit { runSearch() }
+
+            if search.contains("windguru.cz") {
+                Button {
+                    addLink(source: .windguru, value: search)
+                } label: {
+                    Label("Ajouter cette station", systemImage: "plus.circle.fill")
+                }
+                .disabled(isAdding)
+            } else {
+                Button("Chercher") { runSearch() }
+                    .disabled(search.trimmingCharacters(in: .whitespaces).count < 2 || isLoadingSensors)
+            }
+
+            if isLoadingSensors {
+                HStack {
+                    ProgressView().controlSize(.small)
+                    Text("Recherche…").foregroundStyle(.secondary)
+                }
+            }
+
+            ForEach(results) { station in
+                Button {
+                    Task {
+                        _ = await store.addBalise(station)
+                        addedName = station.name
+                        errorMessage = nil
+                    }
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(station.name).foregroundStyle(.primary)
+                            if let alt = station.altitude {
+                                Text("\(alt) m").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                        Spacer()
+                        if store.catalog.balises.contains(where: { $0.key == station.key }) {
+                            Image(systemName: "checkmark").foregroundStyle(.secondary)
+                        } else {
+                            Image(systemName: "plus.circle").foregroundStyle(.tint)
+                        }
+                    }
+                }
+            }
+
+            if let indexNote {
+                Text(indexNote).font(.caption2).foregroundStyle(.tertiary)
+            }
+            statusLines
+        } footer: {
+            Text("Windguru couvre le monde entier — Tarifa / Campo de Futbol, Leucate, Almanarre… Tu peux chercher par nom, ou coller directement une adresse windguru.cz/station/….")
         }
     }
 
@@ -177,20 +244,48 @@ struct BalisesView: View {
 
     // MARK: Actions
 
-    private func addFFVL() {
-        let value = input
+    private func addFFVL() { addLink(source: .ffvl, value: input) }
+
+    private func addLink(source: BaliseProvider, value: String) {
         errorMessage = nil
         addedName = nil
         isAdding = true
         Task {
             do {
-                let balise = try await store.addBalise(from: value)
+                let balise = try await store.addBalise(from: value, fallback: source)
                 addedName = balise.name
                 input = ""
+                search = ""
             } catch {
                 errorMessage = error.localizedDescription
             }
             isAdding = false
+        }
+    }
+
+    private func runSearch() {
+        let query = search.trimmingCharacters(in: .whitespaces)
+        guard query.count >= 2 else { return }
+        isLoadingSensors = true
+        errorMessage = nil
+        indexNote = nil
+        Task {
+            do {
+                let found = try await ServerClient.shared.searchSensors(provider: .windguru, query: query)
+                results = found.sensors.map {
+                    Balise(id: $0.id, name: $0.name, altitude: $0.altitude,
+                           latitude: $0.lat, longitude: $0.lon, provider: .windguru)
+                }
+                if let index = found.index, index.scanned < index.total {
+                    indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés. En attendant, tu peux coller un lien windguru."
+                }
+                if results.isEmpty && errorMessage == nil {
+                    errorMessage = "Aucune station trouvée pour « \(query) »"
+                }
+            } catch {
+                errorMessage = "Recherche indisponible — le serveur doit être joignable (Tailscale)."
+            }
+            isLoadingSensors = false
         }
     }
 

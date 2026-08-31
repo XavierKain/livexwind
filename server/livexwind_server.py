@@ -394,6 +394,8 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
                 state["activity_started_at"] = time.time()
             else:
                 log.warning("push-to-start refusé : %s", text[:160])
+                if code in (400, 410):
+                    drop_token("start", token)
     elif delivered and not state.get("activity_started_at"):
         state["activity_started_at"] = time.time()
 
@@ -403,7 +405,7 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
         for token in data.get("device", []):
             code, text = apns_post(cfg, token, alert_payload(event["title"], event["body"]), "alert")
             log.info("alerte %s… → %s (%s)", token[:8], code, event["title"])
-            if code == 410:
+            if code in (400, 410):
                 drop_token("device", token)
             elif code != 200:
                 log.warning("alerte refusée : %s", text[:160])

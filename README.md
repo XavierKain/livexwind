@@ -28,10 +28,19 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Rythme de mise à jour
 
-La balise publie un relevé **toutes les 10 minutes**. L'app lit l'heure du dernier relevé et se recale
-sur cette grille : prochaine lecture à `dernier relevé + 10 min + 45 s`, donc au plus tard une minute
-après la publication. Le widget demande le même horaire à WidgetKit (iOS peut espacer davantage
-si le widget est peu consulté — c'est un plafond système, pas un choix de l'app).
+**La cadence n'est pas la même d'une station à l'autre** — mesuré : windguru Tarifa publie toutes
+les 60 s, le capteur windmorbihan de l'Isthme toutes les 120 s, la balise FFVL du Pyla toutes les
+10 min. Elle n'est donc jamais supposée : le serveur la déduit des relevés eux-mêmes
+(`observed_period`, le plus petit écart récent — un trou de transmission allonge un écart, jamais
+l'inverse) et la publie dans le flux sous `period`.
+
+L'app et le widget s'y calent. Côté serveur, la balise affichée est guettée toutes les 25 s quand la
+source est une API JSON bon marché (windguru, windmorbihan) — c'est aussi ce qui permet de *mesurer*
+une cadence rapide ; pour la FFVL, dont chaque lecture coûte deux requêtes HTML et qui publie de
+toute façon toutes les 10 min, le réveil est programmé juste après le relevé attendu.
+
+Le widget, lui, est plafonné à 5 min : iOS ne rafraîchit un widget que quelques dizaines de fois par
+jour, viser la minute ne ferait que gaspiller ce budget.
 
 ## Les trois sources
 

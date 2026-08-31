@@ -27,12 +27,12 @@ struct WindProvider: AppIntentTimelineProvider {
         let entry = WindEntry(date: .now, snapshot: snapshot,
                               unit: configuration.unit.unit, windowHours: configuration.window.hours)
 
-        // On se cale sur la grille de publication de la balise (un relevé toutes les
-        // 10 min) : réveil 45 s après l'heure attendue, avec un plancher de 2 min
-        // pour rester dans le budget de rafraîchissement de WidgetKit.
-        var next = snapshot.current.date.addingTimeInterval(600 + 45)
-        if next.timeIntervalSinceNow < 120 {
-            next = Date().addingTimeInterval(120)
+        // On vise le prochain relevé de cette balise, mais iOS ne rafraîchit un
+        // widget que quelques dizaines de fois par jour : viser la minute serait
+        // du gaspillage de budget, d'où le plancher de 5 min.
+        var next = snapshot.nextExpectedUpdate
+        if next.timeIntervalSinceNow < 300 {
+            next = Date().addingTimeInterval(300)
         }
         return Timeline(entries: [entry], policy: .after(next))
     }
@@ -156,7 +156,7 @@ struct WindWidgetView: View {
             WindChart(readings: entry.snapshot.window(hours: entry.windowHours), unit: entry.unit)
             HStack {
                 Text(reading.date, style: .time)
-                Text("· relevé toutes les 10 min")
+                Text("· relevé \(entry.snapshot.cadenceText)")
                 Spacer()
                 if let temp = reading.temperature { Text("\(Int(temp))°") }
             }

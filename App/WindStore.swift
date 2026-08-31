@@ -232,18 +232,19 @@ final class WindStore: ObservableObject {
         }
     }
 
-    /// Se recale sur la grille du site : le relevé tombe toutes les 10 min,
-    /// on interroge 45 s après l'heure attendue pour ne jamais rater un cran.
+    /// Se recale sur la cadence propre à la balise — une station windguru publie
+    /// à la minute, une balise FFVL toutes les 10 min.
     func startAutoRefresh() {
         timer?.cancel()
         timer = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else { return }
                 await self.refresh()
-                let target = self.snapshot.current.date.addingTimeInterval(600 + 45)
+                let period = self.snapshot.periodSeconds
+                let target = self.snapshot.current.date.addingTimeInterval(period + 8)
                 var delay = target.timeIntervalSinceNow
-                if delay <= 5 { delay = 60 }          // relevé en retard : on repasse dans 1 min
-                delay = min(delay, 11 * 60)
+                if delay <= 3 { delay = min(20, period) }   // relevé en retard : on repasse vite
+                delay = min(delay, period + 60)
                 try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             }
         }

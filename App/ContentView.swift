@@ -87,7 +87,7 @@ struct ContentView: View {
                     ProgressView().controlSize(.mini).padding(.leading, 2)
                 }
             }
-            Text("Mise à jour \(store.nextUpdateText) · toutes les 10 min")
+            Text("Mise à jour \(store.nextUpdateText) · \(store.snapshot.cadenceText)")
                 .font(.caption).foregroundStyle(.secondary)
             if let error = store.lastError {
                 Text(error).font(.caption2).foregroundStyle(.orange)

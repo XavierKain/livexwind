@@ -62,7 +62,14 @@ JWT_TTL = 40 * 60
 DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
 PROVIDERS = ("ffvl", "wm", "wg")
 BACKFILL_MIN_POINTS = 20
-POLL_INTERVAL = 30              # cadence de guet sur la balise sélectionnée
+POLL_INTERVAL = 30              # repli quand la cadence d'une balise est inconnue
+MIN_PERIOD = 55                 # aucune source observée ne publie plus vite
+MAX_PERIOD = 900
+CATCH_UP = 8                    # marge après l'heure attendue du prochain relevé
+# Guet rapide sur la balise affichée quand la source est une API JSON bon marché.
+# balisemeteo demande deux requêtes HTML par lecture et publie de toute façon
+# toutes les 10 min : là, on programme le réveil au lieu de guetter.
+FAST_WATCH = {"wm": 25, "wg": 25}
 ALERT_INTERVAL = 120            # balise non affichée mais sous surveillance d'alerte
 SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
@@ -481,13 +488,38 @@ def _refresh_wg(balise: dict) -> dict | None:
     return _store_feed(path, info, reading, previous=old)
 
 
+def observed_period(history: list) -> int:
+    """Cadence réelle de publication, déduite des derniers relevés.
+
+    Elle varie d'une station à l'autre — windguru publie à la minute, une balise
+    FFVL toutes les 10 min — et parfois pour une même source. On la mesure donc
+    au lieu de la supposer.
+
+    On retient le **plus petit** écart récent, pas la médiane : un trou de
+    transmission allonge un écart, jamais l'inverse. C'est aussi ce qui fait
+    converger vite une station dont l'historique initial a été rééchantillonné
+    à 10 min alors qu'elle publie chaque minute.
+    """
+    stamps = []
+    for sample in history[-14:]:
+        try:
+            stamps.append(datetime.fromisoformat(sample["t"].replace("Z", "+00:00")))
+        except (KeyError, ValueError, AttributeError):
+            continue
+    gaps = [(b - a).total_seconds() for a, b in zip(stamps, stamps[1:])
+            if MIN_PERIOD <= (b - a).total_seconds() <= MAX_PERIOD]
+    return int(min(gaps)) if gaps else 600
+
+
 def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:
     old = previous if previous is not None else load_json(path, {})
+    history = scrape.merge_history(old.get("history", []), reading)
     payload = {"generatedAt": datetime.now(timezone.utc).replace(microsecond=0)
                               .isoformat().replace("+00:00", "Z"),
                "balise": info,
                "current": reading,
-               "history": scrape.merge_history(old.get("history", []), reading)}
+               "period": observed_period(history),
+               "history": history}
     save_json(path, payload)
     return payload
 
@@ -745,11 +777,14 @@ def pusher_loop():
             # Cadence : la balise affichée est guettée de près, celles qui ont une
             # alerte armée le sont raisonnablement, les autres ne servent qu'à
             # garnir la courbe quand on change de spot.
-            interval = POLL_INTERVAL if is_selected else (ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
+            cached_feed = load_json(feed_path(balise_id, balise.get("provider", "ffvl")), None) or {}
+            period = cached_feed.get("period") or 600
+            # La balise affichée est guettée à sa propre cadence ; celles qui ont
+            # une alerte armée un peu moins souvent ; les autres au ralenti.
+            interval = max(period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
             if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
-                cached = load_json(feed_path(balise_id, balise.get("provider", "ffvl")), None)
-                if cached:
-                    feeds[key] = cached
+                if cached_feed:
+                    feeds[key] = cached_feed
                 continue
 
             feed = refresh_feed(balise)
@@ -777,8 +812,16 @@ def pusher_loop():
                 except Exception as exc:
                     log.exception("échec du push : %s", exc)
                 state["last_reading"] = current_t
-                period = 600 if balise.get("provider") == "ffvl" else 360
-                sleep_for = max(60, min(iso_to_epoch(current_t) + period + 20 - time.time(), 700))
+                fast = FAST_WATCH.get(balise.get("provider"))
+                if fast:
+                    # Guet régulier : c'est ce qui permet aussi de *mesurer* une
+                    # cadence plus rapide que celle qu'on croyait.
+                    sleep_for = fast
+                else:
+                    # Réveil programmé juste après le relevé attendu.
+                    period = feed.get("period") or 600
+                    sleep_for = max(15, min(iso_to_epoch(current_t) + period + CATCH_UP - time.time(),
+                                            MAX_PERIOD))
 
         # Une alerte armée sur un spot non affiché ne doit pas attendre 10 min.
         if watched:

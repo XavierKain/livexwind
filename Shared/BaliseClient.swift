@@ -144,7 +144,8 @@ struct BaliseClient: Sendable {
             altitude: balise.altitude ?? feed?.altitude ?? cached?.altitude,
             current: current,
             history: history,
-            fetchedAt: .now
+            fetchedAt: .now,
+            periodSeconds: feed?.periodSeconds ?? cached?.periodSeconds ?? 600
         )
         SharedStore.shared.save(snapshot: snapshot)
         return snapshot
@@ -289,6 +290,7 @@ private struct FeedPayload: Decodable {
     let balise: BaliseInfo
     let current: Sample
     let history: [Sample]
+    let period: Double?
 
     static func decode(_ data: Data) throws -> FeedPayload {
         try JSONDecoder().decode(FeedPayload.self, from: data)
@@ -306,7 +308,8 @@ private struct FeedPayload: Decodable {
             altitude: balise.altitude,
             current: latest ?? WindSnapshot.placeholder(balise: identity).current,
             history: readings,
-            fetchedAt: .now
+            fetchedAt: .now,
+            periodSeconds: period ?? 600
         )
     }
 

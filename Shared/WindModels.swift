@@ -71,6 +71,9 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     var current: WindReading
     var history: [WindReading]
     var fetchedAt: Date
+    /// Cadence de publication mesurée par le serveur : 60 s pour une station
+    /// windguru, 10 min pour une balise FFVL. Elle varie d'une station à l'autre.
+    var periodSeconds: Double = 600
 
     static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
         WindSnapshot(
@@ -96,14 +99,22 @@ struct WindSnapshot: Codable, Hashable, Sendable {
         )
     }
 
-    /// Prochaine publication attendue : la balise émet toutes les 10 min, on se cale
-    /// sur la minute du dernier relevé + 10 min + une marge d'une minute.
+    /// Prochaine publication attendue, d'après la cadence propre à la balise.
     var nextExpectedUpdate: Date {
-        let next = current.date.addingTimeInterval(600 + 60)
-        return next > .now ? next : Date().addingTimeInterval(120)
+        let next = current.date.addingTimeInterval(periodSeconds + 10)
+        return next > .now ? next : Date().addingTimeInterval(20)
     }
 
-    var isStale: Bool { Date().timeIntervalSince(current.date) > 25 * 60 }
+    /// « toutes les minutes », « toutes les 10 min »…
+    var cadenceText: String {
+        let minutes = Int((periodSeconds / 60).rounded())
+        return minutes <= 1 ? "toutes les minutes" : "toutes les \(minutes) min"
+    }
+
+    /// En retard au-delà de trois publications manquées (au moins 12 min).
+    var isStale: Bool {
+        Date().timeIntervalSince(current.date) > max(periodSeconds * 3, 12 * 60)
+    }
 
     func window(hours: Double) -> [WindReading] {
         let cutoff = Date().addingTimeInterval(-hours * 3600)

@@ -33,6 +33,20 @@ def ensure_bundle_ids
     UI.message("Création du bundle ID #{identifier}…")
     Spaceship::ConnectAPI::BundleId.create(name: name, identifier: identifier, platform: "IOS")
   end
+
+  # L'app pousse l'activité en direct et les alertes par APNs : il lui faut la capability Push.
+  main = Spaceship::ConnectAPI::BundleId.all.find { |b| b.identifier == APP_ID }
+  if main
+    has_push = begin
+      main.get_capabilities.any? { |c| c.capability_type == "PUSH_NOTIFICATIONS" }
+    rescue StandardError
+      false
+    end
+    unless has_push
+      UI.message("Activation de Push Notifications sur #{APP_ID}…")
+      main.create_capability(Spaceship::ConnectAPI::BundleIdCapability::Type::PUSH_NOTIFICATIONS)
+    end
+  end
 rescue StandardError => e
   UI.important("ensure_bundle_ids a échoué (#{e.message}).")
   UI.important("Fallback manuel : crée #{APP_ID} et #{WIDGET_ID} sur developer.apple.com > Identifiers.")

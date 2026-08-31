@@ -30,6 +30,10 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: LiveXWind
+    entitlements:
+      path: App/LiveXWind.entitlements
+      properties:
+        aps-environment: production
     info:
       path: App/Info.plist
       properties:
@@ -37,6 +41,9 @@ targets:
         UILaunchScreen: {}
         NSSupportsLiveActivities: true
         NSSupportsLiveActivitiesFrequentUpdates: true
+        # Le serveur de push est joint en HTTP sur le réseau privé Tailscale.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
         UIBackgroundModes:
           - fetch
           - processing

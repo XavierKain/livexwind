@@ -25,6 +25,7 @@ struct ContentView: View {
                     chartCard
                     alertsCard
                     liveActivityCard
+                    serverCard
                     footer
                 }
                 .padding(.horizontal, 18)
@@ -44,7 +45,9 @@ struct ContentView: View {
         .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
         .task {
             store.liveActivity.refreshActiveState()
+            store.liveActivity.observePushToStartToken(unit: store.unit)
             await store.refreshNotificationStatus()
+            await store.checkServer()
             store.startAutoRefresh()
         }
         .onChange(of: scenePhase) { _, phase in
@@ -187,10 +190,57 @@ struct ContentView: View {
         return "\(source) \(parts.joined(separator: " · ")) \(store.unit.symbol) · \(store.alerts.startHour)h-\(store.alerts.endHour)h"
     }
 
+
+    private var liveActivityBlurb: String {
+        store.serverReachable == true
+        ? "Affiche le vent sur l'écran verrouillé et l'île dynamique. Le serveur la met à jour par push à chaque relevé, même app fermée, et la relance tout seul quand iOS la coupe."
+        : "Affiche le vent sur l'écran verrouillé et l'île dynamique. Serveur injoignable : elle ne se rafraîchira que quand l'app tourne ou lors des réveils décidés par iOS."
+    }
+
+    private var serverCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: serverIcon)
+                .font(.title3)
+                .foregroundStyle(serverColor)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Push serveur").font(.headline)
+                Text(store.serverDetail ?? "Vérification…")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
+            Button {
+                Task { await store.checkServer() }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+        .padding(14)
+        .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 18))
+    }
+
+    private var serverIcon: String {
+        switch store.serverReachable {
+        case .some(true): return "antenna.radiowaves.left.and.right"
+        case .some(false): return "antenna.radiowaves.left.and.right.slash"
+        case nil: return "antenna.radiowaves.left.and.right"
+        }
+    }
+
+    private var serverColor: Color {
+        switch store.serverReachable {
+        case .some(true): return .green
+        case .some(false): return .orange
+        case nil: return .secondary
+        }
+    }
+
     private var liveActivityCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Activité en direct").font(.headline)
-            Text("Affiche le vent sur l'écran verrouillé et l'île dynamique. Elle se rafraîchit à chaque nouveau relevé quand l'app tourne, et à chaque réveil en arrière-plan.")
+            Text(liveActivityBlurb)
                 .font(.caption).foregroundStyle(.secondary)
             HStack {
                 Button {

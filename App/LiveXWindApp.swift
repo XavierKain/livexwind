@@ -4,6 +4,7 @@ import WidgetKit
 
 @main
 struct LiveXWindApp: App {
+    @UIApplicationDelegateAdaptor(PushDelegate.self) private var pushDelegate
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
@@ -44,7 +45,9 @@ enum BackgroundRefresh {
             let snapshot = await BaliseClient.shared.loadSnapshot()
             let unit = SharedStore.shared.unit
             await LiveActivityManager().push(snapshot: snapshot, unit: unit)
-            await NotificationManager.evaluateAndNotify(snapshot: snapshot, unit: unit)
+            if !SharedStore.shared.serverHandlesAlerts {
+                await NotificationManager.evaluateAndNotify(snapshot: snapshot, unit: unit)
+            }
             WidgetCenter.shared.reloadAllTimelines()
             task.setTaskCompleted(success: true)
         }

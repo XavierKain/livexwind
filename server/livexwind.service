@@ -1,0 +1,17 @@
+[Unit]
+Description=LiveXWind — API d'enregistrement + pousseur APNs (balise FFVL)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=xavier
+WorkingDirectory=/home/xavier/Claude code proj/LiveXWind
+ExecStart=/home/xavier/xklip/venv-livexwind/bin/python "/home/xavier/Claude code proj/LiveXWind/server/livexwind_server.py"
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -19,8 +19,18 @@ final class WindStore: ObservableObject {
         didSet {
             guard alerts != oldValue else { return }
             SharedStore.shared.alertSettings = alerts
+            Task { await syncAlertsWithServer() }
         }
     }
+    @Published var serverURL: String {
+        didSet {
+            guard serverURL != oldValue else { return }
+            SharedStore.shared.serverURL = serverURL
+            Task { await checkServer() }
+        }
+    }
+    @Published var serverReachable: Bool?
+    @Published var serverDetail: String?
     @Published var notificationsAuthorized = false
     @Published var lastAlert: AlertEvent?
 
@@ -32,6 +42,34 @@ final class WindStore: ObservableObject {
         snapshot = cached ?? .placeholder
         unit = SharedStore.shared.unit
         alerts = SharedStore.shared.alertSettings
+        serverURL = SharedStore.shared.serverURL
+    }
+
+    /// Le serveur garde les seuils de son côté pour pouvoir notifier app fermée.
+    func syncAlertsWithServer() async {
+        do {
+            try await ServerClient.shared.pushAlertSettings(alerts, unit: unit)
+            SharedStore.shared.serverHandlesAlerts = true
+            serverReachable = true
+        } catch {
+            SharedStore.shared.serverHandlesAlerts = false
+            serverReachable = false
+        }
+    }
+
+    func checkServer() async {
+        do {
+            let health = try await ServerClient.shared.health()
+            serverReachable = health.ok
+            let activity = health.tokens?["update"] ?? 0
+            serverDetail = health.apns_configured
+                ? "APNs prêt · \(activity) activité(s) suivie(s)"
+                : "Serveur joignable mais clé APNs absente"
+            await syncAlertsWithServer()
+        } catch {
+            serverReachable = false
+            serverDetail = "Injoignable — hors Tailscale ? Les mises à jour hors app passeront par iOS."
+        }
     }
 
     func refreshNotificationStatus() async {
@@ -64,7 +102,10 @@ final class WindStore: ObservableObject {
         if fresh.current.date != previous.current.date || force {
             await liveActivity.push(snapshot: fresh, unit: unit)
         }
-        if let event = await NotificationManager.evaluateAndNotify(snapshot: fresh, unit: unit) {
+        // Le serveur pousse les alertes par APNs dès qu'il est joignable :
+        // on ne notifie localement que dans le cas contraire.
+        if !SharedStore.shared.serverHandlesAlerts,
+           let event = await NotificationManager.evaluateAndNotify(snapshot: fresh, unit: unit) {
             lastAlert = event
         }
     }

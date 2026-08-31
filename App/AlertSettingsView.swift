@@ -60,7 +60,30 @@ struct AlertSettingsView: View {
                 } footer: {
                     Text("Les alertes sont évaluées à chaque relevé lu par l'app, y compris lors des réveils en arrière-plan — iOS en fixe la cadence, une alerte peut donc arriver au relevé suivant.")
                 }
+
+                Section {
+                    TextField("http://100.117.213.59:7110", text: $store.serverURL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                    HStack {
+                        Text("État")
+                        Spacer()
+                        switch store.serverReachable {
+                        case .some(true): Label("joignable", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                        case .some(false): Label("injoignable", systemImage: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                        case nil: Text("—").foregroundStyle(.secondary)
+                        }
+                    }
+                    .font(.caption)
+                    Button("Tester la connexion") { Task { await store.checkServer() } }
+                } header: {
+                    Text("Serveur de push")
+                } footer: {
+                    Text("Quand le serveur répond, c'est lui qui envoie les alertes par APNs et qui met à jour l'activité en direct — l'app n'a pas besoin d'être ouverte. Hors Tailscale, l'app repasse en notifications locales.")
+                }
             }
+            .safeAreaInset(edge: .bottom) { EmptyView() }
             .navigationTitle("Alertes")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

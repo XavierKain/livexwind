@@ -30,13 +30,30 @@ balise et parse le tableau HTML. Le site ne publiant l'historique qu'en images P
 `docs/balise-64.json` (48 h d'historique) sur GitHub Pages ; l'app y récupère la courbe et s'en sert
 aussi de secours si le scraping direct échoue.
 
+## Push APNs (serveur)
+
+`server/livexwind_server.py` tourne en systemd sur le serveur Hetzner (`livexwind.service`,
+port 7110, joint depuis l'iPhone par Tailscale : `http://100.117.213.59:7110`). Il fait deux choses :
+
+- **API d'enregistrement** — l'app y dépose son token d'activité en direct, son token
+  *push-to-start* (iOS 17.2+), son token d'appareil et ses seuils d'alerte.
+- **Pousseur** — il suit la balise et, dès qu'un relevé tombe, envoie l'update de l'activité
+  en direct, relance celle-ci si iOS l'a coupée (limite de 8 h), et envoie l'alerte de seuil.
+
+Résultat : l'activité en direct et les alertes ne dépendent plus des réveils en arrière-plan
+d'iOS. Hors Tailscale, l'app le détecte et repasse en notifications locales.
+
+Config : `~/xklip/config/livexwind.json` (team ID, key ID APNs, chemin du `.p8`, bundle ID).
+Le JWT ES256 est signé directement avec `cryptography` — pas de dépendance PyJWT.
+
 ## Structure
 
 ```
 App/        app SwiftUI (dial, graphe, activité en direct, réveil BGTask)
 Widget/     extension WidgetKit + activité en direct
 Shared/     modèles, client balise, vues partagées, intent de configuration
-feed/       scraper Python utilisé par GitHub Actions
+feed/       scraper Python partagé (GitHub Actions + serveur)
+server/     API d'enregistrement + pousseur APNs (systemd)
 fastlane/   build signé + upload TestFlight
 docs/       flux JSON publié sur GitHub Pages
 ```

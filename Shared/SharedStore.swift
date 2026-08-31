@@ -14,6 +14,8 @@ struct SharedStore {
     private let unitKey = "wind.unit"
     private let alertSettingsKey = "wind.alerts.settings"
     private let alertStateKey = "wind.alerts.state"
+    private let serverURLKey = "wind.server.url"
+    private let serverAlertsKey = "wind.server.handlesAlerts"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -61,6 +63,20 @@ struct SharedStore {
             guard let data = try? JSONEncoder().encode(newValue) else { return }
             defaults.set(data, forKey: alertStateKey)
         }
+    }
+
+    // MARK: Serveur de push
+
+    var serverURL: String {
+        get { defaults.string(forKey: serverURLKey) ?? AppConfig.defaultServerURL }
+        nonmutating set { defaults.set(newValue, forKey: serverURLKey) }
+    }
+
+    /// Vrai quand le serveur a bien pris les seuils : l'app arrête alors de
+    /// notifier localement pour éviter les doublons.
+    var serverHandlesAlerts: Bool {
+        get { defaults.bool(forKey: serverAlertsKey) }
+        nonmutating set { defaults.set(newValue, forKey: serverAlertsKey) }
     }
 
     func reloadWidgets() {

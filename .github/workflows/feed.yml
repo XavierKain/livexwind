@@ -2,9 +2,10 @@ name: Flux balise
 
 # Alimente docs/balise-64.json (servi par GitHub Pages) : l'app y récupère
 # l'historique, que balisemeteo.com ne publie qu'en images PNG.
+# Le cron GitHub ne s'est jamais déclenché sur */10 (schedules non garantis).
+# C'est le serveur (server/livexwind_server.py) qui publie désormais le flux à
+# chaque relevé ; ce workflow ne sert plus qu'au dépannage manuel.
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:

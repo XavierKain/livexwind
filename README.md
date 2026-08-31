@@ -26,9 +26,12 @@ si le widget est peu consulté — c'est un plafond système, pas un choix de l'
 `balisemeteo.com` masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas de session PHP.
 `BaliseClient` fait donc une requête d'amorçage sur l'accueil pour obtenir le cookie, puis lit la fiche
 balise et parse le tableau HTML. Le site ne publiant l'historique qu'en images PNG,
-`.github/workflows/feed.yml` scrape la balise toutes les 10 min et publie
-`docs/balise-64.json` (48 h d'historique) sur GitHub Pages ; l'app y récupère la courbe et s'en sert
-aussi de secours si le scraping direct échoue.
+le serveur publie `docs/balise-64.json`
+(48 h d'historique) sur GitHub Pages à chaque relevé. L'app lit l'historique du serveur en direct
+quand elle est sur Tailscale, et retombe sur GitHub Pages sinon.
+
+> Le cron `schedule` de GitHub Actions ne s'est jamais déclenché sur `*/10` — les horaires ne sont
+> pas garantis. `feed.yml` ne sert plus qu'au dépannage manuel.
 
 ## Push APNs (serveur)
 

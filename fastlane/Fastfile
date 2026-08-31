@@ -67,6 +67,47 @@ def ensure_app_record_exists
 end
 
 platform :ios do
+  desc "État du build et des testeurs TestFlight"
+  lane :status do
+    connect_token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    UI.user_error!("App introuvable") unless app
+
+    UI.important("App : #{app.name} (#{app.bundle_id})")
+
+    builds = app.get_builds(includes: "preReleaseVersion,buildBetaDetail,betaGroups")
+    builds.first(3).each do |b|
+      detail = begin
+        b.build_beta_detail
+      rescue StandardError
+        nil
+      end
+      UI.message("Build #{b.version} — processing: #{b.processing_state} — " \
+                 "interne: #{detail&.internal_build_state} — externe: #{detail&.external_build_state} — " \
+                 "expiré: #{b.expired}")
+      groups = begin
+        b.get_beta_groups.map(&:name)
+      rescue StandardError
+        []
+      end
+      UI.message("  groupes : #{groups.empty? ? 'AUCUN' : groups.join(', ')}")
+    end
+
+    groups = Spaceship::ConnectAPI::BetaGroup.all(filter: { app: app.id })
+    groups.each do |g|
+      testers = begin
+        Spaceship::ConnectAPI::BetaTester.all(filter: { betaGroups: g.id })
+      rescue StandardError
+        []
+      end
+      UI.message("Groupe « #{g.name} » — interne: #{g.is_internal_group} — " \
+                 "auto: #{g.has_access_to_all_builds} — testeurs: #{testers.size}")
+      testers.each do |t|
+        UI.message("  testeur #{t.email} — état: #{t.state}")
+      end
+    end
+  end
+
   desc "Build signé + upload TestFlight"
   lane :beta do
     setup_ci

@@ -68,6 +68,7 @@ struct AlertEvent {
     var body: String
 }
 
+
 enum AlertEngine {
     /// Décide s'il faut notifier pour ce relevé, et renvoie le nouvel état à persister.
     /// On ne notifie qu'au **franchissement** du seuil (pas à chaque relevé au-dessus),

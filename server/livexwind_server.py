@@ -63,6 +63,7 @@ DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "f
 PROVIDERS = ("ffvl", "wm", "wg")
 BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # cadence de guet sur la balise sélectionnée
+ALERT_INTERVAL = 120            # balise non affichée mais sous surveillance d'alerte
 SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
 START_COOLDOWN = 3600
@@ -374,9 +375,24 @@ def device_register():
 
 @app.route("/api/alerts", methods=["POST"])
 def alerts():
+    """Seuils d'une balise. Les conditions n'étant pas les mêmes d'un spot à
+    l'autre, chaque balise a son propre jeu de réglages."""
     body = request.get_json(silent=True) or {}
-    set_prefs({"alerts": body.get("alerts"), "unit": body.get("unit")})
-    log.info("seuils mis à jour : %s", body.get("alerts"))
+    key = body.get("balise")
+    if not key:
+        return jsonify({"error": "balise manquante"}), 400
+
+    with _lock:
+        data = tokens()
+        prefs = data.setdefault("prefs", {})
+        by_balise = prefs.setdefault("alerts_by_balise", {})
+        by_balise[key] = body.get("alerts") or {}
+        if body.get("unit"):
+            prefs["unit"] = body["unit"]
+        prefs.pop("alerts", None)   # ancien réglage global
+        save_json(TOKENS_PATH, data)
+
+    log.info("seuils de %s : %s", key, body.get("alerts"))
     return jsonify({"ok": True})
 
 
@@ -476,9 +492,12 @@ def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = N
     return payload
 
 
-def evaluate_alert(reading: dict, prefs: dict, state: dict):
+def alerts_for(key: str, prefs: dict) -> dict:
+    return (prefs.get("alerts_by_balise") or {}).get(key) or {}
+
+
+def evaluate_alert(reading: dict, settings: dict, unit: str, state: dict):
     """Même logique que AlertEngine côté Swift : on ne notifie qu'au franchissement."""
-    settings = (prefs or {}).get("alerts") or {}
     if not settings.get("enabled"):
         return None, state
 
@@ -486,7 +505,6 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
     if value is None:
         return None, state
 
-    unit = prefs.get("unit", "kmh")
     factor = 1.0 if unit == "kmh" else 1 / 1.852
     symbol = "km/h" if unit == "kmh" else "nds"
 
@@ -590,24 +608,43 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     elif delivered and not state.get("activity_started_at"):
         state["activity_started_at"] = time.time()
 
-    # 3. alertes de seuil — les verrous de franchissement sont propres à la balise
-    key = balise_key(balise)
-    latches = state.setdefault("alerts", {}).setdefault(key, {})
-    event, latches = evaluate_alert(reading, prefs, latches)
-    state["alerts"][key] = latches
-    if event:
-        for token in data.get("device", []):
-            code, text = apns_post(cfg, token,
-                                   alert_payload(f"{name} · {event['title']}", event["body"]),
-                                   "alert")
-            log.info("alerte %s… → %s (%s)", token[:8], code, event["title"])
-            if code in (400, 410):
-                drop_token("device", token)
-            elif code != 200:
-                log.warning("alerte refusée : %s", text[:160])
-
     state["last_push"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     state["pushed_reading"] = reading.get("t")
+    return state
+
+
+def push_alerts(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
+    """Alertes de seuil d'une balise — évaluées même quand elle n'est pas affichée."""
+    data = tokens()
+    prefs = data.get("prefs", {})
+    key = balise_key(balise)
+    settings = alerts_for(key, prefs)
+    if not settings.get("enabled"):
+        return state
+
+    reading = feed["current"]
+    name = feed["balise"].get("name") or balise.get("name") or "Balise"
+    latches = state.setdefault("alerts", {}).setdefault(key, {})
+
+    # On ne réévalue pas deux fois le même relevé.
+    if latches.get("reading") == reading.get("t"):
+        return state
+    latches["reading"] = reading.get("t")
+
+    event, latches = evaluate_alert(reading, settings, prefs.get("unit", "kmh"), latches)
+    state["alerts"][key] = latches
+    if not event:
+        return state
+
+    for token in data.get("device", []):
+        code, text = apns_post(cfg, token,
+                               alert_payload(f"{name} · {event['title']}", event["body"]),
+                               "alert")
+        log.info("alerte %s (%s…) → %s : %s", name, token[:8], code, event["title"])
+        if code in (400, 410):
+            drop_token("device", token)
+        elif code != 200:
+            log.warning("alerte refusée : %s", text[:160])
     return state
 
 
@@ -695,14 +732,21 @@ def pusher_loop():
         feeds = {}
         sleep_for = POLL_INTERVAL
 
+        prefs = tokens().get("prefs", {})
+        watched = any(alerts_for(balise_key(b), prefs).get("enabled")
+                      for b in balises if b["id"] != selected)
+
         for balise in balises:
             balise_id = balise["id"]
             key = balise_key(balise)
             is_selected = balise_id == selected
+            has_alerts = bool(alerts_for(key, prefs).get("enabled"))
 
-            # Les balises secondaires ne servent qu'à garnir la courbe quand on
-            # change de spot : inutile de les guetter à la seconde près.
-            if not is_selected and time.time() - refreshed_at.get(key, 0) < SECONDARY_INTERVAL:
+            # Cadence : la balise affichée est guettée de près, celles qui ont une
+            # alerte armée le sont raisonnablement, les autres ne servent qu'à
+            # garnir la courbe quand on change de spot.
+            interval = POLL_INTERVAL if is_selected else (ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
+            if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
                 cached = load_json(feed_path(balise_id, balise.get("provider", "ffvl")), None)
                 if cached:
                     feeds[key] = cached
@@ -713,6 +757,14 @@ def pusher_loop():
             if not feed:
                 continue
             feeds[key] = feed
+
+            # Les alertes valent pour toutes les balises suivies…
+            try:
+                state = push_alerts(cfg, feed, balise, state)
+            except Exception as exc:
+                log.exception("échec des alertes sur %s : %s", key, exc)
+
+            # …mais l'activité en direct ne suit que la balise affichée.
             if not is_selected:
                 continue
 
@@ -725,9 +777,12 @@ def pusher_loop():
                 except Exception as exc:
                     log.exception("échec du push : %s", exc)
                 state["last_reading"] = current_t
-                # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
                 period = 600 if balise.get("provider") == "ffvl" else 360
                 sleep_for = max(60, min(iso_to_epoch(current_t) + period + 20 - time.time(), 700))
+
+        # Une alerte armée sur un spot non affiché ne doit pas attendre 10 min.
+        if watched:
+            sleep_for = min(sleep_for, ALERT_INTERVAL)
 
         if feeds:
             state = publish_to_pages(feeds, state)

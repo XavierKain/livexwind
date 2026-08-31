@@ -37,18 +37,20 @@ enum NotificationManager {
         try? await UNUserNotificationCenter.current().add(request)
     }
 
-    /// Évalue le relevé et notifie si un seuil vient d'être franchi.
+    /// Évalue le relevé d'une balise et notifie si un de ses seuils est franchi.
     @discardableResult
     static func evaluateAndNotify(snapshot: WindSnapshot, unit: WindUnit) async -> AlertEvent? {
         let store = SharedStore.shared
+        let key = snapshot.baliseKey
         let (event, newState) = AlertEngine.evaluate(
             reading: snapshot.current,
-            settings: store.alertSettings,
-            state: store.alertState,
+            settings: store.alertSettings(for: key),
+            state: store.alertState(for: key),
             unit: unit
         )
-        store.alertState = newState
-        guard let event, await isAuthorized() else { return nil }
+        store.setAlertState(newState, for: key)
+        guard var event, await isAuthorized() else { return nil }
+        event.title = "\(snapshot.baliseName) · \(event.title)"
         await post(event)
         return event
     }

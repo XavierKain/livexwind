@@ -31,7 +31,7 @@ struct AlertSettingsView: View {
                     }
                     .pickerStyle(.segmented)
                 } footer: {
-                    Text("Une alerte part au moment où le seuil est franchi, pas à chaque relevé au-dessus.")
+                    Text("Ces réglages ne valent que pour **\(store.balise.name)**. Chaque spot a les siens : le serveur surveille toutes tes balises, même celle qui n'est pas affichée.")
                 }
 
                 Section("Vent fort") {
@@ -115,7 +115,7 @@ struct AlertSettingsView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { EmptyView() }
-            .navigationTitle("Alertes")
+            .navigationTitle("Alertes · \(store.balise.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

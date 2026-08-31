@@ -122,8 +122,9 @@ struct ServerClient: Sendable {
 
     // MARK: Seuils
 
-    func pushAlertSettings(_ settings: AlertSettings, unit: WindUnit) async throws {
+    func pushAlertSettings(_ settings: AlertSettings, for balise: Balise, unit: WindUnit) async throws {
         try await post("api/alerts", body: [
+            "balise": balise.key,
             "unit": unit.rawValue,
             "alerts": [
                 "enabled": settings.enabled,

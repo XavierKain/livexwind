@@ -6,7 +6,6 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var range: HistoryRange = .sixHours
     @State private var showAlerts = false
-    @State private var showBalises = false
 
     enum HistoryRange: Double, CaseIterable, Identifiable {
         case threeHours = 3, sixHours = 6, twelveHours = 12, day = 24
@@ -35,7 +34,7 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refresh(force: true) }
             .toolbar {
-                ToolbarItem(placement: .principal) { baliseMenu }
+                ToolbarItem(placement: .principal) { titre }
                 ToolbarItem(placement: .topBarTrailing) {
                     Link(destination: store.balise.pageURL) {
                         Image(systemName: "safari")
@@ -44,7 +43,6 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
-        .sheet(isPresented: $showBalises) { BalisesView(store: store) }
         .task {
             store.liveActivity.refreshActiveState()
             store.liveActivity.observePushToStartToken(unit: store.unit)
@@ -64,31 +62,14 @@ struct ContentView: View {
     }
 
 
-    private var baliseMenu: some View {
-        Menu {
-            Picker("Balise", selection: Binding(
-                get: { store.catalog.selectedID },
-                set: { id in Task { await store.select(baliseID: id) } }
-            )) {
-                ForEach(store.catalog.balises) { balise in
-                    Text(balise.name).tag(balise.id)
-                }
-            }
-            Divider()
-            Button {
-                showBalises = true
-            } label: {
-                Label("Gérer les balises…", systemImage: "slider.horizontal.3")
-            }
-        } label: {
-            HStack(spacing: 4) {
-                Text(store.snapshot.baliseName)
-                    .font(.headline)
-                    .lineLimit(1)
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 11, weight: .semibold))
-            }
-            .foregroundStyle(.primary)
+    private var titre: some View {
+        VStack(spacing: 0) {
+            Text(store.snapshot.baliseName)
+                .font(.headline)
+                .lineLimit(1)
+            Text(store.balise.provider.label)
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
         }
     }
 

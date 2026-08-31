@@ -8,6 +8,8 @@ struct SpotsOverviewView: View {
     @ObservedObject var store: WindStore
     var onSelect: () -> Void
 
+    @State private var showBalises = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -22,7 +24,8 @@ struct SpotsOverviewView: View {
                             SpotRow(balise: balise,
                                     snapshot: store.overview[balise.key],
                                     unit: store.unit,
-                                    isSelected: balise.id == store.catalog.selectedID)
+                                    isSelected: balise.id == store.catalog.selectedID,
+                                    hasAlerts: store.alertBadge(for: balise))
                         }
                         .buttonStyle(.plain)
                     }
@@ -34,6 +37,18 @@ struct SpotsOverviewView: View {
             .navigationTitle("Mes spots")
             .navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refreshOverview(force: true) }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showBalises = true
+                    } label: {
+                        Label("Gérer", systemImage: "plus.circle")
+                    }
+                }
+            }
+            .sheet(isPresented: $showBalises) {
+                BalisesView(store: store)
+            }
             .overlay {
                 if store.catalog.balises.count == 1 && store.overview.isEmpty {
                     ProgressView()
@@ -50,6 +65,7 @@ private struct SpotRow: View {
     let snapshot: WindSnapshot?
     let unit: WindUnit
     let isSelected: Bool
+    let hasAlerts: Bool
 
     private var reading: WindReading? { snapshot?.current }
     private var color: Color { WindPalette.color(kmh: reading?.averageKmh) }
@@ -70,6 +86,9 @@ private struct SpotRow: View {
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                 HStack(spacing: 5) {
+                    if hasAlerts {
+                        Image(systemName: "bell.fill").foregroundStyle(.orange)
+                    }
                     Text(balise.provider.label)
                     if let date = reading?.date {
                         Text("·")

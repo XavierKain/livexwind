@@ -21,10 +21,11 @@ final class WindStore: ObservableObject {
         }
     }
 
+    /// Seuils de la balise affichée — chaque spot a les siens.
     @Published var alerts: AlertSettings {
         didSet {
             guard alerts != oldValue else { return }
-            SharedStore.shared.alertSettings = alerts
+            SharedStore.shared.setAlertSettings(alerts, for: catalog.selectedKey)
             Task { await syncAlertsWithServer() }
         }
     }
@@ -53,7 +54,7 @@ final class WindStore: ObservableObject {
         let cached = SharedStore.shared.loadSnapshot(key: stored.selectedKey)
         snapshot = cached ?? .placeholder(balise: stored.selected)
         unit = SharedStore.shared.unit
-        alerts = SharedStore.shared.alertSettings
+        alerts = SharedStore.shared.alertSettings(for: stored.selectedKey)
         serverURL = SharedStore.shared.serverURL
 
         // LiveActivityManager est un ObservableObject imbriqué : sans ce relais,
@@ -64,9 +65,14 @@ final class WindStore: ObservableObject {
     }
 
     /// Le serveur garde les seuils de son côté pour pouvoir notifier app fermée.
+    /// On lui pousse ceux de toutes les balises : il surveille chaque spot,
+    /// même celui qui n'est pas affiché.
     func syncAlertsWithServer() async {
         do {
-            try await ServerClient.shared.pushAlertSettings(alerts, unit: unit)
+            for balise in catalog.balises {
+                try await ServerClient.shared.pushAlertSettings(
+                    SharedStore.shared.alertSettings(for: balise.key), for: balise, unit: unit)
+            }
             SharedStore.shared.serverHandlesAlerts = true
             serverReachable = true
         } catch {
@@ -78,6 +84,11 @@ final class WindStore: ObservableObject {
     // MARK: Balises
 
     var balise: Balise { catalog.selected }
+
+    /// Résumé court des seuils d'une balise, pour la vue d'ensemble.
+    func alertBadge(for balise: Balise) -> Bool {
+        SharedStore.shared.alertSettings(for: balise.key).enabled
+    }
 
     /// Recharge toutes les balises suivies en parallèle. Le serveur ayant déjà
     /// leurs relevés, c'est presque instantané sur Tailscale.
@@ -102,11 +113,20 @@ final class WindStore: ObservableObject {
         }
         overview = fresh
         if let mine = fresh[catalog.selectedKey] { snapshot = mine }
+
+        // Hors Tailscale, le serveur ne peut pas notifier : on évalue nous-mêmes
+        // les seuils de chaque spot avec ce qu'on vient de charger.
+        if !SharedStore.shared.serverHandlesAlerts {
+            for snapshot in fresh.values {
+                await NotificationManager.evaluateAndNotify(snapshot: snapshot, unit: unit)
+            }
+        }
     }
 
     func select(baliseID: Int) async {
         guard catalog.selectedID != baliseID else { return }
         catalog.selectedID = baliseID
+        alerts = SharedStore.shared.alertSettings(for: catalog.selectedKey)
         persistCatalog()
         // On repart de la courbe en cache le temps du chargement : pas d'écran vide.
         snapshot = SharedStore.shared.loadSnapshot(key: catalog.selectedKey)
@@ -133,6 +153,7 @@ final class WindStore: ObservableObject {
 
     private func install(_ balise: Balise) async -> Balise {
         catalog.add(balise)
+        alerts = SharedStore.shared.alertSettings(for: balise.key)
         persistCatalog()
         snapshot = SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
         await refresh(force: true)
@@ -144,6 +165,7 @@ final class WindStore: ObservableObject {
         catalog.remove(id: id)
         persistCatalog()
         if wasSelected {
+            alerts = SharedStore.shared.alertSettings(for: catalog.selectedKey)
             snapshot = SharedStore.shared.loadSnapshot(key: catalog.selectedKey)
                 ?? .placeholder(balise: catalog.selected)
             await refresh(force: true)

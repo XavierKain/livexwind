@@ -63,6 +63,12 @@ struct BaliseEntity: AppEntity, Identifiable, Hashable {
     var id: Int
     var name: String
     var altitude: Int?
+    var providerRaw: String = BaliseProvider.ffvl.rawValue
+
+    var balise: Balise {
+        Balise(id: id, name: name, altitude: altitude,
+               provider: BaliseProvider(rawValue: providerRaw) ?? .ffvl)
+    }
 
     static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Balise")
     static var defaultQuery = BaliseQuery()
@@ -72,7 +78,9 @@ struct BaliseEntity: AppEntity, Identifiable, Hashable {
                               subtitle: altitude.map { "#\(id) · \($0) m" } ?? "#\(id)")
     }
 
-    static let pyla = BaliseEntity(id: Balise.pyla.id, name: Balise.pyla.name, altitude: Balise.pyla.altitude)
+    static let pyla = BaliseEntity(id: Balise.pyla.id, name: Balise.pyla.name,
+                                   altitude: Balise.pyla.altitude,
+                                   providerRaw: Balise.pyla.provider.rawValue)
 }
 
 struct BaliseQuery: EntityQuery {
@@ -80,7 +88,9 @@ struct BaliseQuery: EntityQuery {
         let known = try? await ServerClient.shared.fetchBalises()
         return identifiers.map { id in
             if let match = known?.first(where: { $0.id == id }) {
-                return BaliseEntity(id: id, name: match.name ?? "Balise \(id)", altitude: match.altitude)
+                return BaliseEntity(id: id, name: match.name ?? "Balise \(id)",
+                                    altitude: match.altitude,
+                                    providerRaw: match.provider ?? BaliseProvider.ffvl.rawValue)
             }
             return BaliseEntity(id: id, name: "Balise \(id)", altitude: nil)
         }
@@ -90,7 +100,10 @@ struct BaliseQuery: EntityQuery {
         guard let remote = try? await ServerClient.shared.fetchBalises(), !remote.isEmpty else {
             return [.pyla]
         }
-        return remote.map { BaliseEntity(id: $0.id, name: $0.name ?? "Balise \($0.id)", altitude: $0.altitude) }
+        return remote.map {
+            BaliseEntity(id: $0.id, name: $0.name ?? "Balise \($0.id)", altitude: $0.altitude,
+                         providerRaw: $0.provider ?? BaliseProvider.ffvl.rawValue)
+        }
     }
 
     func defaultResult() async -> BaliseEntity? { .pyla }

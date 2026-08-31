@@ -64,6 +64,8 @@ struct WindReading: Codable, Hashable, Sendable, Identifiable {
 
 struct WindSnapshot: Codable, Hashable, Sendable {
     var baliseID: Int
+    /// "ffvl-64" / "wm-73091277" — deux sources peuvent partager un identifiant.
+    var baliseKey: String = "ffvl-0"
     var baliseName: String
     var altitude: Int?
     var current: WindReading
@@ -73,6 +75,7 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
         WindSnapshot(
             baliseID: balise.id,
+            baliseKey: balise.key,
             baliseName: balise.name,
             altitude: balise.altitude,
             current: WindReading(date: .now, directionDegrees: 270, directionLabel: "O",

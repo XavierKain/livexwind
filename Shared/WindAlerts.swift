@@ -14,10 +14,29 @@ struct AlertSettings: Codable, Equatable {
     /// Plage horaire pendant laquelle les alertes sont autorisées (heure locale).
     var startHour = 8
     var endHour = 21
+    /// Alerte quand le vent s'oriente dans un secteur choisi — utile quand on
+    /// attend une bascule pour que le spot devienne bon.
+    var directionEnabled = false
+    /// Relèvement d'où vient le vent, au centre du secteur attendu.
+    var directionCenter = 270
+    /// Demi-ouverture du secteur, en degrés.
+    var directionSpread = 45
     /// Délai minimal entre deux notifications du même type.
     var cooldownMinutes = 45
 
     static let `default` = AlertSettings()
+
+    /// Bornes du secteur, pour l'affichage.
+    var directionRange: (from: Int, to: Int) {
+        (((directionCenter - directionSpread) % 360 + 360) % 360,
+         ((directionCenter + directionSpread) % 360 + 360) % 360)
+    }
+
+    func contains(direction: Int) -> Bool {
+        var delta = abs(direction - directionCenter) % 360
+        if delta > 180 { delta = 360 - delta }
+        return delta <= directionSpread
+    }
 
     func isWithinWindow(_ date: Date, calendar: Calendar = .current) -> Bool {
         let hour = calendar.component(.hour, from: date)
@@ -30,15 +49,17 @@ struct AlertSettings: Codable, Equatable {
 struct AlertState: Codable, Equatable {
     var wasAboveUpper = false
     var wasBelowLower = false
+    var wasInDirection = false
     var lastUpperNotification: Date?
     var lastLowerNotification: Date?
+    var lastDirectionNotification: Date?
     var lastReadingDate: Date?
 
     static let empty = AlertState()
 }
 
 enum AlertKind: String {
-    case upper, lower
+    case upper, lower, direction
 }
 
 struct AlertEvent {
@@ -73,10 +94,14 @@ enum AlertEngine {
         let lower = (unit.convert(fromKmh: settings.lowerKmh)).rounded()
         let isAbove = settings.upperEnabled && shown >= upper
         let isBelow = settings.lowerEnabled && shown <= lower
+        let isInSector = settings.directionEnabled
+            && (reading.directionDegrees.map(settings.contains(direction:)) ?? false)
         let wasAbove = state.wasAboveUpper
         let wasBelow = state.wasBelowLower
+        let wasInSector = state.wasInDirection
         state.wasAboveUpper = isAbove
         state.wasBelowLower = isBelow
+        state.wasInDirection = isInSector
 
         guard settings.isWithinWindow(now) else { return (nil, state) }
 
@@ -97,6 +122,15 @@ enum AlertEngine {
             return (AlertEvent(kind: .lower,
                                title: "Ça tombe 🍃 \(formatted)",
                                body: "\(source.capitalized) sous \(unit.format(kmh: settings.lowerKmh)) \(unit.symbol) · \(direction)"),
+                    state)
+        }
+
+        if isInSector && !wasInSector, allowed(state.lastDirectionNotification, settings, now) {
+            state.lastDirectionNotification = now
+            let bounds = settings.directionRange
+            return (AlertEvent(kind: .direction,
+                               title: "Le vent a tourné 🧭 \(direction)",
+                               body: "Dans ton secteur \(bounds.from)°–\(bounds.to)° · \(formatted)"),
                     state)
         }
 

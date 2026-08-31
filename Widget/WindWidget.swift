@@ -15,15 +15,15 @@ struct WindProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: WindConfigurationIntent, in context: Context) async -> WindEntry {
-        let id = configuration.balise?.id ?? AppConfig.baliseID
-        let cached = SharedStore.shared.loadSnapshot(balise: id) ?? .placeholder()
+        let balise = configuration.balise?.balise ?? .pyla
+        let cached = SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
         return WindEntry(date: .now, snapshot: cached,
                          unit: configuration.unit.unit, windowHours: configuration.window.hours)
     }
 
     func timeline(for configuration: WindConfigurationIntent, in context: Context) async -> Timeline<WindEntry> {
-        let id = configuration.balise?.id ?? AppConfig.baliseID
-        let snapshot = await BaliseClient(baliseID: id).loadSnapshot()
+        let balise = configuration.balise?.balise ?? .pyla
+        let snapshot = await BaliseClient(balise: balise).loadSnapshot()
         let entry = WindEntry(date: .now, snapshot: snapshot,
                               unit: configuration.unit.unit, windowHours: configuration.window.hours)
 

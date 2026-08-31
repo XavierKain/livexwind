@@ -50,7 +50,10 @@ struct ServerClient: Sendable {
     /// Le serveur relève toutes les balises suivies, mais ne pousse l'activité en
     /// direct et les alertes que pour celle qui est sélectionnée.
     func syncBalises(_ catalog: BaliseCatalog) async throws {
-        let payload = catalog.balises.map { ["id": $0.id, "name": $0.name, "altitude": $0.altitude as Any] }
+        let payload = catalog.balises.map {
+            ["id": $0.id, "name": $0.name, "altitude": $0.altitude as Any,
+             "provider": $0.provider.rawValue]
+        }
         try await post("api/balises", body: ["balises": payload, "selected": catalog.selectedID])
     }
 
@@ -58,6 +61,7 @@ struct ServerClient: Sendable {
         let id: Int
         let name: String?
         let altitude: Int?
+        let provider: String?
     }
 
     func fetchBalises() async throws -> [RemoteBalise] {
@@ -82,6 +86,9 @@ struct ServerClient: Sendable {
                 "lowerEnabled": settings.lowerEnabled,
                 "lowerKmh": settings.lowerKmh,
                 "useGusts": settings.useGusts,
+                "directionEnabled": settings.directionEnabled,
+                "directionCenter": settings.directionCenter,
+                "directionSpread": settings.directionSpread,
                 "startHour": settings.startHour,
                 "endHour": settings.endHour,
                 "cooldownMinutes": settings.cooldownMinutes

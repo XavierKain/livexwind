@@ -7,18 +7,19 @@ import Foundation
 /// puis on lit la fiche balise. L'historique vient du serveur (Tailscale) ou, à
 /// défaut, du flux JSON publié sur GitHub Pages — le site ne propose que des PNG.
 struct BaliseClient: Sendable {
-    let baliseID: Int
+    let balise: Balise
+    var baliseID: Int { balise.id }
 
-    init(baliseID: Int) {
-        self.baliseID = baliseID
+    init(balise: Balise) {
+        self.balise = balise
     }
 
     /// Client pointant sur la balise actuellement sélectionnée.
     static var current: BaliseClient {
-        BaliseClient(baliseID: SharedStore.shared.catalog.selectedID)
+        BaliseClient(balise: SharedStore.shared.catalog.selected)
     }
 
-    private var feedURL: URL { AppConfig.feedURL(balise: baliseID) }
+    private var feedURL: URL { AppConfig.feedURL(key: balise.key) }
 
     private func makeSession() -> URLSession {
         let config = URLSessionConfiguration.ephemeral
@@ -47,19 +48,28 @@ struct BaliseClient: Sendable {
         return html
     }
 
-    /// Relevé live (scraping direct, zéro latence).
+    /// Relevé live : scraping FFVL, ou API JSON pour windmorbihan.
     func fetchCurrent() async throws -> WindReading {
-        guard let reading = BaliseParser.parse(html: try await fetchPage()) else { throw WindError.masked }
-        return reading
+        switch balise.provider {
+        case .windMorbihan:
+            return try await WindMorbihanClient.shared.latest(id: baliseID)
+        case .ffvl:
+            guard let reading = BaliseParser.parse(html: try await fetchPage()) else {
+                throw WindError.masked
+            }
+            return reading
+        }
     }
 
-    /// Vérifie qu'une balise existe et renvoie sa fiche — utilisé à l'ajout.
+    /// Vérifie qu'une balise FFVL existe et renvoie sa fiche — utilisé à l'ajout.
+    /// (Les capteurs windmorbihan sont choisis dans une liste, déjà décrite.)
     func fetchBalise() async throws -> Balise {
+        guard balise.provider == .ffvl else { return balise }
         let html = try await fetchPage()
-        guard let balise = BaliseParser.parseBalise(html: html, id: baliseID) else {
+        guard let found = BaliseParser.parseBalise(html: html, id: baliseID) else {
             throw WindError.unknownBalise
         }
-        return balise
+        return found
     }
 
     // MARK: - Historique
@@ -69,7 +79,8 @@ struct BaliseClient: Sendable {
         guard let base = ServerClient.shared.baseURL else { throw ServerError.notConfigured }
         var components = URLComponents(url: base.appendingPathComponent("api/wind"),
                                        resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "balise", value: String(baliseID))]
+        components?.queryItems = [URLQueryItem(name: "balise", value: String(baliseID)),
+                                  URLQueryItem(name: "provider", value: balise.provider.rawValue)]
         guard let url = components?.url else { throw ServerError.notConfigured }
 
         var request = URLRequest(url: url)
@@ -102,7 +113,7 @@ struct BaliseClient: Sendable {
         async let feedTask = await fetchHistorySource()
         let live = await liveTask
         let feed = await feedTask
-        let cached = SharedStore.shared.loadSnapshot(balise: baliseID)
+        let cached = SharedStore.shared.loadSnapshot(key: balise.key)
 
         var history = feed?.history ?? cached?.history ?? []
         if let live {
@@ -114,15 +125,15 @@ struct BaliseClient: Sendable {
         history = history.filter { $0.date >= cutoff }
 
         let current = live ?? feed?.current ?? cached?.current
-        let known = SharedStore.shared.catalog.balises.first { $0.id == baliseID }
         guard let current else {
-            return cached ?? WindSnapshot.placeholder(balise: known ?? .pyla)
+            return cached ?? WindSnapshot.placeholder(balise: balise)
         }
 
         let snapshot = WindSnapshot(
             baliseID: baliseID,
-            baliseName: known?.name ?? feed?.baliseName ?? cached?.baliseName ?? "Balise \(baliseID)",
-            altitude: known?.altitude ?? feed?.altitude ?? cached?.altitude,
+            baliseKey: balise.key,
+            baliseName: balise.name,
+            altitude: balise.altitude ?? feed?.altitude ?? cached?.altitude,
             current: current,
             history: history,
             fetchedAt: .now
@@ -282,6 +293,7 @@ private struct FeedPayload: Decodable {
                               altitude: balise.altitude, latitude: nil, longitude: nil)
         return WindSnapshot(
             baliseID: balise.id,
+            baliseKey: identity.key,
             baliseName: identity.name,
             altitude: balise.altitude,
             current: latest ?? WindSnapshot.placeholder(balise: identity).current,

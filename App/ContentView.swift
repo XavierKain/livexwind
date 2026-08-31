@@ -37,7 +37,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) { baliseMenu }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Link(destination: AppConfig.pageURL(balise: store.catalog.selectedID)) {
+                    Link(destination: store.balise.pageURL) {
                         Image(systemName: "safari")
                     }
                 }

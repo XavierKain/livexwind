@@ -236,3 +236,58 @@ struct WindSparkline: View {
         }
     }
 }
+
+// MARK: - Secteur de direction
+
+/// Aperçu du secteur d'alerte : l'arc coloré est la fenêtre attendue, la flèche
+/// montre d'où vient le vent en ce moment.
+struct DirectionSectorView: View {
+    var center: Int
+    var spread: Int
+    var current: Int?
+
+    var body: some View {
+        let inSector = current.map { bearing -> Bool in
+            var delta = abs(bearing - center) % 360
+            if delta > 180 { delta = 360 - delta }
+            return delta <= spread
+        } ?? false
+
+        ZStack {
+            Circle().stroke(.quaternary, lineWidth: 8)
+
+            Circle()
+                .trim(from: 0, to: min(1, Double(spread * 2) / 360))
+                .stroke(inSector ? Color.green : Color.accentColor,
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                // -90° pour partir du nord, puis on centre l'arc sur le relèvement.
+                .rotationEffect(.degrees(Double(center - spread) - 90))
+
+            ForEach(["N", "E", "S", "O"].indices, id: \.self) { i in
+                Text(["N", "E", "S", "O"][i])
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .offset(y: -42)
+                    .rotationEffect(.degrees(Double(i) * 90))
+            }
+
+            if let current {
+                Image(systemName: "arrowtriangle.down.fill")
+                    .font(.system(size: 11))
+                    .foregroundStyle(inSector ? .green : .secondary)
+                    .offset(y: -34)
+                    .rotationEffect(.degrees(Double(current)))
+            }
+
+            VStack(spacing: 0) {
+                Text("\(center)°")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                Text("± \(spread)°")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: 104, height: 104)
+    }
+}

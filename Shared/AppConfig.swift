@@ -6,8 +6,8 @@ enum AppConfig {
     static let widgetKind = "LiveXWindWidget"
 
     /// Historique publié par le serveur sur GitHub Pages, une balise par fichier.
-    static func feedURL(balise: Int) -> URL {
-        URL(string: "https://xavierkain.github.io/livexwind/balise-\(balise).json")!
+    static func feedURL(key: String) -> URL {
+        URL(string: "https://xavierkain.github.io/livexwind/balise-\(key).json")!
     }
 
     /// Serveur de push (Tailscale) : c'est lui qui pousse l'activité en direct

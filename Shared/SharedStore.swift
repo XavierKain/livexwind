@@ -73,14 +73,14 @@ struct SharedStore {
     }
 
     /// Un instantané par balise : changer de spot n'efface pas la courbe de l'autre.
-    func loadSnapshot(balise: Int) -> WindSnapshot? {
-        guard let data = defaults.data(forKey: "\(snapshotKey).\(balise)") else { return nil }
+    func loadSnapshot(key: String) -> WindSnapshot? {
+        guard let data = defaults.data(forKey: "\(snapshotKey).\(key)") else { return nil }
         return try? JSONDecoder().decode(WindSnapshot.self, from: data)
     }
 
     func save(snapshot: WindSnapshot) {
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
-        defaults.set(data, forKey: "\(snapshotKey).\(snapshot.baliseID)")
+        defaults.set(data, forKey: "\(snapshotKey).\(snapshot.baliseKey)")
     }
 
     // MARK: Serveur de push

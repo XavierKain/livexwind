@@ -1,27 +1,75 @@
 import Foundation
 
-/// Une balise météo FFVL suivie par l'app.
+/// Source de données d'une balise. Les deux sites ne publient pas du tout la
+/// même chose : balisemeteo (FFVL) est une page HTML à scraper, windmorbihan
+/// expose une API JSON en nœuds.
+enum BaliseProvider: String, Codable, CaseIterable, Sendable {
+    case ffvl
+    case windMorbihan = "wm"
+
+    var label: String { self == .ffvl ? "FFVL" : "Wind Morbihan" }
+    var detail: String {
+        self == .ffvl
+        ? "balisemeteo.com — toute la France, relevé toutes les 10 min"
+        : "windmorbihan.com — baie de Quiberon, relevé toutes les ~6 min"
+    }
+}
+
+/// Une balise météo suivie par l'app.
 struct Balise: Codable, Hashable, Identifiable, Sendable {
     var id: Int
     var name: String
     var altitude: Int?
     var latitude: Double?
     var longitude: Double?
+    var provider: BaliseProvider
+
+    init(id: Int, name: String, altitude: Int? = nil,
+         latitude: Double? = nil, longitude: Double? = nil,
+         provider: BaliseProvider = .ffvl) {
+        self.id = id
+        self.name = name
+        self.altitude = altitude
+        self.latitude = latitude
+        self.longitude = longitude
+        self.provider = provider
+    }
+
+    // Les balises enregistrées avant l'arrivée des sources multiples n'ont pas
+    // de champ `provider` : elles viennent forcément de la FFVL.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(Int.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        altitude = try c.decodeIfPresent(Int.self, forKey: .altitude)
+        latitude = try c.decodeIfPresent(Double.self, forKey: .latitude)
+        longitude = try c.decodeIfPresent(Double.self, forKey: .longitude)
+        provider = try c.decodeIfPresent(BaliseProvider.self, forKey: .provider) ?? .ffvl
+    }
+
+    /// Identifiant stable pour les caches et les noms de fichiers de flux.
+    var key: String { "\(provider.rawValue)-\(id)" }
 
     var pageURL: URL {
-        URL(string: "https://www.balisemeteo.com/balise.php?idBalise=\(id)")!
+        switch provider {
+        case .ffvl:
+            return URL(string: "https://www.balisemeteo.com/balise.php?idBalise=\(id)")!
+        case .windMorbihan:
+            return URL(string: "https://www.windmorbihan.com")!
+        }
     }
 
     var subtitle: String {
-        var parts = ["#\(id)"]
+        var parts = [provider.label]
         if let altitude { parts.append("\(altitude) m") }
         return parts.joined(separator: " · ")
     }
 
     static let pyla = Balise(id: 64, name: "Pyla Pilat", altitude: 55,
-                             latitude: 44.5761111, longitude: -1.2247222)
+                             latitude: 44.5761111, longitude: -1.2247222, provider: .ffvl)
 
     /// Accepte une URL balisemeteo.com collée depuis Safari, ou juste le numéro.
+    /// (Wind Morbihan ne publie pas d'URL par balise : on y choisit dans une liste.)
     static func parseID(from input: String) -> Int? {
         let text = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return nil }
@@ -54,7 +102,7 @@ struct BaliseCatalog: Codable, Equatable, Sendable {
     }
 
     mutating func add(_ balise: Balise) {
-        if let index = balises.firstIndex(where: { $0.id == balise.id }) {
+        if let index = balises.firstIndex(where: { $0.key == balise.key }) {
             balises[index] = balise
         } else {
             balises.append(balise)
@@ -67,4 +115,6 @@ struct BaliseCatalog: Codable, Equatable, Sendable {
         balises.removeAll { $0.id == id }
         if selectedID == id { selectedID = balises.first?.id ?? Balise.pyla.id }
     }
+
+    var selectedKey: String { selected.key }
 }

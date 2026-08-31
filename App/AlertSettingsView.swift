@@ -49,6 +49,37 @@ struct AlertSettingsView: View {
                 }
 
                 Section {
+                    Toggle("Me prévenir quand le vent tourne", isOn: $store.alerts.directionEnabled)
+                    if store.alerts.directionEnabled {
+                        HStack(spacing: 16) {
+                            DirectionSectorView(center: store.alerts.directionCenter,
+                                                spread: store.alerts.directionSpread,
+                                                current: store.snapshot.current.directionDegrees)
+                            VStack(alignment: .leading, spacing: 10) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Direction attendue").font(.caption).foregroundStyle(.secondary)
+                                    Slider(value: Binding(
+                                        get: { Double(store.alerts.directionCenter) },
+                                        set: { store.alerts.directionCenter = Int($0) }
+                                    ), in: 0...355, step: 5)
+                                }
+                                Picker("Ouverture", selection: $store.alerts.directionSpread) {
+                                    Text("± 22°").tag(22)
+                                    Text("± 45°").tag(45)
+                                    Text("± 67°").tag(67)
+                                }
+                                .pickerStyle(.segmented)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                } header: {
+                    Text("Direction")
+                } footer: {
+                    Text("Pratique quand tu attends une bascule : l'alerte part au moment où le vent entre dans le secteur, pas tant qu'il y reste.")
+                }
+
+                Section {
                     Stepper("À partir de \(store.alerts.startHour) h",
                             value: $store.alerts.startHour, in: 0...23)
                     Stepper("Jusqu'à \(store.alerts.endHour) h",

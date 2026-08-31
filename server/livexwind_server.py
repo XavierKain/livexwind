@@ -46,7 +46,8 @@ from cryptography.hazmat.primitives.asymmetric import ec, utils as asym_utils
 from flask import Flask, jsonify, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "feed"))
-import scrape  # noqa: E402  (le même scraper que le dépannage manuel)
+import scrape  # noqa: E402  (source FFVL / balisemeteo.com)
+import windmorbihan  # noqa: E402  (source windmorbihan.com)
 
 PORT = 7110
 HOME = Path.home()
@@ -57,7 +58,9 @@ STATE_PATH = DATA_DIR / "livexwind_state.json"
 
 APNS_HOST = "https://api.push.apple.com"   # production : l'environnement des builds TestFlight
 JWT_TTL = 40 * 60
-DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55}
+DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
+PROVIDERS = ("ffvl", "wm")
+BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # cadence de guet sur la balise sélectionnée
 SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
@@ -92,8 +95,12 @@ def save_json(path: Path, data):
     tmp.replace(path)
 
 
-def feed_path(balise_id: int) -> Path:
-    return DATA_DIR / f"livexwind_feed_{balise_id}.json"
+def feed_path(balise_id: int, provider: str = "ffvl") -> Path:
+    return DATA_DIR / f"livexwind_feed_{provider}_{balise_id}.json"
+
+
+def balise_key(balise: dict) -> str:
+    return f"{balise.get('provider', 'ffvl')}-{balise['id']}"
 
 
 def config() -> dict | None:
@@ -230,6 +237,9 @@ def tracked_balises() -> tuple[list, int]:
     """Balises suivies, et identifiant de celle qui déclenche les push."""
     prefs = tokens().get("prefs", {})
     balises = prefs.get("balises") or [DEFAULT_BALISE]
+    for b in balises:
+        if b.get("provider") not in PROVIDERS:
+            b["provider"] = "ffvl"
     ids = {b["id"] for b in balises}
     selected = prefs.get("selected")
     if selected not in ids:
@@ -255,12 +265,29 @@ def health():
 
 @app.route("/api/wind")
 def wind():
-    _, selected = tracked_balises()
+    tracked, selected = tracked_balises()
     try:
         balise_id = int(request.args.get("balise", selected))
     except (TypeError, ValueError):
         balise_id = selected
-    return jsonify(load_json(feed_path(balise_id), {"error": "pas encore de relevé"}))
+    provider = request.args.get("provider")
+    if provider not in PROVIDERS:
+        match = next((b for b in tracked if b["id"] == balise_id), None)
+        provider = (match or {}).get("provider", "ffvl")
+    return jsonify(load_json(feed_path(balise_id, provider), {"error": "pas encore de relevé"}))
+
+
+@app.route("/api/sensors")
+def sensors():
+    """Capteurs disponibles chez une source, pour le sélecteur de l'app."""
+    provider = request.args.get("provider", "wm")
+    if provider != "wm":
+        return jsonify({"error": "seule la source windmorbihan expose une liste"}), 400
+    try:
+        return jsonify({"provider": "wm", "sensors": windmorbihan.sensors()})
+    except Exception as exc:
+        log.warning("liste des capteurs windmorbihan indisponible : %s", exc)
+        return jsonify({"provider": "wm", "sensors": []}), 502
 
 
 @app.route("/api/balises", methods=["GET", "POST"])
@@ -276,9 +303,11 @@ def balises():
             balise_id = int(b["id"])
         except (KeyError, TypeError, ValueError):
             continue
+        provider = b.get("provider")
         cleaned.append({"id": balise_id,
                         "name": b.get("name") or f"Balise {balise_id}",
-                        "altitude": b.get("altitude")})
+                        "altitude": b.get("altitude"),
+                        "provider": provider if provider in PROVIDERS else "ffvl"})
     if not cleaned:
         return jsonify({"error": "liste vide ou invalide"}), 400
 
@@ -340,9 +369,16 @@ def index():
 
 # ----------------------------------------------------------------------- pusher
 
-def refresh_feed(balise_id: int) -> dict | None:
-    """Relève une balise et met son flux à jour."""
-    path = feed_path(balise_id)
+def refresh_feed(balise: dict) -> dict | None:
+    """Relève une balise et met son flux à jour, quelle que soit sa source."""
+    provider = balise.get("provider", "ffvl")
+    return _refresh_wm(balise) if provider == "wm" else _refresh_ffvl(balise)
+
+
+def _refresh_ffvl(balise: dict) -> dict | None:
+    """balisemeteo.com : scraping, avec une seconde chance si la page est masquée."""
+    balise_id = balise["id"]
+    path = feed_path(balise_id, "ffvl")
     parsed = None
     for _ in range(2):
         try:
@@ -358,12 +394,40 @@ def refresh_feed(balise_id: int) -> dict | None:
     if parsed["reading"]["stale"]:
         return load_json(path, None)
 
+    return _store_feed(path, parsed["balise"], parsed["reading"])
+
+
+def _refresh_wm(balise: dict) -> dict | None:
+    """windmorbihan.com : API JSON, plus d'historique au premier suivi."""
+    balise_id = balise["id"]
+    path = feed_path(balise_id, "wm")
+    try:
+        reading = windmorbihan.latest(balise_id)
+        info = windmorbihan.balise_info(balise_id)
+    except Exception as exc:
+        log.warning("balise wm %s : relevé indisponible (%s)", balise_id, exc)
+        return None
+
+    if not reading or not info:
+        return load_json(path, None)
+
     old = load_json(path, {})
+    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
+        backfill = windmorbihan.history(balise_id)
+        if backfill:
+            log.info("balise wm %s : historique initial (%d points)", balise_id, len(backfill))
+            old = {"history": backfill}
+
+    return _store_feed(path, info, reading, previous=old)
+
+
+def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:
+    old = previous if previous is not None else load_json(path, {})
     payload = {"generatedAt": datetime.now(timezone.utc).replace(microsecond=0)
                               .isoformat().replace("+00:00", "Z"),
-               "balise": parsed["balise"],
-               "current": parsed["reading"],
-               "history": scrape.merge_history(old.get("history", []), parsed["reading"])}
+               "balise": info,
+               "current": reading,
+               "history": scrape.merge_history(old.get("history", []), reading)}
     save_json(path, payload)
     return payload
 
@@ -390,8 +454,21 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
     shown_value = round(value * factor)
     is_above = bool(settings.get("upperEnabled")) and shown_value >= round(upper * factor)
     is_below = bool(settings.get("lowerEnabled")) and shown_value <= round(lower * factor)
-    was_above, was_below = state.get("was_above", False), state.get("was_below", False)
+
+    # Secteur de direction : on prévient quand le vent bascule dans la fenêtre attendue.
+    center = settings.get("directionCenter", 270)
+    spread = settings.get("directionSpread", 45)
+    bearing = reading.get("dir")
+    in_sector = False
+    if settings.get("directionEnabled") and bearing is not None:
+        delta = abs(int(bearing) - int(center)) % 360
+        in_sector = min(delta, 360 - delta) <= spread
+
+    was_above = state.get("was_above", False)
+    was_below = state.get("was_below", False)
+    was_in_sector = state.get("was_in_sector", False)
     state["was_above"], state["was_below"] = is_above, is_below
+    state["was_in_sector"] = in_sector
 
     hour = datetime.now().astimezone().hour
     start, end = settings.get("startHour", 8), settings.get("endHour", 21)
@@ -417,6 +494,13 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
         state["last_lower"] = time.time()
         return {"title": f"Ça tombe 🍃 {shown}",
                 "body": f"{source} sous {round(lower * factor)} {symbol} · {direction}"}, state
+
+    if in_sector and not was_in_sector and ready("last_direction"):
+        state["last_direction"] = time.time()
+        low = (int(center) - int(spread)) % 360
+        high = (int(center) + int(spread)) % 360
+        return {"title": f"Le vent a tourné 🧭 {direction}",
+                "body": f"Dans ton secteur {low}°–{high}° · {shown}"}, state
 
     return None, state
 
@@ -463,9 +547,10 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
         state["activity_started_at"] = time.time()
 
     # 3. alertes de seuil — les verrous de franchissement sont propres à la balise
-    latches = state.setdefault("alerts", {}).setdefault(str(balise["id"]), {})
+    key = balise_key(balise)
+    latches = state.setdefault("alerts", {}).setdefault(key, {})
     event, latches = evaluate_alert(reading, prefs, latches)
-    state["alerts"][str(balise["id"])] = latches
+    state["alerts"][key] = latches
     if event:
         for token in data.get("device", []):
             code, text = apns_post(cfg, token,
@@ -497,8 +582,8 @@ def publish_to_pages(feeds: dict, state: dict) -> dict:
 
         docs = PAGES_CLONE / "docs"
         docs.mkdir(parents=True, exist_ok=True)
-        for balise_id, feed in feeds.items():
-            (docs / f"balise-{balise_id}.json").write_text(
+        for key, feed in feeds.items():
+            (docs / f"balise-{key}.json").write_text(
                 json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
         (docs / "balises.json").write_text(
             json.dumps({"balises": [f["balise"] for f in feeds.values()]},
@@ -529,11 +614,15 @@ def publish_to_pages(feeds: dict, state: dict) -> dict:
 
 def migrate_legacy_feed():
     """Le flux d'avant le multi-balises n'était pas suffixé par l'identifiant."""
-    legacy = DATA_DIR / "livexwind_feed.json"
-    target = feed_path(DEFAULT_BALISE["id"])
-    if legacy.exists() and not target.exists():
-        legacy.rename(target)
-        log.info("ancien flux migré vers %s", target.name)
+    target = feed_path(DEFAULT_BALISE["id"], "ffvl")
+    if target.exists():
+        return
+    for legacy in (DATA_DIR / f"livexwind_feed_{DEFAULT_BALISE['id']}.json",
+                   DATA_DIR / "livexwind_feed.json"):
+        if legacy.exists():
+            legacy.rename(target)
+            log.info("ancien flux migré vers %s", target.name)
+            return
 
 
 def pusher_loop():
@@ -553,21 +642,22 @@ def pusher_loop():
 
         for balise in balises:
             balise_id = balise["id"]
+            key = balise_key(balise)
             is_selected = balise_id == selected
 
             # Les balises secondaires ne servent qu'à garnir la courbe quand on
             # change de spot : inutile de les guetter à la seconde près.
-            if not is_selected and time.time() - refreshed_at.get(str(balise_id), 0) < SECONDARY_INTERVAL:
-                cached = load_json(feed_path(balise_id), None)
+            if not is_selected and time.time() - refreshed_at.get(key, 0) < SECONDARY_INTERVAL:
+                cached = load_json(feed_path(balise_id, balise.get("provider", "ffvl")), None)
                 if cached:
-                    feeds[balise_id] = cached
+                    feeds[key] = cached
                 continue
 
-            feed = refresh_feed(balise_id)
-            refreshed_at[str(balise_id)] = time.time()
+            feed = refresh_feed(balise)
+            refreshed_at[key] = time.time()
             if not feed:
                 continue
-            feeds[balise_id] = feed
+            feeds[key] = feed
             if not is_selected:
                 continue
 
@@ -581,7 +671,8 @@ def pusher_loop():
                     log.exception("échec du push : %s", exc)
                 state["last_reading"] = current_t
                 # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
-                sleep_for = max(60, min(iso_to_epoch(current_t) + 600 + 20 - time.time(), 700))
+                period = 360 if balise.get("provider") == "wm" else 600
+                sleep_for = max(60, min(iso_to_epoch(current_t) + period + 20 - time.time(), 700))
 
         if feeds:
             state = publish_to_pages(feeds, state)

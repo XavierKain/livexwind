@@ -48,7 +48,7 @@ final class WindStore: ObservableObject {
     init() {
         let stored = SharedStore.shared.catalog
         catalog = stored
-        let cached = SharedStore.shared.loadSnapshot(balise: stored.selectedID)
+        let cached = SharedStore.shared.loadSnapshot(key: stored.selectedKey)
         snapshot = cached ?? .placeholder(balise: stored.selected)
         unit = SharedStore.shared.unit
         alerts = SharedStore.shared.alertSettings
@@ -82,18 +82,29 @@ final class WindStore: ObservableObject {
         catalog.selectedID = baliseID
         persistCatalog()
         // On repart de la courbe en cache le temps du chargement : pas d'écran vide.
-        snapshot = SharedStore.shared.loadSnapshot(balise: baliseID) ?? .placeholder(balise: catalog.selected)
+        snapshot = SharedStore.shared.loadSnapshot(key: catalog.selectedKey)
+            ?? .placeholder(balise: catalog.selected)
         await refresh(force: true)
     }
 
-    /// Ajoute une balise depuis une URL balisemeteo.com collée, ou un simple numéro.
+    /// Ajoute une balise FFVL depuis une URL balisemeteo.com collée, ou un numéro.
     @discardableResult
     func addBalise(from input: String) async throws -> Balise {
         guard let id = Balise.parseID(from: input) else { throw WindError.unknownBalise }
-        let balise = try await BaliseClient(baliseID: id).fetchBalise()
+        let candidate = Balise(id: id, name: "Balise \(id)", provider: .ffvl)
+        return await install(try await BaliseClient(balise: candidate).fetchBalise())
+    }
+
+    /// Ajoute un capteur choisi dans la liste d'une source qui en publie une.
+    @discardableResult
+    func addBalise(_ balise: Balise) async -> Balise {
+        await install(balise)
+    }
+
+    private func install(_ balise: Balise) async -> Balise {
         catalog.add(balise)
         persistCatalog()
-        snapshot = SharedStore.shared.loadSnapshot(balise: id) ?? .placeholder(balise: balise)
+        snapshot = SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
         await refresh(force: true)
         return balise
     }
@@ -103,7 +114,7 @@ final class WindStore: ObservableObject {
         catalog.remove(id: id)
         persistCatalog()
         if wasSelected {
-            snapshot = SharedStore.shared.loadSnapshot(balise: catalog.selectedID)
+            snapshot = SharedStore.shared.loadSnapshot(key: catalog.selectedKey)
                 ?? .placeholder(balise: catalog.selected)
             await refresh(force: true)
         }
@@ -151,7 +162,7 @@ final class WindStore: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        let fresh = await BaliseClient(baliseID: catalog.selectedID).loadSnapshot()
+        let fresh = await BaliseClient(balise: catalog.selected).loadSnapshot()
         let previous = snapshot
         snapshot = fresh
         lastError = fresh.current.averageKmh == nil ? "Relevé indisponible" : nil

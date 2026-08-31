@@ -1,0 +1,35 @@
+name: Flux balise
+
+# Alimente docs/balise-64.json (servi par GitHub Pages) : l'app y récupère
+# l'historique, que balisemeteo.com ne publie qu'en images PNG.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: feed
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scrape balise 64
+        run: python3 feed/scrape.py --balise 64 --out docs/balise-64.json
+
+      - name: Commit si le relevé a changé
+        run: |
+          git config user.name "livexwind-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add docs/balise-64.json
+          git diff --cached --quiet && echo "aucun changement" && exit 0
+          git commit -m "flux: relevé balise 64"
+          git pull --rebase --autostash
+          git push

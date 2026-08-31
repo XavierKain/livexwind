@@ -1,0 +1,34 @@
+{
+ "generatedAt": "2026-08-31T11:14:40Z",
+ "balise": {
+  "id": 64,
+  "name": "Pyla Pilat",
+  "lat": 44.5761111,
+  "lon": -1.2247222,
+  "altitude": 55,
+  "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
+ },
+ "current": {
+  "t": "2026-08-31T11:11:00Z",
+  "dir": 270,
+  "dirLabel": "O",
+  "avg": 21.0,
+  "gust": 28.0,
+  "gustDir": 292,
+  "gustDirLabel": "ONO",
+  "min": 16.0,
+  "temp": 24.0,
+  "lum": 100.0,
+  "stale": false
+ },
+ "history": [
+  {
+   "t": "2026-08-31T11:11:00Z",
+   "dir": 270,
+   "avg": 21.0,
+   "gust": 28.0,
+   "min": 16.0,
+   "temp": 24.0
+  }
+ ]
+}

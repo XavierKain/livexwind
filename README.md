@@ -9,6 +9,10 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 - **km/h ⇄ nœuds** : bascule instantanée dans l'app, et paramètre par widget (appui long → *Modifier le widget*).
 - **Widgets** : petit, moyen, grand, plus rectangulaire / circulaire / inline sur l'écran verrouillé.
 - **Activité en direct** : vent sur l'écran verrouillé et l'île dynamique, avec mini-courbe.
+- **Alertes de seuil** : notification quand le vent franchit un seuil haut (ça monte) ou retombe sous
+  un seuil bas, au choix sur le vent moyen ou les rafales, avec plage horaire et anti-spam.
+  Elles sont évaluées à chaque relevé lu par l'app et à chaque réveil `BGAppRefreshTask` —
+  iOS fixe la cadence de ces réveils, une alerte peut donc arriver au relevé suivant.
 
 ## Rythme de mise à jour
 

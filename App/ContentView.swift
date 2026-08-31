@@ -5,6 +5,7 @@ struct ContentView: View {
     @StateObject private var store = WindStore()
     @Environment(\.scenePhase) private var scenePhase
     @State private var range: HistoryRange = .sixHours
+    @State private var showAlerts = false
 
     enum HistoryRange: Double, CaseIterable, Identifiable {
         case threeHours = 3, sixHours = 6, twelveHours = 12, day = 24
@@ -22,6 +23,7 @@ struct ContentView: View {
                     unitPicker
                     metrics
                     chartCard
+                    alertsCard
                     liveActivityCard
                     footer
                 }
@@ -39,8 +41,10 @@ struct ContentView: View {
                 }
             }
         }
+        .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
         .task {
             store.liveActivity.refreshActiveState()
+            await store.refreshNotificationStatus()
             store.startAutoRefresh()
         }
         .onChange(of: scenePhase) { _, phase in
@@ -147,6 +151,40 @@ struct ContentView: View {
             Capsule().fill(color).frame(width: 14, height: 3)
             Text(text).font(.caption2).foregroundStyle(.secondary)
         }
+    }
+
+
+    private var alertsCard: some View {
+        Button { showAlerts = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: store.alerts.enabled ? "bell.badge.fill" : "bell.slash")
+                    .font(.title3)
+                    .foregroundStyle(store.alerts.enabled ? Color.orange : .secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Alertes de seuil").font(.headline).foregroundStyle(.primary)
+                    Text(alertsSummary).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 18))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var alertsSummary: String {
+        guard store.alerts.enabled else { return "Désactivées — touche pour définir un seuil" }
+        let source = store.alerts.useGusts ? "rafales" : "vent moyen"
+        var parts: [String] = []
+        if store.alerts.upperEnabled {
+            parts.append("≥ \(store.unit.format(kmh: store.alerts.upperKmh))")
+        }
+        if store.alerts.lowerEnabled {
+            parts.append("≤ \(store.unit.format(kmh: store.alerts.lowerKmh))")
+        }
+        if parts.isEmpty { return "Aucun seuil actif" }
+        return "\(source) \(parts.joined(separator: " · ")) \(store.unit.symbol) · \(store.alerts.startHour)h-\(store.alerts.endHour)h"
     }
 
     private var liveActivityCard: some View {

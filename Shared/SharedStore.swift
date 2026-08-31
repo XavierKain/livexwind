@@ -12,6 +12,8 @@ struct SharedStore {
     private let defaults: UserDefaults
     private let snapshotKey = "wind.snapshot"
     private let unitKey = "wind.unit"
+    private let alertSettingsKey = "wind.alerts.settings"
+    private let alertStateKey = "wind.alerts.state"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -32,6 +34,32 @@ struct SharedStore {
         nonmutating set {
             defaults.set(newValue.rawValue, forKey: unitKey)
             reloadWidgets()
+        }
+    }
+
+    // MARK: Alertes de seuil
+
+    var alertSettings: AlertSettings {
+        get {
+            guard let data = defaults.data(forKey: alertSettingsKey),
+                  let value = try? JSONDecoder().decode(AlertSettings.self, from: data) else { return .default }
+            return value
+        }
+        nonmutating set {
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
+            defaults.set(data, forKey: alertSettingsKey)
+        }
+    }
+
+    var alertState: AlertState {
+        get {
+            guard let data = defaults.data(forKey: alertStateKey),
+                  let value = try? JSONDecoder().decode(AlertState.self, from: data) else { return .empty }
+            return value
+        }
+        nonmutating set {
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
+            defaults.set(data, forKey: alertStateKey)
         }
     }
 

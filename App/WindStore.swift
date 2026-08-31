@@ -15,6 +15,15 @@ final class WindStore: ObservableObject {
         }
     }
 
+    @Published var alerts: AlertSettings {
+        didSet {
+            guard alerts != oldValue else { return }
+            SharedStore.shared.alertSettings = alerts
+        }
+    }
+    @Published var notificationsAuthorized = false
+    @Published var lastAlert: AlertEvent?
+
     let liveActivity = LiveActivityManager()
     private var timer: Task<Void, Never>?
 
@@ -22,6 +31,17 @@ final class WindStore: ObservableObject {
         let cached = SharedStore.shared.loadSnapshot()
         snapshot = cached ?? .placeholder
         unit = SharedStore.shared.unit
+        alerts = SharedStore.shared.alertSettings
+    }
+
+    func refreshNotificationStatus() async {
+        notificationsAuthorized = await NotificationManager.isAuthorized()
+    }
+
+    func enableAlerts() async {
+        let granted = await NotificationManager.requestAuthorization()
+        notificationsAuthorized = granted
+        alerts.enabled = granted
     }
 
     var nextUpdateText: String {
@@ -43,6 +63,9 @@ final class WindStore: ObservableObject {
 
         if fresh.current.date != previous.current.date || force {
             await liveActivity.push(snapshot: fresh, unit: unit)
+        }
+        if let event = await NotificationManager.evaluateAndNotify(snapshot: fresh, unit: unit) {
+            lastAlert = event
         }
     }
 

@@ -167,21 +167,22 @@ platform :ios do
     testers.each do |t|
       masked = "#{t.email.to_s.partition('@').first[0, 3]}***@#{t.email.to_s.partition('@').last}"
 
+      # Le retrait est ignoré si le testeur n'est déjà plus dans le groupe.
       begin
         Spaceship::ConnectAPI.client.delete_beta_tester_from_beta_groups(
           beta_tester_id: t.id, beta_group_ids: [group.id]
         )
         UI.message("#{masked} retiré du groupe")
       rescue StandardError => e
-        UI.important("retrait impossible (#{e.class}: #{e.message})")
+        UI.important("retrait ignoré (#{e.class}: #{e.message})")
       end
 
       sleep(3)
 
       added = false
       [
-        -> { group.add_beta_testers(beta_testers: [t]) },
-        -> { Spaceship::ConnectAPI.client.add_beta_tester_to_group(beta_group_id: group.id, beta_tester_id: t.id) }
+        -> { group.add_beta_testers(beta_tester_ids: [t.id]) },
+        -> { Spaceship::ConnectAPI.client.add_beta_tester_to_group(beta_group_id: group.id, beta_tester_ids: [t.id]) }
       ].each do |attempt|
         begin
           attempt.call

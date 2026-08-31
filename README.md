@@ -4,10 +4,13 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Ce que ça fait
 
-- **Plusieurs balises, deux sources** : la FFVL (balisemeteo.com, toute la France, ajout par URL)
-  et Wind Morbihan (windmorbihan.com, baie de Quiberon, choix dans une liste de capteurs).
+- **Plusieurs balises, trois sources** : FFVL (balisemeteo.com, France, ajout par URL),
+  Wind Morbihan (baie de Quiberon, liste de capteurs) et Windguru (le monde entier, dont
+  Tarifa / Campo de Futbol — recherche par nom ou lien `windguru.cz/station/…`).
   On bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
   seule celle qui est sélectionnée déclenche l'activité en direct et les alertes.
+- **Vue d'ensemble** : l'onglet *Mes spots* liste les balises suivies avec leur vent du moment,
+  direction, rafales et mini-courbe — six tiennent dans un écran.
 - **Relevé live** : vent moyen, rafales, mini, direction (rose des vents + degrés), température.
 - **Graphe d'évolution** : force moyenne, rafales, et flèches de direction sur 3 / 6 / 12 / 24 h,
   avec un curseur au doigt (glissement horizontal ; le glissement vertical laisse défiler la page).
@@ -30,7 +33,7 @@ sur cette grille : prochaine lecture à `dernier relevé + 10 min + 45 s`, donc 
 après la publication. Le widget demande le même horaire à WidgetKit (iOS peut espacer davantage
 si le widget est peu consulté — c'est un plafond système, pas un choix de l'app).
 
-## Les deux sources
+## Les trois sources
 
 **FFVL / balisemeteo.com** masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas de
 session PHP : on fait une requête d'amorçage sur l'accueil pour obtenir le cookie, puis on lit la
@@ -48,6 +51,23 @@ private2.windmorbihan.com/mesures/history.json         historique 48 h (~6 Mo)
 Les vitesses y sont en nœuds, converties en km/h (l'unité interne). Le téléphone ne télécharge que
 les deux premiers fichiers ; `history.json` n'est lu qu'une fois par le serveur, au premier suivi
 d'un capteur, puis l'historique s'accumule à partir des relevés courants.
+
+**windguru.cz** expose trois points d'entrée publics, sans authentification :
+
+```
+int/iapi.php?q=station&id_station=N&weather=false     fiche de la station
+int/iapi.php?q=station_data_current&id_station=N      relevé courant
+int/iapi.php?q=station_data&id_station=N&from=&to=    historique
+```
+
+Vitesses en nœuds là aussi (vérifié : la page affiche « 0.8 knots / max 2.5 » quand l'API renvoie
+`wind_avg 0.8 / wind_max 2.5`). Leur **recherche**, en revanche, exige un compte : le serveur tient
+donc son propre index (`feed/windguru.py`, balayage lent et repris des fiches `q=station`,
+~13 500 identifiants), qui alimente `/api/sensors?provider=wg&q=…`. En attendant que l'index soit
+complet, coller un lien `windguru.cz/station/…` fonctionne immédiatement.
+
+> Windfinder a été écarté : son API exige un en-tête `WF-AUTH` qu'il faudrait extraire de leur
+> client web, ce qui serait fragile autant que discutable.
 
 ## Comment la donnée est récupérée
 

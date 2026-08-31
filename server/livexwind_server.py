@@ -603,6 +603,16 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     return state
 
 
+def write_feed_files(docs: Path, feeds: dict):
+    docs.mkdir(parents=True, exist_ok=True)
+    for key, feed in feeds.items():
+        (docs / f"balise-{key}.json").write_text(
+            json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
+    (docs / "balises.json").write_text(
+        json.dumps({"balises": [f["balise"] for f in feeds.values()]},
+                   ensure_ascii=False, indent=1) + "\n")
+
+
 def publish_to_pages(feeds: dict, state: dict) -> dict:
     """Publie les flux sur GitHub Pages, pour l'app quand elle est hors Tailscale.
 
@@ -617,15 +627,18 @@ def publish_to_pages(feeds: dict, state: dict) -> dict:
                            check=True, capture_output=True, timeout=120)
 
         docs = PAGES_CLONE / "docs"
-        docs.mkdir(parents=True, exist_ok=True)
-        for key, feed in feeds.items():
-            (docs / f"balise-{key}.json").write_text(
-                json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
-        (docs / "balises.json").write_text(
-            json.dumps({"balises": [f["balise"] for f in feeds.values()]},
-                       ensure_ascii=False, indent=1) + "\n")
 
         git = ["git", "-C", str(PAGES_CLONE), "-c", "credential.helper=store"]
+
+        # On se recale sur l'amont avant d'écrire : ce clone est jetable, donc un
+        # reset dur est sans risque et ne peut pas rester coincé dans un rebase
+        # (contrairement à `pull --rebase`, qui s'était bloqué une fois).
+        subprocess.run(git + ["rebase", "--abort"], capture_output=True, timeout=30)
+        subprocess.run(git + ["fetch", "origin", "main"], check=True, capture_output=True, timeout=90)
+        subprocess.run(git + ["reset", "--hard", "origin/main"], check=True, capture_output=True, timeout=30)
+
+        write_feed_files(docs, feeds)
+
         subprocess.run(git + ["add", "docs"], check=True, capture_output=True, timeout=30)
         if subprocess.run(git + ["diff", "--cached", "--quiet"],
                           capture_output=True, timeout=30).returncode == 0:
@@ -636,8 +649,6 @@ def publish_to_pages(feeds: dict, state: dict) -> dict:
                               "-c", "user.email=bot@users.noreply.github.com",
                               "commit", "-m", "flux: relevés balises"],
                        check=True, capture_output=True, timeout=30)
-        subprocess.run(git + ["pull", "--rebase", "--autostash"],
-                       check=True, capture_output=True, timeout=90)
         subprocess.run(git + ["push"], check=True, capture_output=True, timeout=90)
         log.info("flux publiés sur GitHub Pages (%d balise(s))", len(feeds))
         state["last_pages_push"] = time.time()

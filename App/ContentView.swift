@@ -136,13 +136,12 @@ struct ContentView: View {
                 .pickerStyle(.segmented)
                 .frame(width: 200)
             }
-            WindChart(readings: store.snapshot.window(hours: range.rawValue), unit: store.unit)
+            WindChart(readings: store.snapshot.window(hours: range.rawValue), unit: store.unit, interactive: true)
                 .frame(height: 190)
             HStack(spacing: 14) {
                 legend(color: .accentColor, text: "Moyen")
                 legend(color: .orange, text: "Rafales")
-                Label("flèche = sens du vent", systemImage: "location.north.fill")
-                    .font(.caption2).foregroundStyle(.secondary)
+                Text("glisse le doigt sur la courbe").font(.caption2).foregroundStyle(.tertiary)
             }
         }
         .padding(14)

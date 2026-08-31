@@ -89,6 +89,10 @@ struct WindChart: View {
     var unit: WindUnit
     var showDirection: Bool = true
     var compact: Bool = false
+    /// Active le curseur au doigt (app seulement — un widget ne reçoit pas de gestes).
+    var interactive: Bool = false
+
+    @State private var selected: WindReading?
 
     private func value(_ kmh: Double?) -> Double? {
         kmh.map { unit.convert(fromKmh: $0) }
@@ -132,6 +136,19 @@ struct WindChart: View {
                     }
                 }
             }
+
+            if let selected, let avg = value(selected.averageKmh) {
+                RuleMark(x: .value("Heure", selected.date))
+                    .foregroundStyle(.secondary.opacity(0.45))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    .annotation(position: .top, spacing: 2,
+                                overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                        callout(selected)
+                    }
+                PointMark(x: .value("Heure", selected.date), y: .value("Moyen", avg))
+                    .symbolSize(90)
+                    .foregroundStyle(WindPalette.color(kmh: selected.averageKmh))
+            }
         }
         .chartYAxis {
             AxisMarks(position: .leading) { value in
@@ -149,6 +166,54 @@ struct WindChart: View {
                 AxisValueLabel(format: .dateTime.hour().minute())
             }
         }
+        .chartOverlay { proxy in
+            if interactive {
+                GeometryReader { geo in
+                    Rectangle()
+                        .fill(.clear)
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { drag in
+                                    guard let plot = proxy.plotFrame else { return }
+                                    let x = drag.location.x - geo[plot].origin.x
+                                    guard let date: Date = proxy.value(atX: x) else { return }
+                                    selected = nearest(to: date)
+                                }
+                        )
+                }
+            }
+        }
+    }
+
+    private func nearest(to date: Date) -> WindReading? {
+        readings.min { a, b in
+            abs(a.date.timeIntervalSince(date)) < abs(b.date.timeIntervalSince(date))
+        }
+    }
+
+    @ViewBuilder
+    private func callout(_ reading: WindReading) -> some View {
+        let color = WindPalette.color(kmh: reading.averageKmh)
+        VStack(alignment: .leading, spacing: 1) {
+            Text(reading.date, format: .dateTime.hour().minute())
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.secondary)
+            HStack(spacing: 4) {
+                WindArrow(degrees: reading.directionDegrees, color: color)
+                    .frame(width: 10, height: 10)
+                Text("\(unit.format(kmh: reading.averageKmh)) \(unit.shortSymbol)")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+            }
+            Text("raf. \(unit.format(kmh: reading.gustKmh)) · \(reading.compass)")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(color.opacity(0.35), lineWidth: 1))
     }
 }
 

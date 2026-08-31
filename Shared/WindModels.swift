@@ -15,6 +15,14 @@ enum WindUnit: String, CaseIterable, Codable, Sendable {
         self == .kmh ? value : value / 1.852
     }
 
+    /// Retour vers le km/h, pour les réglages saisis dans l'unité affichée.
+    func toKmh(_ value: Double) -> Double {
+        self == .kmh ? value : value * 1.852
+    }
+
+    /// Bornes du curseur de seuil, dans l'unité affichée.
+    var thresholdRange: ClosedRange<Double> { self == .kmh ? 2...70 : 1...38 }
+
     func format(kmh value: Double?, decimals: Int = 0) -> String {
         guard let value else { return "—" }
         return String(format: "%.\(decimals)f", convert(fromKmh: value))

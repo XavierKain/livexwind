@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 import WidgetKit
@@ -11,7 +12,12 @@ final class WindStore: ObservableObject {
         didSet {
             guard unit != oldValue else { return }
             SharedStore.shared.unit = unit
-            Task { await liveActivity.push(snapshot: snapshot, unit: unit) }
+            Task {
+                // Le serveur construit ses push dans cette unité : il doit la connaître
+                // tout de suite, sinon la Live Activity et les alertes restent en km/h.
+                await syncAlertsWithServer()
+                await liveActivity.push(snapshot: snapshot, unit: unit)
+            }
         }
     }
 
@@ -36,6 +42,7 @@ final class WindStore: ObservableObject {
 
     let liveActivity = LiveActivityManager()
     private var timer: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         let cached = SharedStore.shared.loadSnapshot()
@@ -43,6 +50,12 @@ final class WindStore: ObservableObject {
         unit = SharedStore.shared.unit
         alerts = SharedStore.shared.alertSettings
         serverURL = SharedStore.shared.serverURL
+
+        // LiveActivityManager est un ObservableObject imbriqué : sans ce relais,
+        // la vue ne se redessine pas quand son état change (bouton figé).
+        liveActivity.objectWillChange
+            .sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &cancellables)
     }
 
     /// Le serveur garde les seuils de son côté pour pouvoir notifier app fermée.

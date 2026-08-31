@@ -56,11 +56,28 @@ struct BaliseClient: Sendable {
         return try FeedPayload.decode(data).snapshot
     }
 
+    /// Historique du serveur (Tailscale) : le plus frais et le plus complet,
+    /// puisqu'il relève la balise en continu. GitHub Pages sert de secours.
+    func fetchServerFeed() async throws -> WindSnapshot {
+        guard let base = ServerClient.shared.baseURL else { throw ServerError.notConfigured }
+        var request = URLRequest(url: base.appendingPathComponent("api/wind"))
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.timeoutInterval = 8
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try FeedPayload.decode(data).snapshot
+    }
+
+    /// Historique le plus riche disponible : serveur, sinon GitHub Pages.
+    private func fetchHistorySource() async -> WindSnapshot? {
+        if let server = try? await fetchServerFeed(), !server.history.isEmpty { return server }
+        return try? await fetchFeed()
+    }
+
     /// Stratégie complète : scraping direct pour la valeur la plus fraîche,
     /// flux JSON pour l'historique, cache local en dernier recours.
     func loadSnapshot() async -> WindSnapshot {
         async let liveTask = try? await fetchCurrent()
-        async let feedTask = try? await fetchFeed()
+        async let feedTask = await fetchHistorySource()
         let live = await liveTask
         let feed = await feedTask
         let cached = SharedStore.shared.loadSnapshot()

@@ -28,6 +28,7 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import subprocess
 import sys
 import threading
 import time
@@ -56,6 +57,9 @@ BALISE_ID = 64
 POLL_INTERVAL = 30
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
 START_COOLDOWN = 3600
+PAGES_CLONE = DATA_DIR / "livexwind-pages"
+PAGES_REMOTE = "https://github.com/XavierKain/livexwind.git"
+PAGES_INTERVAL = 20 * 60        # on regroupe deux relevés par commit
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -173,8 +177,7 @@ def start_payload(state: dict, balise_name: str, stale_epoch: float) -> dict:
                     "attributes": {"baliseName": balise_name, "baliseID": BALISE_ID},
                     "content-state": state,
                     "stale-date": int(stale_epoch),
-                    "relevance-score": 100,
-                    "alert": {"title": "LiveXWind", "body": "Vent en direct"}}}
+                    "relevance-score": 100}}
 
 
 def alert_payload(title: str, body: str) -> dict:
@@ -415,6 +418,45 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
     return state
 
 
+def publish_to_pages(feed: dict, state: dict) -> dict:
+    """Pousse le flux sur GitHub Pages, pour l'app quand elle est hors Tailscale.
+
+    On passe par un clone dédié : le dépôt de travail ne doit pas être touché.
+    """
+    if time.time() - state.get("last_pages_push", 0) < PAGES_INTERVAL:
+        return state
+
+    try:
+        if not (PAGES_CLONE / ".git").exists():
+            subprocess.run(["git", "clone", "--depth", "1", PAGES_REMOTE, str(PAGES_CLONE)],
+                           check=True, capture_output=True, timeout=120)
+
+        target = PAGES_CLONE / "docs" / "balise-64.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
+
+        git = ["git", "-C", str(PAGES_CLONE), "-c", "credential.helper=store"]
+        subprocess.run(git + ["add", "docs/balise-64.json"], check=True, capture_output=True, timeout=30)
+        status = subprocess.run(git + ["diff", "--cached", "--quiet"], capture_output=True, timeout=30)
+        if status.returncode == 0:
+            state["last_pages_push"] = time.time()
+            return state
+
+        subprocess.run(git + ["-c", "user.name=livexwind-bot",
+                              "-c", "user.email=bot@users.noreply.github.com",
+                              "commit", "-m", "flux: relevé balise 64"],
+                       check=True, capture_output=True, timeout=30)
+        subprocess.run(git + ["pull", "--rebase", "--autostash"], check=True, capture_output=True, timeout=90)
+        subprocess.run(git + ["push"], check=True, capture_output=True, timeout=90)
+        log.info("flux publié sur GitHub Pages (%d points)", len(feed.get("history", [])))
+        state["last_pages_push"] = time.time()
+    except subprocess.CalledProcessError as exc:
+        log.warning("publication Pages échouée : %s", (exc.stderr or b"")[:200])
+    except Exception as exc:
+        log.warning("publication Pages échouée : %s", exc)
+    return state
+
+
 def pusher_loop():
     log.info("boucle pusher démarrée")
     while True:
@@ -439,6 +481,7 @@ def pusher_loop():
             except Exception as exc:
                 log.exception("échec du push : %s", exc)
             state["last_reading"] = current_t
+            state = publish_to_pages(feed, state)
             save_json(STATE_PATH, state)
             # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
             wait = iso_to_epoch(current_t) + 600 + 20 - time.time()

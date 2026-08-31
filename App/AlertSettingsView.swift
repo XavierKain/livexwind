@@ -95,17 +95,23 @@ struct AlertSettingsView: View {
         }
     }
 
+    /// Le seuil est stocké en km/h mais réglé dans l'unité affichée : un cran du
+    /// curseur = 1 km/h ou 1 nœud selon le réglage, jamais un mélange des deux.
     private func thresholdRow(value: Binding<Double>, tint: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let shown = Binding<Double>(
+            get: { (unit.convert(fromKmh: value.wrappedValue) * 10).rounded() / 10 },
+            set: { value.wrappedValue = unit.toKmh($0) }
+        )
+        return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text("Seuil")
                 Spacer()
-                Text("\(unit.format(kmh: value.wrappedValue)) \(unit.symbol)")
+                Text("\(Int(shown.wrappedValue.rounded())) \(unit.symbol)")
                     .font(.system(.body, design: .rounded).weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(tint)
             }
-            Slider(value: value, in: 2...70, step: 1)
+            Slider(value: shown, in: unit.thresholdRange, step: 1)
                 .tint(tint)
         }
     }

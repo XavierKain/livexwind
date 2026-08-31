@@ -4,8 +4,12 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Ce que ça fait
 
+- **Plusieurs balises** : ajoute n'importe quelle balise FFVL en collant son URL (ou son numéro),
+  bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
+  seule celle qui est sélectionnée déclenche l'activité en direct et les alertes.
 - **Relevé live** : vent moyen, rafales, mini, direction (rose des vents + degrés), température.
-- **Graphe d'évolution** : force moyenne, rafales, et flèches de direction sur 3 / 6 / 12 / 24 h.
+- **Graphe d'évolution** : force moyenne, rafales, et flèches de direction sur 3 / 6 / 12 / 24 h,
+  avec un curseur au doigt (glissement horizontal ; le glissement vertical laisse défiler la page).
 - **km/h ⇄ nœuds** : bascule instantanée dans l'app, et paramètre par widget (appui long → *Modifier le widget*).
 - **Widgets** : petit, moyen, grand, plus rectangulaire / circulaire / inline sur l'écran verrouillé.
 - **Activité en direct** : vent sur l'écran verrouillé et l'île dynamique, avec mini-courbe.

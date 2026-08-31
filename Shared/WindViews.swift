@@ -93,6 +93,7 @@ struct WindChart: View {
     var interactive: Bool = false
 
     @State private var selected: WindReading?
+    @State private var isScrubbing = false
 
     private func value(_ kmh: Double?) -> Double? {
         kmh.map { unit.convert(fromKmh: $0) }
@@ -172,14 +173,23 @@ struct WindChart: View {
                     Rectangle()
                         .fill(.clear)
                         .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
+                        // simultaneousGesture : la ScrollView garde la main sur le
+                        // geste vertical. On ne prend le curseur que si le doigt
+                        // part clairement à l'horizontale, et on garde la main
+                        // jusqu'au relâchement.
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 12)
                                 .onChanged { drag in
+                                    if !isScrubbing {
+                                        guard abs(drag.translation.width) > abs(drag.translation.height) else { return }
+                                        isScrubbing = true
+                                    }
                                     guard let plot = proxy.plotFrame else { return }
                                     let x = drag.location.x - geo[plot].origin.x
                                     guard let date: Date = proxy.value(atX: x) else { return }
                                     selected = nearest(to: date)
                                 }
+                                .onEnded { _ in isScrubbing = false }
                         )
                 }
             }

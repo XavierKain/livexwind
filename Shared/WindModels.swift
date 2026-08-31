@@ -70,26 +70,28 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     var history: [WindReading]
     var fetchedAt: Date
 
-    static let placeholder = WindSnapshot(
-        baliseID: 64,
-        baliseName: "Pyla Pilat",
-        altitude: 55,
-        current: WindReading(date: .now, directionDegrees: 270, directionLabel: "O",
-                             averageKmh: 21, gustKmh: 28, gustDirectionDegrees: 292,
-                             minKmh: 16, temperature: 24, luminosity: 100),
-        history: (0..<24).map { i in
-            let base = 14.0 + Double((i * 7) % 13)
-            return WindReading(date: Date().addingTimeInterval(Double(-600 * (23 - i))),
-                               directionDegrees: 250 + (i * 3) % 40,
-                               directionLabel: nil,
-                               averageKmh: base,
-                               gustKmh: base + 6,
-                               gustDirectionDegrees: nil,
-                               minKmh: max(0, base - 4),
-                               temperature: 23)
-        },
-        fetchedAt: .now
-    )
+    static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
+        WindSnapshot(
+            baliseID: balise.id,
+            baliseName: balise.name,
+            altitude: balise.altitude,
+            current: WindReading(date: .now, directionDegrees: 270, directionLabel: "O",
+                                 averageKmh: 21, gustKmh: 28, gustDirectionDegrees: 292,
+                                 minKmh: 16, temperature: 24, luminosity: 100),
+            history: (0..<24).map { i in
+                let base = 14.0 + Double((i * 7) % 13)
+                return WindReading(date: Date().addingTimeInterval(Double(-600 * (23 - i))),
+                                   directionDegrees: 250 + (i * 3) % 40,
+                                   directionLabel: nil,
+                                   averageKmh: base,
+                                   gustKmh: base + 6,
+                                   gustDirectionDegrees: nil,
+                                   minKmh: max(0, base - 4),
+                                   temperature: 23)
+            },
+            fetchedAt: .now
+        )
+    }
 
     /// Prochaine publication attendue : la balise émet toutes les 10 min, on se cale
     /// sur la minute du dernier relevé + 10 min + une marge d'une minute.

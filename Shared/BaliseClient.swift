@@ -4,18 +4,21 @@ import Foundation
 ///
 /// balisemeteo.com masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas
 /// de session PHP : on amorce donc une requête sur l'accueil pour obtenir le cookie,
-/// puis on lit la fiche balise. L'historique vient d'un flux JSON publié toutes les
-/// 10 min par GitHub Actions (le site ne propose que des graphes PNG).
+/// puis on lit la fiche balise. L'historique vient du serveur (Tailscale) ou, à
+/// défaut, du flux JSON publié sur GitHub Pages — le site ne propose que des PNG.
 struct BaliseClient: Sendable {
-    static let shared = BaliseClient()
-
     let baliseID: Int
-    let feedURL: URL
 
-    init(baliseID: Int = AppConfig.baliseID, feedURL: URL = AppConfig.feedURL) {
+    init(baliseID: Int) {
         self.baliseID = baliseID
-        self.feedURL = feedURL
     }
+
+    /// Client pointant sur la balise actuellement sélectionnée.
+    static var current: BaliseClient {
+        BaliseClient(baliseID: SharedStore.shared.catalog.selectedID)
+    }
+
+    private var feedURL: URL { AppConfig.feedURL(balise: baliseID) }
 
     private func makeSession() -> URLSession {
         let config = URLSessionConfiguration.ephemeral
@@ -30,24 +33,53 @@ struct BaliseClient: Sendable {
         return URLSession(configuration: config)
     }
 
-    // MARK: - Relevé live (scraping direct, zéro latence)
+    // MARK: - Page de la balise
 
-    func fetchCurrent() async throws -> WindReading {
+    private func fetchPage() async throws -> String {
         let session = makeSession()
         defer { session.finishTasksAndInvalidate() }
 
         _ = try? await session.data(from: URL(string: "https://www.balisemeteo.com/index.php")!)
-        let pageURL = URL(string: "https://www.balisemeteo.com/balise.php?idBalise=\(baliseID)")!
-        let (data, _) = try await session.data(from: pageURL)
+        let (data, _) = try await session.data(from: AppConfig.pageURL(balise: baliseID))
         guard let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
             throw WindError.decoding
         }
-        guard let reading = BaliseParser.parse(html: html) else { throw WindError.masked }
+        return html
+    }
+
+    /// Relevé live (scraping direct, zéro latence).
+    func fetchCurrent() async throws -> WindReading {
+        guard let reading = BaliseParser.parse(html: try await fetchPage()) else { throw WindError.masked }
         return reading
     }
 
-    // MARK: - Flux JSON (historique + secours)
+    /// Vérifie qu'une balise existe et renvoie sa fiche — utilisé à l'ajout.
+    func fetchBalise() async throws -> Balise {
+        let html = try await fetchPage()
+        guard let balise = BaliseParser.parseBalise(html: html, id: baliseID) else {
+            throw WindError.unknownBalise
+        }
+        return balise
+    }
 
+    // MARK: - Historique
+
+    /// Serveur (Tailscale) : le plus frais et le plus complet.
+    func fetchServerFeed() async throws -> WindSnapshot {
+        guard let base = ServerClient.shared.baseURL else { throw ServerError.notConfigured }
+        var components = URLComponents(url: base.appendingPathComponent("api/wind"),
+                                       resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "balise", value: String(baliseID))]
+        guard let url = components?.url else { throw ServerError.notConfigured }
+
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.timeoutInterval = 8
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try FeedPayload.decode(data).snapshot
+    }
+
+    /// GitHub Pages : secours quand le téléphone n'est pas sur Tailscale.
     func fetchFeed() async throws -> WindSnapshot {
         var request = URLRequest(url: feedURL)
         request.cachePolicy = .reloadIgnoringLocalCacheData
@@ -56,31 +88,21 @@ struct BaliseClient: Sendable {
         return try FeedPayload.decode(data).snapshot
     }
 
-    /// Historique du serveur (Tailscale) : le plus frais et le plus complet,
-    /// puisqu'il relève la balise en continu. GitHub Pages sert de secours.
-    func fetchServerFeed() async throws -> WindSnapshot {
-        guard let base = ServerClient.shared.baseURL else { throw ServerError.notConfigured }
-        var request = URLRequest(url: base.appendingPathComponent("api/wind"))
-        request.cachePolicy = .reloadIgnoringLocalCacheData
-        request.timeoutInterval = 8
-        let (data, _) = try await URLSession.shared.data(for: request)
-        return try FeedPayload.decode(data).snapshot
-    }
-
-    /// Historique le plus riche disponible : serveur, sinon GitHub Pages.
     private func fetchHistorySource() async -> WindSnapshot? {
         if let server = try? await fetchServerFeed(), !server.history.isEmpty { return server }
         return try? await fetchFeed()
     }
 
-    /// Stratégie complète : scraping direct pour la valeur la plus fraîche,
-    /// flux JSON pour l'historique, cache local en dernier recours.
+    // MARK: - Instantané complet
+
+    /// Scraping direct pour la valeur la plus fraîche, flux pour l'historique,
+    /// cache local en dernier recours.
     func loadSnapshot() async -> WindSnapshot {
         async let liveTask = try? await fetchCurrent()
         async let feedTask = await fetchHistorySource()
         let live = await liveTask
         let feed = await feedTask
-        let cached = SharedStore.shared.loadSnapshot()
+        let cached = SharedStore.shared.loadSnapshot(balise: baliseID)
 
         var history = feed?.history ?? cached?.history ?? []
         if let live {
@@ -92,12 +114,15 @@ struct BaliseClient: Sendable {
         history = history.filter { $0.date >= cutoff }
 
         let current = live ?? feed?.current ?? cached?.current
-        guard let current else { return cached ?? .placeholder }
+        let known = SharedStore.shared.catalog.balises.first { $0.id == baliseID }
+        guard let current else {
+            return cached ?? WindSnapshot.placeholder(balise: known ?? .pyla)
+        }
 
         let snapshot = WindSnapshot(
             baliseID: baliseID,
-            baliseName: feed?.baliseName ?? cached?.baliseName ?? "Balise \(baliseID)",
-            altitude: feed?.altitude ?? cached?.altitude,
+            baliseName: known?.name ?? feed?.baliseName ?? cached?.baliseName ?? "Balise \(baliseID)",
+            altitude: known?.altitude ?? feed?.altitude ?? cached?.altitude,
             current: current,
             history: history,
             fetchedAt: .now
@@ -110,11 +135,13 @@ struct BaliseClient: Sendable {
 enum WindError: Error, LocalizedError {
     case decoding
     case masked
+    case unknownBalise
 
     var errorDescription: String? {
         switch self {
         case .decoding: return "Page illisible"
         case .masked: return "Relevé masqué par balisemeteo.com"
+        case .unknownBalise: return "Cette balise n'existe pas sur balisemeteo.com"
         }
     }
 }
@@ -135,8 +162,8 @@ enum BaliseParser {
     }
 
     private static func stripTags(_ fragment: String) -> String {
-        let noTags = fragment.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-        return noTags
+        fragment
+            .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
             .replacingOccurrences(of: "&nbsp;", with: " ")
             .replacingOccurrences(of: "&eacute;", with: "é")
             .replacingOccurrences(of: "&agrave;", with: "à")
@@ -167,9 +194,27 @@ enum BaliseParser {
         return (nil, nil)
     }
 
+    /// Fiche d'identité de la balise (nom, altitude, position).
+    static func parseBalise(html: String, id: Int) -> Balise? {
+        // La page d'une balise inexistante ne contient ni fil d'ariane ni titre.
+        var name = firstMatch("<p><b>([^<]+)</b></p>", in: html).map(stripTags)
+        if name?.isEmpty ?? true {
+            name = firstMatch("<h1>([^<]+)</h1>", in: html).map(stripTags)
+        }
+        guard let name, !name.isEmpty else { return nil }
+
+        let altitude = firstMatch("Altitude\\s*:\\s*(\\d+)\\s*m", in: html).flatMap(Int.init)
+        let lat = firstMatch("maps/preview\\?q=(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)", in: html, group: 1)
+            .flatMap(Double.init)
+        let lon = firstMatch("maps/preview\\?q=(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)", in: html, group: 2)
+            .flatMap(Double.init)
+
+        return Balise(id: id, name: name, altitude: altitude, latitude: lat, longitude: lon)
+    }
+
     static func parse(html: String) -> WindReading? {
-        guard let stamp = firstMatch("Relev(?:é|&eacute;) du ([^<]+)</div>", in: html) else { return nil }
-        guard let date = parisDate(from: stamp) else { return nil }
+        guard let stamp = firstMatch("Relev(?:é|&eacute;) du ([^<]+)</div>", in: html),
+              let date = parisDate(from: stamp) else { return nil }
 
         // Le bloc "Vent maxi" réutilise les mêmes libellés : on coupe la page en deux.
         let parts = html.components(separatedBy: "Vent maxi")
@@ -202,15 +247,14 @@ enum BaliseParser {
         formatter.locale = Locale(identifier: "fr_FR")
         formatter.timeZone = TimeZone(identifier: "Europe/Paris")
         formatter.dateFormat = "dd/MM/yyyy - HH:mm"
-        let cleaned = stamp.trimmingCharacters(in: .whitespacesAndNewlines)
-        return formatter.date(from: cleaned)
+        return formatter.date(from: stamp.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 }
 
-// MARK: - Flux JSON publié par GitHub Actions
+// MARK: - Flux JSON
 
 private struct FeedPayload: Decodable {
-    struct Balise: Decodable { let id: Int; let name: String?; let altitude: Int? }
+    struct BaliseInfo: Decodable { let id: Int; let name: String?; let altitude: Int? }
     struct Sample: Decodable {
         let t: String?
         let dir: Int?
@@ -223,7 +267,7 @@ private struct FeedPayload: Decodable {
         let lum: Double?
     }
 
-    let balise: Balise
+    let balise: BaliseInfo
     let current: Sample
     let history: [Sample]
 
@@ -233,12 +277,14 @@ private struct FeedPayload: Decodable {
 
     var snapshot: WindSnapshot {
         let readings = history.compactMap(Self.reading(from:)).sorted { $0.date < $1.date }
-        let current = Self.reading(from: current) ?? readings.last
+        let latest = Self.reading(from: current) ?? readings.last
+        let identity = Balise(id: balise.id, name: balise.name ?? "Balise \(balise.id)",
+                              altitude: balise.altitude, latitude: nil, longitude: nil)
         return WindSnapshot(
             baliseID: balise.id,
-            baliseName: balise.name ?? "Balise \(balise.id)",
+            baliseName: identity.name,
             altitude: balise.altitude,
-            current: current ?? WindSnapshot.placeholder.current,
+            current: latest ?? WindSnapshot.placeholder(balise: identity).current,
             history: readings,
             fetchedAt: .now
         )

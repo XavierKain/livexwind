@@ -42,7 +42,7 @@ enum BackgroundRefresh {
     private static func handle(_ task: BGAppRefreshTask) {
         schedule()
         let work = Task { @MainActor in
-            let snapshot = await BaliseClient.shared.loadSnapshot()
+            let snapshot = await BaliseClient.current.loadSnapshot()
             let unit = SharedStore.shared.unit
             await LiveActivityManager().push(snapshot: snapshot, unit: unit)
             if !SharedStore.shared.serverHandlesAlerts {

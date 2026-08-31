@@ -66,8 +66,13 @@ enum AlertEngine {
         if let last = state.lastReadingDate, last >= reading.date { return (nil, state) }
         state.lastReadingDate = reading.date
 
-        let isAbove = settings.upperEnabled && value >= settings.upperKmh
-        let isBelow = settings.lowerEnabled && value <= settings.lowerKmh
+        // On compare ce que l'utilisateur voit : 24,0 km/h affiché « 13 nds » doit
+        // déclencher un seuil réglé sur 13 nds (24,076 km/h en interne).
+        let shown = (unit.convert(fromKmh: value)).rounded()
+        let upper = (unit.convert(fromKmh: settings.upperKmh)).rounded()
+        let lower = (unit.convert(fromKmh: settings.lowerKmh)).rounded()
+        let isAbove = settings.upperEnabled && shown >= upper
+        let isBelow = settings.lowerEnabled && shown <= lower
         let wasAbove = state.wasAboveUpper
         let wasBelow = state.wasBelowLower
         state.wasAboveUpper = isAbove

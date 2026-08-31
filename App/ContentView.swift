@@ -6,6 +6,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var range: HistoryRange = .sixHours
     @State private var showAlerts = false
+    @State private var showBalises = false
 
     enum HistoryRange: Double, CaseIterable, Identifiable {
         case threeHours = 3, sixHours = 6, twelveHours = 12, day = 24
@@ -31,18 +32,19 @@ struct ContentView: View {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 30)
             }
-            .navigationTitle(store.snapshot.baliseName)
             .navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refresh(force: true) }
             .toolbar {
+                ToolbarItem(placement: .principal) { baliseMenu }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Link(destination: AppConfig.pageURL) {
+                    Link(destination: AppConfig.pageURL(balise: store.catalog.selectedID)) {
                         Image(systemName: "safari")
                     }
                 }
             }
         }
         .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
+        .sheet(isPresented: $showBalises) { BalisesView(store: store) }
         .task {
             store.liveActivity.refreshActiveState()
             store.liveActivity.observePushToStartToken(unit: store.unit)
@@ -58,6 +60,35 @@ struct ContentView: View {
             default:
                 store.stopAutoRefresh()
             }
+        }
+    }
+
+
+    private var baliseMenu: some View {
+        Menu {
+            Picker("Balise", selection: Binding(
+                get: { store.catalog.selectedID },
+                set: { id in Task { await store.select(baliseID: id) } }
+            )) {
+                ForEach(store.catalog.balises) { balise in
+                    Text(balise.name).tag(balise.id)
+                }
+            }
+            Divider()
+            Button {
+                showBalises = true
+            } label: {
+                Label("Gérer les balises…", systemImage: "slider.horizontal.3")
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(store.snapshot.baliseName)
+                    .font(.headline)
+                    .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 11, weight: .semibold))
+            }
+            .foregroundStyle(.primary)
         }
     }
 
@@ -268,11 +299,7 @@ struct ContentView: View {
 
     private var footer: some View {
         VStack(spacing: 3) {
-            if let alt = store.snapshot.altitude {
-                Text("Balise FFVL #\(store.snapshot.baliseID) · \(alt) m")
-            } else {
-                Text("Balise FFVL #\(store.snapshot.baliseID)")
-            }
+            Text("Balise FFVL \(store.balise.subtitle)")
             Text("Données balisemeteo.com / FFVL")
         }
         .font(.caption2)

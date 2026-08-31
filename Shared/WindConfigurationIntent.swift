@@ -7,6 +7,9 @@ struct WindConfigurationIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Vent balise"
     static var description = IntentDescription("Choisis l'unité et la fenêtre du graphe.")
 
+    @Parameter(title: "Balise")
+    var balise: BaliseEntity?
+
     @Parameter(title: "Unité", default: .kmh)
     var unit: WindUnitChoice
 
@@ -51,4 +54,44 @@ enum WindWindowChoice: String, AppEnum {
         case .day: return 24
         }
     }
+}
+
+
+/// Balise proposée dans la configuration du widget. La liste vient du serveur —
+/// l'extension widget n'a pas accès aux réglages de l'app (pas d'App Group).
+struct BaliseEntity: AppEntity, Identifiable, Hashable {
+    var id: Int
+    var name: String
+    var altitude: Int?
+
+    static var typeDisplayRepresentation = TypeDisplayRepresentation(name: "Balise")
+    static var defaultQuery = BaliseQuery()
+
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(name)",
+                              subtitle: altitude.map { "#\(id) · \($0) m" } ?? "#\(id)")
+    }
+
+    static let pyla = BaliseEntity(id: Balise.pyla.id, name: Balise.pyla.name, altitude: Balise.pyla.altitude)
+}
+
+struct BaliseQuery: EntityQuery {
+    func entities(for identifiers: [Int]) async throws -> [BaliseEntity] {
+        let known = try? await ServerClient.shared.fetchBalises()
+        return identifiers.map { id in
+            if let match = known?.first(where: { $0.id == id }) {
+                return BaliseEntity(id: id, name: match.name ?? "Balise \(id)", altitude: match.altitude)
+            }
+            return BaliseEntity(id: id, name: "Balise \(id)", altitude: nil)
+        }
+    }
+
+    func suggestedEntities() async throws -> [BaliseEntity] {
+        guard let remote = try? await ServerClient.shared.fetchBalises(), !remote.isEmpty else {
+            return [.pyla]
+        }
+        return remote.map { BaliseEntity(id: $0.id, name: $0.name ?? "Balise \($0.id)", altitude: $0.altitude) }
+    }
+
+    func defaultResult() async -> BaliseEntity? { .pyla }
 }

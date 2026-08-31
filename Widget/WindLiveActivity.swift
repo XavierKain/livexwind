@@ -66,7 +66,7 @@ struct WindLiveActivity: Widget {
                     .foregroundStyle(color)
             }
             .keylineTint(color)
-            .widgetURL(AppConfig.pageURL)
+            .widgetURL(AppConfig.pageURL(balise: context.attributes.baliseID))
         }
     }
 

@@ -16,19 +16,10 @@ struct SharedStore {
     private let alertStateKey = "wind.alerts.state"
     private let serverURLKey = "wind.server.url"
     private let serverAlertsKey = "wind.server.handlesAlerts"
+    private let catalogKey = "wind.balises"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-    }
-
-    func loadSnapshot() -> WindSnapshot? {
-        guard let data = defaults.data(forKey: snapshotKey) else { return nil }
-        return try? JSONDecoder().decode(WindSnapshot.self, from: data)
-    }
-
-    func save(snapshot: WindSnapshot) {
-        guard let data = try? JSONEncoder().encode(snapshot) else { return }
-        defaults.set(data, forKey: snapshotKey)
     }
 
     var unit: WindUnit {
@@ -63,6 +54,33 @@ struct SharedStore {
             guard let data = try? JSONEncoder().encode(newValue) else { return }
             defaults.set(data, forKey: alertStateKey)
         }
+    }
+
+    // MARK: Balises suivies
+
+    var catalog: BaliseCatalog {
+        get {
+            guard let data = defaults.data(forKey: catalogKey),
+                  let value = try? JSONDecoder().decode(BaliseCatalog.self, from: data),
+                  !value.balises.isEmpty else { return .default }
+            return value
+        }
+        nonmutating set {
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
+            defaults.set(data, forKey: catalogKey)
+            reloadWidgets()
+        }
+    }
+
+    /// Un instantané par balise : changer de spot n'efface pas la courbe de l'autre.
+    func loadSnapshot(balise: Int) -> WindSnapshot? {
+        guard let data = defaults.data(forKey: "\(snapshotKey).\(balise)") else { return nil }
+        return try? JSONDecoder().decode(WindSnapshot.self, from: data)
+    }
+
+    func save(snapshot: WindSnapshot) {
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        defaults.set(data, forKey: "\(snapshotKey).\(snapshot.baliseID)")
     }
 
     // MARK: Serveur de push

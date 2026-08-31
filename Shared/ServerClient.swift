@@ -45,6 +45,31 @@ struct ServerClient: Sendable {
         try await post("api/live-activity/stop", body: [:])
     }
 
+    // MARK: Balises suivies
+
+    /// Le serveur relève toutes les balises suivies, mais ne pousse l'activité en
+    /// direct et les alertes que pour celle qui est sélectionnée.
+    func syncBalises(_ catalog: BaliseCatalog) async throws {
+        let payload = catalog.balises.map { ["id": $0.id, "name": $0.name, "altitude": $0.altitude as Any] }
+        try await post("api/balises", body: ["balises": payload, "selected": catalog.selectedID])
+    }
+
+    struct RemoteBalise: Decodable {
+        let id: Int
+        let name: String?
+        let altitude: Int?
+    }
+
+    func fetchBalises() async throws -> [RemoteBalise] {
+        guard let baseURL else { throw ServerError.notConfigured }
+        var request = URLRequest(url: baseURL.appendingPathComponent("api/balises"))
+        request.timeoutInterval = 6
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        let (data, _) = try await URLSession.shared.data(for: request)
+        struct Payload: Decodable { let balises: [RemoteBalise] }
+        return try JSONDecoder().decode(Payload.self, from: data).balises
+    }
+
     // MARK: Seuils
 
     func pushAlertSettings(_ settings: AlertSettings, unit: WindUnit) async throws {

@@ -11,17 +11,19 @@ struct WindEntry: TimelineEntry {
 
 struct WindProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> WindEntry {
-        WindEntry(date: .now, snapshot: .placeholder, unit: .kmh, windowHours: 6)
+        WindEntry(date: .now, snapshot: .placeholder(), unit: .kmh, windowHours: 6)
     }
 
     func snapshot(for configuration: WindConfigurationIntent, in context: Context) async -> WindEntry {
-        let cached = SharedStore.shared.loadSnapshot() ?? .placeholder
+        let id = configuration.balise?.id ?? AppConfig.baliseID
+        let cached = SharedStore.shared.loadSnapshot(balise: id) ?? .placeholder()
         return WindEntry(date: .now, snapshot: cached,
                          unit: configuration.unit.unit, windowHours: configuration.window.hours)
     }
 
     func timeline(for configuration: WindConfigurationIntent, in context: Context) async -> Timeline<WindEntry> {
-        let snapshot = await BaliseClient.shared.loadSnapshot()
+        let id = configuration.balise?.id ?? AppConfig.baliseID
+        let snapshot = await BaliseClient(baliseID: id).loadSnapshot()
         let entry = WindEntry(date: .now, snapshot: snapshot,
                               unit: configuration.unit.unit, windowHours: configuration.window.hours)
 

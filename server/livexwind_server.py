@@ -3,11 +3,16 @@
 LiveXWind — API d'enregistrement + pousseur APNs.
 
 Un seul processus, deux fils :
-  • une API Flask (port 7110) où l'app iOS enregistre ses tokens push et ses seuils ;
-  • une boucle qui suit la balise et, dès qu'un nouveau relevé tombe, pousse
+  • une API Flask (port 7110) où l'app iOS enregistre ses tokens push, ses seuils
+    et la liste des balises qu'elle suit ;
+  • une boucle qui relève ces balises et, dès qu'un nouveau relevé tombe sur la
+    balise sélectionnée, pousse
     - une mise à jour de l'activité en direct (APNs push-type "liveactivity"),
     - un push-to-start si l'activité est morte (iOS la coupe au bout de 8 h),
     - une notification d'alerte si un seuil vient d'être franchi.
+
+Toutes les balises suivies sont relevées, pour que changer de spot dans l'app
+affiche une courbe déjà remplie ; seule la balise sélectionnée déclenche des push.
 
 Le téléphone joint ce serveur via Tailscale (http://100.117.213.59:7110).
 
@@ -41,7 +46,7 @@ from cryptography.hazmat.primitives.asymmetric import ec, utils as asym_utils
 from flask import Flask, jsonify, request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "feed"))
-import scrape  # noqa: E402  (le même scraper que GitHub Actions)
+import scrape  # noqa: E402  (le même scraper que le dépannage manuel)
 
 PORT = 7110
 HOME = Path.home()
@@ -49,12 +54,12 @@ CONFIG_PATH = HOME / "xklip" / "config" / "livexwind.json"
 DATA_DIR = HOME / "xklip" / "data"
 TOKENS_PATH = DATA_DIR / "livexwind_tokens.json"
 STATE_PATH = DATA_DIR / "livexwind_state.json"
-FEED_PATH = DATA_DIR / "livexwind_feed.json"
 
 APNS_HOST = "https://api.push.apple.com"   # production : l'environnement des builds TestFlight
 JWT_TTL = 40 * 60
-BALISE_ID = 64
-POLL_INTERVAL = 30
+DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55}
+POLL_INTERVAL = 30              # cadence de guet sur la balise sélectionnée
+SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
 START_COOLDOWN = 3600
 PAGES_CLONE = DATA_DIR / "livexwind-pages"
@@ -85,6 +90,10 @@ def save_json(path: Path, data):
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1))
     tmp.replace(path)
+
+
+def feed_path(balise_id: int) -> Path:
+    return DATA_DIR / f"livexwind_feed_{balise_id}.json"
 
 
 def config() -> dict | None:
@@ -170,11 +179,12 @@ def update_payload(state: dict, stale_epoch: float) -> dict:
                     "relevance-score": 100}}
 
 
-def start_payload(state: dict, balise_name: str, stale_epoch: float) -> dict:
+def start_payload(state: dict, balise_name: str, balise_id: int, stale_epoch: float) -> dict:
+    # Pas de bloc "alert" : l'activité doit apparaître sans bannière de notification.
     return {"aps": {"timestamp": int(time.time()),
                     "event": "start",
                     "attributes-type": "WindActivityAttributes",
-                    "attributes": {"baliseName": balise_name, "baliseID": BALISE_ID},
+                    "attributes": {"baliseName": balise_name, "baliseID": balise_id},
                     "content-state": state,
                     "stale-date": int(stale_epoch),
                     "relevance-score": 100}}
@@ -216,22 +226,66 @@ def set_prefs(prefs: dict):
         save_json(TOKENS_PATH, data)
 
 
+def tracked_balises() -> tuple[list, int]:
+    """Balises suivies, et identifiant de celle qui déclenche les push."""
+    prefs = tokens().get("prefs", {})
+    balises = prefs.get("balises") or [DEFAULT_BALISE]
+    ids = {b["id"] for b in balises}
+    selected = prefs.get("selected")
+    if selected not in ids:
+        selected = balises[0]["id"]
+    return balises, selected
+
+
 # -------------------------------------------------------------------------- api
 
 @app.route("/api/health")
 def health():
     state = load_json(STATE_PATH, {})
     data = tokens()
+    balises, selected = tracked_balises()
     return jsonify({"ok": True,
                     "apns_configured": bool(config()),
                     "tokens": {k: len(v) for k, v in data.items() if isinstance(v, list)},
+                    "balises": [b["id"] for b in balises],
+                    "selected": selected,
                     "last_reading": state.get("last_reading"),
                     "last_push": state.get("last_push")})
 
 
 @app.route("/api/wind")
 def wind():
-    return jsonify(load_json(FEED_PATH, {"error": "pas encore de relevé"}))
+    _, selected = tracked_balises()
+    try:
+        balise_id = int(request.args.get("balise", selected))
+    except (TypeError, ValueError):
+        balise_id = selected
+    return jsonify(load_json(feed_path(balise_id), {"error": "pas encore de relevé"}))
+
+
+@app.route("/api/balises", methods=["GET", "POST"])
+def balises():
+    if request.method == "GET":
+        tracked, selected = tracked_balises()
+        return jsonify({"balises": tracked, "selected": selected})
+
+    body = request.get_json(silent=True) or {}
+    cleaned = []
+    for b in body.get("balises") or []:
+        try:
+            balise_id = int(b["id"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        cleaned.append({"id": balise_id,
+                        "name": b.get("name") or f"Balise {balise_id}",
+                        "altitude": b.get("altitude")})
+    if not cleaned:
+        return jsonify({"error": "liste vide ou invalide"}), 400
+
+    set_prefs({"balises": cleaned, "selected": body.get("selected") or cleaned[0]["id"]})
+    log.info("balises suivies : %s (sélectionnée %s)",
+             [b["id"] for b in cleaned], body.get("selected"))
+    return jsonify({"ok": True})
 
 
 @app.route("/api/live-activity/register", methods=["POST"])
@@ -279,37 +333,38 @@ def alerts():
 @app.route("/")
 def index():
     return jsonify({"service": "livexwind", "port": PORT,
-                    "endpoints": ["/api/health", "/api/wind",
+                    "endpoints": ["/api/health", "/api/wind?balise=<id>", "/api/balises",
                                   "/api/live-activity/register", "/api/live-activity/stop",
                                   "/api/device/register", "/api/alerts"]})
 
 
 # ----------------------------------------------------------------------- pusher
 
-def refresh_feed() -> dict | None:
-    """Rejoue le scraper partagé et renvoie le flux complet."""
+def refresh_feed(balise_id: int) -> dict | None:
+    """Relève une balise et met son flux à jour."""
+    path = feed_path(balise_id)
     parsed = None
-    for attempt in range(2):
+    for _ in range(2):
         try:
-            parsed = scrape.parse(scrape.fetch(BALISE_ID), BALISE_ID)
+            parsed = scrape.parse(scrape.fetch(balise_id), balise_id)
         except Exception as exc:
-            log.warning("scraping impossible : %s", exc)
+            log.warning("balise %s : scraping impossible (%s)", balise_id, exc)
             return None
         if not parsed["reading"]["stale"]:
             break
-        log.info("page masquée par le site — nouvel essai")
+        log.info("balise %s : page masquée par le site — nouvel essai", balise_id)
         time.sleep(4)
 
     if parsed["reading"]["stale"]:
-        return load_json(FEED_PATH, None)
+        return load_json(path, None)
 
-    old = load_json(FEED_PATH, {})
+    old = load_json(path, {})
     payload = {"generatedAt": datetime.now(timezone.utc).replace(microsecond=0)
                               .isoformat().replace("+00:00", "Z"),
                "balise": parsed["balise"],
                "current": parsed["reading"],
                "history": scrape.merge_history(old.get("history", []), parsed["reading"])}
-    save_json(FEED_PATH, payload)
+    save_json(path, payload)
     return payload
 
 
@@ -329,8 +384,12 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
 
     upper = settings.get("upperKmh", 25)
     lower = settings.get("lowerKmh", 10)
-    is_above = bool(settings.get("upperEnabled")) and value >= upper
-    is_below = bool(settings.get("lowerEnabled")) and value <= lower
+
+    # On compare la valeur telle qu'elle est affichée dans l'app : 24,0 km/h se lit
+    # « 13 nds » et doit franchir un seuil réglé sur 13 nds (24,076 km/h en interne).
+    shown_value = round(value * factor)
+    is_above = bool(settings.get("upperEnabled")) and shown_value >= round(upper * factor)
+    is_below = bool(settings.get("lowerEnabled")) and shown_value <= round(lower * factor)
     was_above, was_below = state.get("was_above", False), state.get("was_below", False)
     state["was_above"], state["was_below"] = is_above, is_below
 
@@ -342,7 +401,7 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
 
     cooldown = settings.get("cooldownMinutes", 45) * 60
     source = "Rafales" if settings.get("useGusts") else "Vent moyen"
-    shown = f"{value * factor:.0f} {symbol}"
+    shown = f"{shown_value} {symbol}"
     direction = f"{reading.get('dirLabel') or '—'} {reading.get('dir') or 0}°"
 
     def ready(key):
@@ -352,17 +411,17 @@ def evaluate_alert(reading: dict, prefs: dict, state: dict):
     if is_above and not was_above and ready("last_upper"):
         state["last_upper"] = time.time()
         return {"title": f"Ça monte 🪁 {shown}",
-                "body": f"{source} au-dessus de {upper * factor:.0f} {symbol} · {direction}"}, state
+                "body": f"{source} au-dessus de {round(upper * factor)} {symbol} · {direction}"}, state
 
     if is_below and not was_below and ready("last_lower"):
         state["last_lower"] = time.time()
         return {"title": f"Ça tombe 🍃 {shown}",
-                "body": f"{source} sous {lower * factor:.0f} {symbol} · {direction}"}, state
+                "body": f"{source} sous {round(lower * factor)} {symbol} · {direction}"}, state
 
     return None, state
 
 
-def push_all(cfg: dict, feed: dict, state: dict) -> dict:
+def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     data = tokens()
     prefs = data.get("prefs", {})
     unit = prefs.get("unit", "kmh")
@@ -370,6 +429,7 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
     trend = [s["avg"] for s in feed.get("history", [])[-18:] if s.get("avg") is not None]
     body_state = content_state(reading, trend, unit)
     stale = iso_to_epoch(reading.get("t")) + 25 * 60
+    name = feed["balise"].get("name") or balise.get("name") or "Balise"
 
     # 1. mise à jour de l'activité en direct
     delivered = 0
@@ -389,7 +449,7 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
     if needs_start and (time.time() - state.get("last_start", 0)) > START_COOLDOWN:
         for token in data.get("start", []):
             code, text = apns_post(cfg, token,
-                                   start_payload(body_state, feed["balise"].get("name", "Balise"), stale),
+                                   start_payload(body_state, name, balise["id"], stale),
                                    "liveactivity", ".push-type.liveactivity")
             log.info("push-to-start %s… → %s", token[:8], code)
             if code == 200:
@@ -402,11 +462,15 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
     elif delivered and not state.get("activity_started_at"):
         state["activity_started_at"] = time.time()
 
-    # 3. alertes de seuil
-    event, state = evaluate_alert(reading, prefs, state)
+    # 3. alertes de seuil — les verrous de franchissement sont propres à la balise
+    latches = state.setdefault("alerts", {}).setdefault(str(balise["id"]), {})
+    event, latches = evaluate_alert(reading, prefs, latches)
+    state["alerts"][str(balise["id"])] = latches
     if event:
         for token in data.get("device", []):
-            code, text = apns_post(cfg, token, alert_payload(event["title"], event["body"]), "alert")
+            code, text = apns_post(cfg, token,
+                                   alert_payload(f"{name} · {event['title']}", event["body"]),
+                                   "alert")
             log.info("alerte %s… → %s (%s)", token[:8], code, event["title"])
             if code in (400, 410):
                 drop_token("device", token)
@@ -418,8 +482,8 @@ def push_all(cfg: dict, feed: dict, state: dict) -> dict:
     return state
 
 
-def publish_to_pages(feed: dict, state: dict) -> dict:
-    """Pousse le flux sur GitHub Pages, pour l'app quand elle est hors Tailscale.
+def publish_to_pages(feeds: dict, state: dict) -> dict:
+    """Publie les flux sur GitHub Pages, pour l'app quand elle est hors Tailscale.
 
     On passe par un clone dédié : le dépôt de travail ne doit pas être touché.
     """
@@ -431,30 +495,45 @@ def publish_to_pages(feed: dict, state: dict) -> dict:
             subprocess.run(["git", "clone", "--depth", "1", PAGES_REMOTE, str(PAGES_CLONE)],
                            check=True, capture_output=True, timeout=120)
 
-        target = PAGES_CLONE / "docs" / "balise-64.json"
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
+        docs = PAGES_CLONE / "docs"
+        docs.mkdir(parents=True, exist_ok=True)
+        for balise_id, feed in feeds.items():
+            (docs / f"balise-{balise_id}.json").write_text(
+                json.dumps(feed, ensure_ascii=False, indent=1) + "\n")
+        (docs / "balises.json").write_text(
+            json.dumps({"balises": [f["balise"] for f in feeds.values()]},
+                       ensure_ascii=False, indent=1) + "\n")
 
         git = ["git", "-C", str(PAGES_CLONE), "-c", "credential.helper=store"]
-        subprocess.run(git + ["add", "docs/balise-64.json"], check=True, capture_output=True, timeout=30)
-        status = subprocess.run(git + ["diff", "--cached", "--quiet"], capture_output=True, timeout=30)
-        if status.returncode == 0:
+        subprocess.run(git + ["add", "docs"], check=True, capture_output=True, timeout=30)
+        if subprocess.run(git + ["diff", "--cached", "--quiet"],
+                          capture_output=True, timeout=30).returncode == 0:
             state["last_pages_push"] = time.time()
             return state
 
         subprocess.run(git + ["-c", "user.name=livexwind-bot",
                               "-c", "user.email=bot@users.noreply.github.com",
-                              "commit", "-m", "flux: relevé balise 64"],
+                              "commit", "-m", "flux: relevés balises"],
                        check=True, capture_output=True, timeout=30)
-        subprocess.run(git + ["pull", "--rebase", "--autostash"], check=True, capture_output=True, timeout=90)
+        subprocess.run(git + ["pull", "--rebase", "--autostash"],
+                       check=True, capture_output=True, timeout=90)
         subprocess.run(git + ["push"], check=True, capture_output=True, timeout=90)
-        log.info("flux publié sur GitHub Pages (%d points)", len(feed.get("history", [])))
+        log.info("flux publiés sur GitHub Pages (%d balise(s))", len(feeds))
         state["last_pages_push"] = time.time()
     except subprocess.CalledProcessError as exc:
         log.warning("publication Pages échouée : %s", (exc.stderr or b"")[:200])
     except Exception as exc:
         log.warning("publication Pages échouée : %s", exc)
     return state
+
+
+def migrate_legacy_feed():
+    """Le flux d'avant le multi-balises n'était pas suffixé par l'identifiant."""
+    legacy = DATA_DIR / "livexwind_feed.json"
+    target = feed_path(DEFAULT_BALISE["id"])
+    if legacy.exists() and not target.exists():
+        legacy.rename(target)
+        log.info("ancien flux migré vers %s", target.name)
 
 
 def pusher_loop():
@@ -466,32 +545,54 @@ def pusher_loop():
             time.sleep(300)
             continue
 
-        feed = refresh_feed()
-        if not feed:
-            time.sleep(120)
-            continue
-
         state = load_json(STATE_PATH, {})
-        current_t = feed["current"].get("t")
+        balises, selected = tracked_balises()
+        refreshed_at = state.setdefault("refreshed_at", {})
+        feeds = {}
+        sleep_for = POLL_INTERVAL
 
-        if current_t and current_t != state.get("pushed_reading"):
-            log.info("nouveau relevé %s — %s km/h", current_t, feed["current"].get("avg"))
-            try:
-                state = push_all(cfg, feed, state)
-            except Exception as exc:
-                log.exception("échec du push : %s", exc)
-            state["last_reading"] = current_t
-            state = publish_to_pages(feed, state)
-            save_json(STATE_PATH, state)
-            # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
-            wait = iso_to_epoch(current_t) + 600 + 20 - time.time()
-            time.sleep(max(60, min(wait, 700)))
-        else:
-            time.sleep(POLL_INTERVAL)
+        for balise in balises:
+            balise_id = balise["id"]
+            is_selected = balise_id == selected
+
+            # Les balises secondaires ne servent qu'à garnir la courbe quand on
+            # change de spot : inutile de les guetter à la seconde près.
+            if not is_selected and time.time() - refreshed_at.get(str(balise_id), 0) < SECONDARY_INTERVAL:
+                cached = load_json(feed_path(balise_id), None)
+                if cached:
+                    feeds[balise_id] = cached
+                continue
+
+            feed = refresh_feed(balise_id)
+            refreshed_at[str(balise_id)] = time.time()
+            if not feed:
+                continue
+            feeds[balise_id] = feed
+            if not is_selected:
+                continue
+
+            current_t = feed["current"].get("t")
+            if current_t and current_t != state.get("pushed_reading"):
+                log.info("balise %s : nouveau relevé %s — %s km/h",
+                         balise_id, current_t, feed["current"].get("avg"))
+                try:
+                    state = push_all(cfg, feed, balise, state)
+                except Exception as exc:
+                    log.exception("échec du push : %s", exc)
+                state["last_reading"] = current_t
+                # le relevé suivant tombe ~10 min plus tard : on dort jusqu'à 20 s avant
+                sleep_for = max(60, min(iso_to_epoch(current_t) + 600 + 20 - time.time(), 700))
+
+        if feeds:
+            state = publish_to_pages(feeds, state)
+        state["refreshed_at"] = refreshed_at
+        save_json(STATE_PATH, state)
+        time.sleep(sleep_for)
 
 
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    migrate_legacy_feed()
     threading.Thread(target=pusher_loop, daemon=True).start()
     log.info("API LiveXWind sur le port %d", PORT)
     app.run(host="0.0.0.0", port=PORT, debug=False, use_reloader=False)

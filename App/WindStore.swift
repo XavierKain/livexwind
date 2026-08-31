@@ -37,6 +37,7 @@ final class WindStore: ObservableObject {
     }
     @Published var serverReachable: Bool?
     @Published var serverDetail: String?
+    @Published private(set) var catalog: BaliseCatalog
     @Published var notificationsAuthorized = false
     @Published var lastAlert: AlertEvent?
 
@@ -45,8 +46,10 @@ final class WindStore: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        let cached = SharedStore.shared.loadSnapshot()
-        snapshot = cached ?? .placeholder
+        let stored = SharedStore.shared.catalog
+        catalog = stored
+        let cached = SharedStore.shared.loadSnapshot(balise: stored.selectedID)
+        snapshot = cached ?? .placeholder(balise: stored.selected)
         unit = SharedStore.shared.unit
         alerts = SharedStore.shared.alertSettings
         serverURL = SharedStore.shared.serverURL
@@ -70,6 +73,47 @@ final class WindStore: ObservableObject {
         }
     }
 
+    // MARK: Balises
+
+    var balise: Balise { catalog.selected }
+
+    func select(baliseID: Int) async {
+        guard catalog.selectedID != baliseID else { return }
+        catalog.selectedID = baliseID
+        persistCatalog()
+        // On repart de la courbe en cache le temps du chargement : pas d'écran vide.
+        snapshot = SharedStore.shared.loadSnapshot(balise: baliseID) ?? .placeholder(balise: catalog.selected)
+        await refresh(force: true)
+    }
+
+    /// Ajoute une balise depuis une URL balisemeteo.com collée, ou un simple numéro.
+    @discardableResult
+    func addBalise(from input: String) async throws -> Balise {
+        guard let id = Balise.parseID(from: input) else { throw WindError.unknownBalise }
+        let balise = try await BaliseClient(baliseID: id).fetchBalise()
+        catalog.add(balise)
+        persistCatalog()
+        snapshot = SharedStore.shared.loadSnapshot(balise: id) ?? .placeholder(balise: balise)
+        await refresh(force: true)
+        return balise
+    }
+
+    func removeBalise(id: Int) async {
+        let wasSelected = catalog.selectedID == id
+        catalog.remove(id: id)
+        persistCatalog()
+        if wasSelected {
+            snapshot = SharedStore.shared.loadSnapshot(balise: catalog.selectedID)
+                ?? .placeholder(balise: catalog.selected)
+            await refresh(force: true)
+        }
+    }
+
+    private func persistCatalog() {
+        SharedStore.shared.catalog = catalog
+        Task { try? await ServerClient.shared.syncBalises(catalog) }
+    }
+
     func checkServer() async {
         do {
             let health = try await ServerClient.shared.health()
@@ -79,6 +123,7 @@ final class WindStore: ObservableObject {
                 ? "APNs prêt · \(activity) activité(s) suivie(s)"
                 : "Serveur joignable mais clé APNs absente"
             await syncAlertsWithServer()
+            try? await ServerClient.shared.syncBalises(catalog)
         } catch {
             serverReachable = false
             serverDetail = "Injoignable — hors Tailscale ? Les mises à jour hors app passeront par iOS."
@@ -106,7 +151,7 @@ final class WindStore: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        let fresh = await BaliseClient.shared.loadSnapshot()
+        let fresh = await BaliseClient(baliseID: catalog.selectedID).loadSnapshot()
         let previous = snapshot
         snapshot = fresh
         lastError = fresh.current.averageKmh == nil ? "Relevé indisponible" : nil

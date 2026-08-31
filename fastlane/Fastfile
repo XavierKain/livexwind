@@ -41,26 +41,8 @@ end
 def ensure_app_record_exists
   return if Spaceship::ConnectAPI::App.find(APP_ID)
 
-  # Apple documente /v1/apps en lecture seule, mais on tente : si ça passe un jour,
-  # le pipeline devient 100 % autonome. Sinon on retombe sur la création manuelle.
-  begin
-    bundle = Spaceship::ConnectAPI::BundleId.all.find { |b| b.identifier == APP_ID }
-    Spaceship::ConnectAPI.client.tunes_request_client.post(
-      "apps",
-      {
-        data: {
-          type: "apps",
-          attributes: { bundleId: APP_ID, name: APP_NAME, primaryLocale: "fr-FR", sku: "livexwind" },
-          relationships: { bundleId: { data: { type: "bundleIds", id: bundle&.id } } }
-        }
-      }
-    )
-    UI.success("Fiche App Store Connect créée automatiquement.")
-    return if Spaceship::ConnectAPI::App.find(APP_ID)
-  rescue StandardError => e
-    UI.important("Création automatique de la fiche impossible (#{e.message}).")
-  end
-
+  # L'API App Store Connect n'expose pas POST /v1/apps (vérifié : "The path provided
+  # does not match a defined resource type") — la fiche se crée à la main, une fois.
   UI.user_error!(<<~MSG)
     L'app n'existe pas encore dans App Store Connect (l'API Apple ne permet pas de la créer).
     À faire une seule fois :

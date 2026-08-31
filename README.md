@@ -50,4 +50,8 @@ Le projet Xcode est généré par [XcodeGen](https://github.com/yonaskolb/XcodeG
 
 Secrets requis : `APPLE_TEAM_ID`, `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `MATCH_PASSWORD`.
 
+Les bundle IDs sont créés automatiquement par la lane. Seule étape manuelle, une seule fois :
+créer la fiche de l'app dans App Store Connect (Apps > + > Nouvelle app, iOS, nom *LiveXWind*,
+bundle ID `com.xavierkain.livexwind`, SKU `livexwind`) — l'API Apple n'expose pas `POST /v1/apps`.
+
 Données : balisemeteo.com / FFVL.

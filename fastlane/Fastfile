@@ -92,49 +92,66 @@ platform :ios do
   lane :diag do
     connect_token
     app = Spaceship::ConnectAPI::App.find(APP_ID)
-    client = Spaceship::ConnectAPI.client.tunes_request_client
 
     mask = lambda do |email|
-      return "?" if email.nil?
+      return "?" if email.nil? || email.empty?
       local, _, domain = email.partition("@")
       "#{local[0, 3]}***@#{domain}"
     end
 
-    UI.important("— Groupes et testeurs —")
-    resp = client.get("betaGroups", { "filter[app]" => app.id, "include" => "betaTesters", "limit" => 20 })
-    groups = resp.body["data"] || []
-    included = resp.body["included"] || []
+    UI.important("— API disponible —")
+    UI.message("client: #{Spaceship::ConnectAPI.client.methods.grep(/beta_tester|user/).sort.join(', ')}")
+
+    groups = app.get_beta_groups
     groups.each do |g|
-      a = g["attributes"]
-      UI.message("Groupe « #{a['name']} » — interne #{a['isInternalGroup']} — tous builds #{a['hasAccessToAllBuilds']}")
-      ids = ((g.dig("relationships", "betaTesters", "data")) || []).map { |d| d["id"] }
-      UI.message("  testeurs liés : #{ids.size}")
-    end
-    included.select { |i| i["type"] == "betaTesters" }.each do |t|
-      a = t["attributes"]
-      UI.message("  testeur #{mask.call(a['email'])} — état #{a['state']} — invité #{a['inviteType']}")
+      UI.important("Groupe « #{g.name} » — interne #{g.is_internal_group} — tous builds #{g.has_access_to_all_builds}")
+      UI.message("  méthodes: #{(g.methods - Object.instance_methods).grep(/tester|build/).sort.join(', ')}")
+
+      testers = nil
+      [
+        -> { g.get_beta_testers },
+        -> { Spaceship::ConnectAPI.client.get_beta_testers(filter: { betaGroups: g.id }).to_models },
+        -> { Spaceship::ConnectAPI.client.get_beta_testers(filter: { apps: app.id }).to_models }
+      ].each do |attempt|
+        begin
+          testers = attempt.call
+          break if testers
+        rescue StandardError => e
+          UI.message("  (essai: #{e.class})")
+        end
+      end
+
+      if testers.nil?
+        UI.message("  testeurs : illisibles")
+      elsif testers.empty?
+        UI.message("  testeurs : AUCUN rattaché à ce groupe")
+      else
+        testers.each do |t|
+          UI.message("  testeur #{mask.call(t.email)} — état #{t.state rescue '?'} — invite #{t.invite_type rescue '?'}")
+        end
+      end
     end
 
     UI.important("— Utilisateurs de l'équipe —")
-    users = client.get("users", { "limit" => 50 }).body["data"] || []
-    users.each do |u|
-      a = u["attributes"]
-      UI.message("#{mask.call(a['username'])} — rôles #{Array(a['roles']).join('/')} — " \
-                 "toutes apps #{a['allAppsVisible']} — provisioning #{a['provisioningAllowed']}")
+    begin
+      Spaceship::ConnectAPI::User.all.each do |u|
+        UI.message("#{mask.call(u.username)} — rôles #{Array(u.roles).join('/')} — toutes apps #{u.all_apps_visible}")
+      end
+    rescue StandardError => e
+      UI.message("utilisateurs illisibles (#{e.class}: #{e.message})")
     end
 
     UI.important("— Invitations en attente —")
-    invites = client.get("userInvitations", { "limit" => 50 }).body["data"] || []
-    if invites.empty?
-      UI.message("aucune invitation en attente")
-    else
-      invites.each do |i|
-        a = i["attributes"]
-        UI.message("#{mask.call(a['email'])} — rôles #{Array(a['roles']).join('/')} — expire #{a['expirationDate']}")
+    begin
+      invites = Spaceship::ConnectAPI::UserInvitation.all
+      if invites.empty?
+        UI.message("aucune")
+      else
+        invites.each { |i| UI.message("#{mask.call(i.email)} — rôles #{Array(i.roles).join('/')}") }
       end
+    rescue StandardError => e
+      UI.message("invitations illisibles (#{e.class}: #{e.message})")
     end
-  rescue StandardError => e
-    UI.error("diag : #{e.class} — #{e.message}")
   end
 
   desc "Build signé + upload TestFlight"

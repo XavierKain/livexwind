@@ -88,6 +88,55 @@ platform :ios do
     end
   end
 
+  desc "Diagnostic testeurs internes (emails masqués : logs Actions publics)"
+  lane :diag do
+    connect_token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    client = Spaceship::ConnectAPI.client.tunes_request_client
+
+    mask = lambda do |email|
+      return "?" if email.nil?
+      local, _, domain = email.partition("@")
+      "#{local[0, 3]}***@#{domain}"
+    end
+
+    UI.important("— Groupes et testeurs —")
+    resp = client.get("betaGroups", { "filter[app]" => app.id, "include" => "betaTesters", "limit" => 20 })
+    groups = resp.body["data"] || []
+    included = resp.body["included"] || []
+    groups.each do |g|
+      a = g["attributes"]
+      UI.message("Groupe « #{a['name']} » — interne #{a['isInternalGroup']} — tous builds #{a['hasAccessToAllBuilds']}")
+      ids = ((g.dig("relationships", "betaTesters", "data")) || []).map { |d| d["id"] }
+      UI.message("  testeurs liés : #{ids.size}")
+    end
+    included.select { |i| i["type"] == "betaTesters" }.each do |t|
+      a = t["attributes"]
+      UI.message("  testeur #{mask.call(a['email'])} — état #{a['state']} — invité #{a['inviteType']}")
+    end
+
+    UI.important("— Utilisateurs de l'équipe —")
+    users = client.get("users", { "limit" => 50 }).body["data"] || []
+    users.each do |u|
+      a = u["attributes"]
+      UI.message("#{mask.call(a['username'])} — rôles #{Array(a['roles']).join('/')} — " \
+                 "toutes apps #{a['allAppsVisible']} — provisioning #{a['provisioningAllowed']}")
+    end
+
+    UI.important("— Invitations en attente —")
+    invites = client.get("userInvitations", { "limit" => 50 }).body["data"] || []
+    if invites.empty?
+      UI.message("aucune invitation en attente")
+    else
+      invites.each do |i|
+        a = i["attributes"]
+        UI.message("#{mask.call(a['email'])} — rôles #{Array(a['roles']).join('/')} — expire #{a['expirationDate']}")
+      end
+    end
+  rescue StandardError => e
+    UI.error("diag : #{e.class} — #{e.message}")
+  end
+
   desc "Build signé + upload TestFlight"
   lane :beta do
     setup_ci

@@ -2,6 +2,12 @@ name: TestFlight status
 
 on:
   workflow_dispatch:
+    inputs:
+      lane:
+        description: "Lane fastlane"
+        default: status
+        type: choice
+        options: [status, diag]
 
 jobs:
   status:
@@ -14,7 +20,7 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
       - name: État TestFlight
-        run: bundle exec fastlane status
+        run: bundle exec fastlane ${{ inputs.lane }}
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}

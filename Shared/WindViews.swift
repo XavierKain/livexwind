@@ -93,6 +93,7 @@ struct WindChart: View {
     var interactive: Bool = false
 
     @State private var selected: WindReading?
+    @State private var dismissTask: Task<Void, Never>?
 
     private func value(_ kmh: Double?) -> Double? {
         kmh.map { unit.convert(fromKmh: $0) }
@@ -172,13 +173,28 @@ struct WindChart: View {
                     // Reconnaisseur UIKit : il ne démarre que sur un geste
                     // horizontal, donc le défilement vertical de la page passe.
                     HorizontalPanArea { point in
+                        dismissTask?.cancel()
+                        dismissTask = nil
                         guard let plot = proxy.plotFrame else { return }
                         let x = point.x - geo[plot].origin.x
                         guard let date: Date = proxy.value(atX: x) else { return }
                         selected = nearest(to: date)
+                    } onEnd: {
+                        scheduleDismiss()
                     }
                 }
             }
+        }
+    }
+
+    /// La bulle recouvre les réglages au-dessus du graphe : on la laisse le
+    /// temps de lire la valeur, puis elle s'efface d'elle-même.
+    private func scheduleDismiss() {
+        dismissTask?.cancel()
+        dismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.3)) { selected = nil }
         }
     }
 

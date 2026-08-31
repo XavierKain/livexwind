@@ -7,7 +7,7 @@ on:
         description: "Lane fastlane"
         default: status
         type: choice
-        options: [status, diag]
+        options: [status, diag, reinvite]
 
 jobs:
   status:

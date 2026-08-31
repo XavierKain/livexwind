@@ -154,6 +154,49 @@ platform :ios do
     end
   end
 
+  desc "Retire puis remet le testeur interne dans le groupe : force un nouvel email d'invitation"
+  lane :reinvite do
+    connect_token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    group = app.get_beta_groups.find(&:is_internal_group)
+    UI.user_error!("Aucun groupe interne") unless group
+
+    testers = Spaceship::ConnectAPI.client.get_beta_testers(filter: { apps: app.id }).to_models
+    UI.user_error!("Aucun testeur sur l'app") if testers.empty?
+
+    testers.each do |t|
+      masked = "#{t.email.to_s.partition('@').first[0, 3]}***@#{t.email.to_s.partition('@').last}"
+
+      begin
+        Spaceship::ConnectAPI.client.delete_beta_tester_from_beta_groups(
+          beta_tester_id: t.id, beta_group_ids: [group.id]
+        )
+        UI.message("#{masked} retiré du groupe")
+      rescue StandardError => e
+        UI.important("retrait impossible (#{e.class}: #{e.message})")
+      end
+
+      sleep(3)
+
+      added = false
+      [
+        -> { group.add_beta_testers(beta_testers: [t]) },
+        -> { Spaceship::ConnectAPI.client.add_beta_tester_to_group(beta_group_id: group.id, beta_tester_id: t.id) }
+      ].each do |attempt|
+        begin
+          attempt.call
+          added = true
+          break
+        rescue StandardError => e
+          UI.message("(essai d'ajout : #{e.class}: #{e.message})")
+        end
+      end
+
+      UI.success("#{masked} remis dans « #{group.name} » — un nouvel email part maintenant") if added
+      UI.error("#{masked} n'a pas pu être remis dans le groupe") unless added
+    end
+  end
+
   desc "Build signé + upload TestFlight"
   lane :beta do
     setup_ci

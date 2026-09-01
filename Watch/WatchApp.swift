@@ -73,12 +73,14 @@ struct WatchWindView: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
 
-                Picker("Unité", selection: $store.unit) {
-                    Text("km/h").tag(WindUnit.kmh)
-                    Text("nds").tag(WindUnit.knots)
+                // watchOS n'a pas de picker segmenté : un simple bouton bascule.
+                Button {
+                    store.unit = store.unit.next
+                } label: {
+                    Text(store.unit == .kmh ? "→ nœuds" : "→ km/h")
+                        .font(.caption2)
                 }
-                .pickerStyle(.segmented)
-                .frame(height: 32)
+                .buttonStyle(.bordered)
             }
             .padding(.horizontal, 4)
         }

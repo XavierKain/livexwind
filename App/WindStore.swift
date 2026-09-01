@@ -63,6 +63,15 @@ final class WindStore: ObservableObject {
         liveActivity.objectWillChange
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
+
+        // L'Apple Watch ne peut pas écrire côté serveur : elle nous demande le
+        // changement de spot, et c'est nous qui l'appliquons et le propageons.
+        NotificationCenter.default.publisher(for: WatchLink.selectionRequested)
+            .compactMap { $0.userInfo?["id"] as? Int }
+            .sink { [weak self] id in
+                Task { await self?.select(baliseID: id) }
+            }
+            .store(in: &cancellables)
     }
 
     /// Le serveur garde les seuils de son côté pour pouvoir notifier app fermée.

@@ -678,6 +678,19 @@ def write_feed_files(docs: Path, feeds: dict):
         json.dumps({"balises": [f["balise"] for f in feeds.values()]},
                    ensure_ascii=False, indent=1) + "\n")
 
+    # Vue d'ensemble en un seul fichier : l'Apple Watch affiche la liste des
+    # spots sans avoir à télécharger un flux complet par balise.
+    (docs / "overview.json").write_text(json.dumps({
+        "spots": [{
+            "key": key,
+            "id": feed["balise"].get("id"),
+            "name": feed["balise"].get("name"),
+            "provider": key.split("-", 1)[0],
+            "current": feed.get("current"),
+            "period": feed.get("period"),
+        } for key, feed in feeds.items()]
+    }, ensure_ascii=False, indent=1) + "\n")
+
     # Pointeur vers la balise affichée : c'est ainsi que l'Apple Watch sait quel
     # spot montrer, sans avoir à dialoguer avec l'iPhone.
     balises, selected = tracked_balises()

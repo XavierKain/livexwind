@@ -88,6 +88,7 @@ targets:
     deploymentTarget: "10.0"
     sources:
       - path: Watch/WatchApp.swift
+      - path: Watch/WatchSpotsView.swift
       - path: Watch/WatchFeed.swift
       - path: Watch/Assets.xcassets
       - Shared

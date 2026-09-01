@@ -5,7 +5,9 @@ import WidgetKit
 struct LiveXWindWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            WatchWindView()
+            NavigationStack {
+                WatchWindView()
+            }
         }
     }
 }
@@ -16,6 +18,10 @@ final class WatchWindStore: ObservableObject {
     @Published private(set) var isLoading = false
     /// Suit l'iPhone : l'unité se règle là-bas, la montre s'aligne.
     @Published private(set) var unit: WindUnit = SharedStore.shared.unit
+
+    init() {
+        WatchLink.shared.activate()
+    }
 
     func refresh() async {
         isLoading = true
@@ -74,9 +80,12 @@ struct WatchWindView: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
 
-                Text("unité réglée sur l'iPhone")
-                    .font(.system(size: 9))
-                    .foregroundStyle(.tertiary)
+                NavigationLink {
+                    WatchSpotsView(store: store)
+                } label: {
+                    Label("Changer de spot", systemImage: "list.bullet")
+                        .font(.caption2)
+                }
             }
             .padding(.horizontal, 4)
         }

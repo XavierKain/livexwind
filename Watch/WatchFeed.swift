@@ -27,6 +27,28 @@ enum WatchFeed {
         var unit: WindUnit
     }
 
+    /// Une ligne de la liste des spots, telle que publiée par le serveur.
+    struct Spot: Decodable {
+        struct Current: Decodable {
+            let avg: Double?
+            let gust: Double?
+            let dir: Int?
+        }
+        let key: String
+        let id: Int
+        let name: String
+        let current: Current?
+    }
+
+    private struct Overview: Decodable { let spots: [Spot] }
+
+    /// Tous les spots suivis, en une seule requête.
+    static func spots() async -> [Spot] {
+        guard let data = try? await get(AppConfig.publicMirror.appendingPathComponent("overview.json")),
+              let overview = try? JSONDecoder().decode(Overview.self, from: data) else { return [] }
+        return overview.spots
+    }
+
     private static func get(_ url: URL, timeout: TimeInterval = 12) async throws -> Data {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData

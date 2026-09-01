@@ -8,6 +8,7 @@ final class PushDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCen
                      didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         application.registerForRemoteNotifications()
+        WatchLink.shared.activate()
         return true
     }
 

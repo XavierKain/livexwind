@@ -698,8 +698,32 @@ def publish_public(feeds: dict):
     """Écrit les flux dans la racine nginx — immédiat, sans commit."""
     try:
         write_feed_files(PUBLIC_DIR, feeds)
+        publish_catalogs()
     except OSError as exc:
         log.warning("miroir public indisponible : %s", exc)
+
+
+def publish_catalogs():
+    """Publie les catalogues de stations pour que la recherche marche sans Tailscale.
+
+    L'app les télécharge une fois et cherche en local : c'était la dernière
+    fonction qui exigeait d'être sur le réseau privé.
+    """
+    catalogs = {
+        "wg": [{"c": str(st["id"]), "n": st["name"], "a": st.get("lat"),
+                "o": st.get("lon"), "e": st.get("altitude")}
+               for st in windguru.load_index().get("stations", {}).values()],
+        "mc": [{"c": st["code"], "n": st["name"], "a": None, "o": None,
+                "e": st.get("altitude")} for st in meteocat.stations()],
+    }
+    for provider, stations in catalogs.items():
+        if not stations:
+            continue
+        target = PUBLIC_DIR / f"stations-{provider}.json"
+        payload = json.dumps({"stations": stations}, ensure_ascii=False, separators=(",", ":"))
+        if not target.exists() or target.stat().st_size != len(payload.encode()):
+            target.write_text(payload)
+            log.info("catalogue %s publié (%d stations)", provider, len(stations))
 
 
 def write_feed_files(docs: Path, feeds: dict):

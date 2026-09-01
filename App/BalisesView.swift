@@ -315,16 +315,20 @@ struct BalisesView: View {
 
     private func searchNear(lat: Double, lon: Double) async {
         await perform(query: "", near: (lat, lon),
-                      emptyMessage: "Aucune station indexée dans un rayon de 60 km pour l'instant")
+                      emptyMessage: "Aucune station connue dans un rayon de 60 km")
     }
 
+    /// Cherche d'abord chez le serveur (index à jour, réponse immédiate), puis
+    /// dans le catalogue public si le téléphone n'est pas sur Tailscale — c'est
+    /// le cas dès qu'on est en déplacement, précisément quand on cherche un spot.
     private func perform(query: String, near: (lat: Double, lon: Double)?, emptyMessage: String) async {
-        isLoadingSensors = true
+        isLoading = true
         errorMessage = nil
         indexNote = nil
-        do {
-            let found = try await ServerClient.shared.searchSensors(
-                provider: .windguru, query: query, near: near)
+        defer { isLoading = false }
+
+        if let found = try? await ServerClient.shared.searchSensors(
+            provider: searchProvider, query: query, near: near) {
             results = found.sensors.map {
                 Balise(code: $0.sourceCode, name: $0.name, altitude: $0.altitude,
                        latitude: $0.lat, longitude: $0.lon, provider: searchProvider)
@@ -332,14 +336,28 @@ struct BalisesView: View {
             distances = Dictionary(uniqueKeysWithValues: found.sensors.compactMap { hit in
                 hit.km.map { (Balise.handle(for: hit.sourceCode), $0) }
             })
-            if let index = found.index, index.scanned < index.total {
-                indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés. En attendant, coller un lien windguru fonctionne déjà."
+            if searchProvider == .windguru, let index = found.index, index.scanned < index.total {
+                indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés."
             }
             if results.isEmpty { errorMessage = emptyMessage }
-        } catch {
-            errorMessage = "Recherche indisponible — le serveur doit être joignable (Tailscale)."
+            return
         }
-        isLoadingSensors = false
+
+        // Repli hors réseau privé : le catalogue est téléchargé une fois, la
+        // recherche se fait ensuite sur le téléphone.
+        if let near {
+            let hits = await StationCatalog.nearby(latitude: near.lat, longitude: near.lon,
+                                                   provider: searchProvider)
+            results = hits.map(\.balise)
+            distances = Dictionary(uniqueKeysWithValues: hits.map { (Balise.handle(for: $0.balise.code), $0.km) })
+        } else {
+            results = await StationCatalog.search(query, provider: searchProvider)
+            distances = [:]
+        }
+
+        if results.isEmpty {
+            errorMessage = emptyMessage
+        }
     }
 
     private func loadSensors() async {

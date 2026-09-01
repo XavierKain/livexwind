@@ -151,7 +151,7 @@ final class WindStore: ObservableObject {
         guard let parsed = Balise.parseLink(input, fallback: fallback) else {
             throw WindError.unknownBalise
         }
-        let candidate = Balise(id: parsed.id, name: "Balise \(parsed.id)", provider: parsed.provider)
+        let candidate = Balise(code: parsed.code, name: "Balise \(parsed.code)", provider: parsed.provider)
         return await install(try await BaliseClient(balise: candidate).fetchBalise())
     }
 

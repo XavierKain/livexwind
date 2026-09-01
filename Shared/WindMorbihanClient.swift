@@ -32,7 +32,7 @@ struct WindMorbihanClient: Sendable {
                 guard let id = Int(key) else { return nil }
                 return Balise(id: id, name: sensor.label ?? "Capteur \(id)",
                               altitude: nil, latitude: sensor.lat, longitude: sensor.lng,
-                              provider: .windMorbihan)
+                              provider: .windMorbihan, code: String(id))
             }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }

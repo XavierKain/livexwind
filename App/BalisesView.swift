@@ -22,6 +22,9 @@ struct BalisesView: View {
     @State private var indexNote: String?
     @StateObject private var location = LocationProvider()
 
+    /// La recherche s'exécute chez la source choisie dans le sélecteur.
+    private var searchProvider: BaliseProvider { source }
+
     private var filteredSensors: [Balise] {
         let query = search.trimmingCharacters(in: .whitespaces)
         guard !query.isEmpty else { return sensors }
@@ -35,7 +38,7 @@ struct BalisesView: View {
                 sourcePicker
                 switch source {
                 case .ffvl: ajoutParLien
-                case .windguru: ajoutWindguru
+                case .windguru, .meteoCat: ajoutParRecherche
                 case .windMorbihan: ajoutWindMorbihan
                 }
             }
@@ -131,17 +134,19 @@ struct BalisesView: View {
         }
     }
 
-    private var ajoutWindguru: some View {
+    private var ajoutParRecherche: some View {
         Section {
-            TextField("Rechercher (Tarifa, Leucate…) ou coller un lien", text: $search)
+            TextField(source == .meteoCat
+                      ? "Rechercher (Montsec, Àger…) ou coller un lien"
+                      : "Rechercher (Tarifa, Leucate…) ou coller un lien", text: $search)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .onSubmit { runSearch() }
 
-            if search.contains("windguru.cz") {
+            if search.contains("windguru.cz") || search.contains("meteo.cat") {
                 Button {
-                    addLink(source: .windguru, value: search)
+                    addLink(source: searchProvider, value: search)
                 } label: {
                     Label("Ajouter cette station", systemImage: "plus.circle.fill")
                 }
@@ -151,6 +156,7 @@ struct BalisesView: View {
                     .disabled(search.trimmingCharacters(in: .whitespaces).count < 2 || isLoadingSensors)
             }
 
+            if source == .windguru {
             HStack(spacing: 14) {
                 Button {
                     Task { await searchNearMe() }
@@ -168,6 +174,7 @@ struct BalisesView: View {
             }
             .font(.caption)
             .buttonStyle(.borderless)
+            }
 
             if isLoadingSensors {
                 HStack {
@@ -212,7 +219,9 @@ struct BalisesView: View {
             }
             statusLines
         } footer: {
-            Text("Windguru couvre le monde entier — Tarifa / Campo de Futbol, Leucate, Almanarre… Tu peux chercher par nom, ou coller directement une adresse windguru.cz/station/….")
+            Text(source == .meteoCat
+                 ? "Le réseau XEMA couvre la Catalogne — Montsec d'Ares pour Àger, et 188 autres stations. Cherche par nom ou par code, ou colle une adresse meteo.cat/observacions/xema/dades?codi=…."
+                 : "Windguru couvre le monde entier — Tarifa / Campo de Futbol, Leucate, Almanarre… Tu peux chercher par nom, ou coller directement une adresse windguru.cz/station/….")
         }
     }
 
@@ -317,11 +326,11 @@ struct BalisesView: View {
             let found = try await ServerClient.shared.searchSensors(
                 provider: .windguru, query: query, near: near)
             results = found.sensors.map {
-                Balise(id: $0.id, name: $0.name, altitude: $0.altitude,
-                       latitude: $0.lat, longitude: $0.lon, provider: .windguru)
+                Balise(code: $0.sourceCode, name: $0.name, altitude: $0.altitude,
+                       latitude: $0.lat, longitude: $0.lon, provider: searchProvider)
             }
             distances = Dictionary(uniqueKeysWithValues: found.sensors.compactMap { hit in
-                hit.km.map { (hit.id, $0) }
+                hit.km.map { (Balise.handle(for: hit.sourceCode), $0) }
             })
             if let index = found.index, index.scanned < index.total {
                 indexNote = "Catalogue en cours de constitution : \(index.indexed) stations indexées sur \(index.scanned) identifiants balayés. En attendant, coller un lien windguru fonctionne déjà."

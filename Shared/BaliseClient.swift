@@ -9,6 +9,8 @@ import Foundation
 struct BaliseClient: Sendable {
     let balise: Balise
     var baliseID: Int { balise.id }
+    /// Identifiant chez la source — numérique sauf pour meteo.cat.
+    private var sourceID: Int { Int(balise.code) ?? balise.id }
 
     init(balise: Balise) {
         self.balise = balise
@@ -41,7 +43,7 @@ struct BaliseClient: Sendable {
         defer { session.finishTasksAndInvalidate() }
 
         _ = try? await session.data(from: URL(string: "https://www.balisemeteo.com/index.php")!)
-        let (data, _) = try await session.data(from: AppConfig.pageURL(balise: baliseID))
+        let (data, _) = try await session.data(from: AppConfig.pageURL(balise: sourceID))
         guard let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) else {
             throw WindError.decoding
         }
@@ -52,9 +54,11 @@ struct BaliseClient: Sendable {
     func fetchCurrent() async throws -> WindReading {
         switch balise.provider {
         case .windMorbihan:
-            return try await WindMorbihanClient.shared.latest(id: baliseID)
+            return try await WindMorbihanClient.shared.latest(id: sourceID)
         case .windguru:
-            return try await WindguruClient.shared.latest(id: baliseID)
+            return try await WindguruClient.shared.latest(id: sourceID)
+        case .meteoCat:
+            return try await MeteoCatClient.shared.latest(code: balise.code)
         case .ffvl:
             guard let reading = BaliseParser.parse(html: try await fetchPage()) else {
                 throw WindError.masked
@@ -70,10 +74,12 @@ struct BaliseClient: Sendable {
         case .windMorbihan:
             return balise
         case .windguru:
-            return try await WindguruClient.shared.station(id: baliseID)
+            return try await WindguruClient.shared.station(id: sourceID)
+        case .meteoCat:
+            return try await MeteoCatClient.shared.station(code: balise.code)
         case .ffvl:
             let html = try await fetchPage()
-            guard let found = BaliseParser.parseBalise(html: html, id: baliseID) else {
+            guard let found = BaliseParser.parseBalise(html: html, id: sourceID) else {
                 throw WindError.unknownBalise
             }
             return found
@@ -87,7 +93,7 @@ struct BaliseClient: Sendable {
         guard let base = ServerClient.shared.baseURL else { throw ServerError.notConfigured }
         var components = URLComponents(url: base.appendingPathComponent("api/wind"),
                                        resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "balise", value: String(baliseID)),
+        components?.queryItems = [URLQueryItem(name: "balise", value: balise.code),
                                   URLQueryItem(name: "provider", value: balise.provider.rawValue)]
         guard let url = components?.url else { throw ServerError.notConfigured }
 

@@ -11,7 +11,7 @@ from __future__ import annotations
 from datetime import datetime
 
 MIN_PERIOD = 55     # aucune source observée ne publie plus vite
-MAX_PERIOD = 900
+MAX_PERIOD = 2400   # meteo.cat publie au pas semi-horaire
 DEFAULT_PERIOD = 600
 
 

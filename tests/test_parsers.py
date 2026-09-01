@@ -135,6 +135,14 @@ class CadenceTests(unittest.TestCase):
         )]
         self.assertEqual(observed_period(historique), 60)
 
+    def test_pas_semi_horaire(self):
+        """meteo.cat publie toutes les 30 min : la cadence doit être mesurée, pas écartée."""
+        from cadence import observed_period
+        historique = [{"t": t} for t in (
+            "2026-09-01T10:00:00Z", "2026-09-01T10:30:00Z", "2026-09-01T11:00:00Z",
+        )]
+        self.assertEqual(observed_period(historique), 1800)
+
     def test_repli_quand_l_historique_est_trop_court(self):
         from cadence import observed_period
         self.assertEqual(observed_period([]), 600)

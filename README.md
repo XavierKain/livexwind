@@ -4,9 +4,9 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Ce que ça fait
 
-- **Plusieurs balises, trois sources** : FFVL (balisemeteo.com, France, ajout par URL),
-  Wind Morbihan (baie de Quiberon, liste de capteurs) et Windguru (le monde entier, dont
-  Tarifa / Campo de Futbol — recherche par nom ou lien `windguru.cz/station/…`).
+- **Plusieurs balises, quatre sources** : FFVL (balisemeteo.com, France, ajout par URL),
+  Wind Morbihan (baie de Quiberon, liste de capteurs), Windguru (le monde entier, dont
+  Tarifa / Campo de Futbol) et Meteo.cat (réseau XEMA de Catalogne, dont Àger).
   On bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
   seule celle qui est sélectionnée déclenche l'activité en direct et les alertes.
 - **Vue d'ensemble** : l'onglet *Mes spots* liste les balises suivies avec leur vent du moment,
@@ -42,7 +42,7 @@ toute façon toutes les 10 min, le réveil est programmé juste après le relev�
 Le widget, lui, est plafonné à 5 min : iOS ne rafraîchit un widget que quelques dizaines de fois par
 jour, viser la minute ne ferait que gaspiller ce budget.
 
-## Les trois sources
+## Les quatre sources
 
 **FFVL / balisemeteo.com** masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas de
 session PHP : on fait une requête d'amorçage sur l'accueil pour obtenir le cookie, puis on lit la
@@ -74,6 +74,12 @@ Vitesses en nœuds là aussi (vérifié : la page affiche « 0.8 knots / max 2.5
 donc son propre index (`feed/windguru.py`, balayage lent et repris des fiches `q=station`,
 ~13 500 identifiants), qui alimente `/api/sensors?provider=wg&q=…`. En attendant que l'index soit
 complet, coller un lien `windguru.cz/station/…` fonctionne immédiatement.
+
+**meteo.cat** (réseau XEMA de Catalogne) rend ses pages côté serveur : le tableau semi-horaire de
+`observacions/xema/dades?codi=WQ` donne VVM (vent moyen), DVM (direction) et VVX (rafale), déjà en
+km/h et en heures TU — donc en UTC, sans conversion. C'est la source d'Àger, station « Montsec
+d'Ares ». Ses stations sont identifiées par un **code alphabétique** et non par un nombre : c'est
+pour elles que `Balise` porte un `code` distinct de son identifiant numérique interne.
 
 > Windfinder a été écarté : son API exige un en-tête `WF-AUTH` qu'il faudrait extraire de leur
 > client web, ce qui serait fragile autant que discutable.

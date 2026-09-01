@@ -29,7 +29,8 @@ struct WindguruClient: Sendable {
             throw WindError.unknownBalise
         }
         return Balise(id: stationID, name: info.label, altitude: info.alt,
-                      latitude: info.lat, longitude: info.lon, provider: .windguru)
+                      latitude: info.lat, longitude: info.lon,
+                      provider: .windguru, code: String(stationID))
     }
 
     func latest(id: Int) async throws -> WindReading {

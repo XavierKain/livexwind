@@ -51,27 +51,46 @@ struct ServerClient: Sendable {
     /// direct et les alertes que pour celle qui est sélectionnée.
     func syncBalises(_ catalog: BaliseCatalog) async throws {
         let payload = catalog.balises.map {
-            ["id": $0.id, "name": $0.name, "altitude": $0.altitude as Any,
-             "provider": $0.provider.rawValue]
+            ["id": $0.id, "code": $0.code, "name": $0.name,
+             "altitude": $0.altitude as Any, "provider": $0.provider.rawValue]
         }
         try await post("api/balises", body: ["balises": payload, "selected": catalog.selectedID])
     }
 
     struct RemoteBalise: Decodable {
         let id: Int
+        let code: String?
         let name: String?
         let altitude: Int?
         let provider: String?
     }
 
     struct SensorHit: Decodable {
-        let id: Int
+        /// Les sources à code texte (meteo.cat) renvoient une chaîne.
+        let code: String?
         let name: String
         let lat: Double?
         let lon: Double?
         let altitude: Int?
         /// Distance au point cherché, présente seulement en recherche par proximité.
         let km: Double?
+        let id: WindguruID?
+
+        /// windguru numérote ses stations, meteo.cat les nomme.
+        var sourceCode: String { code ?? id?.text ?? "" }
+    }
+
+    /// L'identifiant d'un capteur est un nombre chez windguru, une chaîne ailleurs.
+    struct WindguruID: Decodable {
+        let text: String
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let number = try? container.decode(Int.self) {
+                text = String(number)
+            } else {
+                text = try container.decode(String.self)
+            }
+        }
     }
 
     struct SensorSearch: Decodable {

@@ -49,6 +49,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "feed"))
 import scrape  # noqa: E402  (source FFVL / balisemeteo.com)
 import windmorbihan  # noqa: E402  (source windmorbihan.com)
 import windguru  # noqa: E402  (source windguru.cz, mondiale)
+import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
 from cadence import observed_period  # noqa: E402
 
 PORT = 7110
@@ -60,11 +61,11 @@ STATE_PATH = DATA_DIR / "livexwind_state.json"
 
 APNS_HOST = "https://api.push.apple.com"   # production : l'environnement des builds TestFlight
 JWT_TTL = 40 * 60
-DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
-PROVIDERS = ("ffvl", "wm", "wg")
+DEFAULT_BALISE = {"id": 64, "code": "64", "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
+PROVIDERS = ("ffvl", "wm", "wg", "mc")
 BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # repli quand la cadence d'une balise est inconnue
-MAX_PERIOD = 900
+MAX_PERIOD = 2400
 CATCH_UP = 8                    # marge après l'heure attendue du prochain relevé
 # Guet rapide sur la balise affichée quand la source est une API JSON bon marché.
 # balisemeteo demande deux requêtes HTML par lecture et publie de toute façon
@@ -108,12 +109,17 @@ def save_json(path: Path, data):
     tmp.replace(path)
 
 
-def feed_path(balise_id: int, provider: str = "ffvl") -> Path:
-    return DATA_DIR / f"livexwind_feed_{provider}_{balise_id}.json"
+def feed_path(code, provider: str = "ffvl") -> Path:
+    return DATA_DIR / f"livexwind_feed_{provider}_{code}.json"
+
+
+def balise_code(balise: dict) -> str:
+    """Identifiant chez la source : numérique partout sauf meteo.cat."""
+    return str(balise.get("code") or balise["id"])
 
 
 def balise_key(balise: dict) -> str:
-    return f"{balise.get('provider', 'ffvl')}-{balise['id']}"
+    return f"{balise.get('provider', 'ffvl')}-{balise_code(balise)}"
 
 
 def config() -> dict | None:
@@ -253,6 +259,7 @@ def tracked_balises() -> tuple[list, int]:
     for b in balises:
         if b.get("provider") not in PROVIDERS:
             b["provider"] = "ffvl"
+        b.setdefault("code", str(b["id"]))
     ids = {b["id"] for b in balises}
     selected = prefs.get("selected")
     if selected not in ids:
@@ -280,15 +287,15 @@ def health():
 @app.route("/api/wind")
 def wind():
     tracked, selected = tracked_balises()
-    try:
-        balise_id = int(request.args.get("balise", selected))
-    except (TypeError, ValueError):
-        balise_id = selected
+    code = request.args.get("balise")
     provider = request.args.get("provider")
+    if not code:
+        match = next((b for b in tracked if b["id"] == selected), None) or {}
+        code, provider = balise_code(match), match.get("provider", "ffvl")
     if provider not in PROVIDERS:
-        match = next((b for b in tracked if b["id"] == balise_id), None)
-        provider = (match or {}).get("provider", "ffvl")
-    return jsonify(load_json(feed_path(balise_id, provider), {"error": "pas encore de relevé"}))
+        match = next((b for b in tracked if balise_code(b) == code), None) or {}
+        provider = match.get("provider", "ffvl")
+    return jsonify(load_json(feed_path(code, provider), {"error": "pas encore de relevé"}))
 
 
 @app.route("/api/sensors")
@@ -300,6 +307,9 @@ def sensors():
     """
     provider = request.args.get("provider", "wm")
     query = (request.args.get("q") or "").strip()
+
+    if provider == "mc":
+        return jsonify({"provider": "mc", "sensors": meteocat.search(query) if query else []})
 
     if provider == "wg":
         lat, lon = request.args.get("lat"), request.args.get("lon")
@@ -338,6 +348,7 @@ def balises():
             continue
         provider = b.get("provider")
         cleaned.append({"id": balise_id,
+                        "code": str(b.get("code") or balise_id),
                         "name": b.get("name") or f"Balise {balise_id}",
                         "altitude": b.get("altitude"),
                         "provider": provider if provider in PROVIDERS else "ffvl"})
@@ -424,12 +435,14 @@ def refresh_feed(balise: dict) -> dict | None:
         return _refresh_wm(balise)
     if provider == "wg":
         return _refresh_wg(balise)
+    if provider == "mc":
+        return _refresh_mc(balise)
     return _refresh_ffvl(balise)
 
 
 def _refresh_ffvl(balise: dict) -> dict | None:
     """balisemeteo.com : scraping, avec une seconde chance si la page est masquée."""
-    balise_id = balise["id"]
+    balise_id = int(balise_code(balise))
     path = feed_path(balise_id, "ffvl")
     parsed = None
     for _ in range(2):
@@ -451,7 +464,7 @@ def _refresh_ffvl(balise: dict) -> dict | None:
 
 def _refresh_wm(balise: dict) -> dict | None:
     """windmorbihan.com : API JSON, plus d'historique au premier suivi."""
-    balise_id = balise["id"]
+    balise_id = int(balise_code(balise))
     path = feed_path(balise_id, "wm")
     try:
         reading = windmorbihan.latest(balise_id)
@@ -475,7 +488,7 @@ def _refresh_wm(balise: dict) -> dict | None:
 
 def _refresh_wg(balise: dict) -> dict | None:
     """windguru.cz : API JSON ouverte, plus l'historique au premier suivi."""
-    balise_id = balise["id"]
+    balise_id = int(balise_code(balise))
     path = feed_path(balise_id, "wg")
     reading = windguru.latest(balise_id)
     info = windguru.station(balise_id)
@@ -489,6 +502,26 @@ def _refresh_wg(balise: dict) -> dict | None:
             log.info("balise wg %s : historique initial (%d points)", balise_id, len(backfill))
             old = {"history": backfill}
 
+    return _store_feed(path, info, reading, previous=old)
+
+
+def _refresh_mc(balise: dict) -> dict | None:
+    """meteo.cat : page HTML semi-horaire, déjà en km/h et en UTC."""
+    code = balise_code(balise)
+    path = feed_path(code, "mc")
+    reading = meteocat.latest(code)
+    info = meteocat.station(code)
+    if not reading or not info:
+        return load_json(path, None)
+
+    old = load_json(path, {})
+    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
+        backfill = meteocat.history(code)
+        if backfill:
+            log.info("balise mc %s : historique du jour (%d points)", code, len(backfill))
+            old = {"history": backfill}
+
+    info = {**info, "id": balise["id"], "code": code}
     return _store_feed(path, info, reading, previous=old)
 
 
@@ -704,6 +737,7 @@ def write_feed_files(docs: Path, feeds: dict):
             "id": chosen["id"],
             "name": chosen.get("name"),
             "provider": chosen.get("provider", "ffvl"),
+            "code": balise_code(chosen),
             "unit": tokens().get("prefs", {}).get("unit", "kmh"),
         }, ensure_ascii=False, indent=1) + "\n")
 
@@ -795,7 +829,7 @@ def pusher_loop():
             # Cadence : la balise affichée est guettée de près, celles qui ont une
             # alerte armée le sont raisonnablement, les autres ne servent qu'à
             # garnir la courbe quand on change de spot.
-            cached_feed = load_json(feed_path(balise_id, balise.get("provider", "ffvl")), None) or {}
+            cached_feed = load_json(feed_path(balise_code(balise), balise.get("provider", "ffvl")), None) or {}
             period = cached_feed.get("period") or 600
             # La balise affichée est guettée à sa propre cadence ; celles qui ont
             # une alerte armée un peu moins souvent ; les autres au ralenti.

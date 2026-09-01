@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-01T15:42:00Z",
+    "t": "2026-09-01T16:12:00Z",
     "dir": 336,
     "dirLabel": "NNO",
-    "avg": 25.0,
+    "avg": 24.0,
     "gust": 29.0,
-    "gustDir": 314,
-    "gustDirLabel": "NO",
-    "min": 20.0,
+    "gustDir": 336,
+    "gustDirLabel": "NNO",
+    "min": 21.0,
     "temp": 23.0,
     "lum": 100.0,
     "stale": false
@@ -26,8 +26,8 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-01T15:40:00Z",
-    "dir": 289,
+    "t": "2026-09-01T16:10:00Z",
+    "dir": 282,
     "dirLabel": "ONO",
     "avg": 18.5,
     "gust": 20.4,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-01T15:35:00Z",
+    "t": "2026-09-01T16:04:00Z",
     "dir": 267,
     "dirLabel": "O",
     "avg": 20.4,
-    "gust": 22.2,
+    "gust": 20.4,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -64,18 +64,18 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-01T15:42:00Z",
-    "dir": 77,
+    "t": "2026-09-01T16:11:00Z",
+    "dir": 69,
     "dirLabel": "ENE",
-    "avg": 28.9,
-    "gust": 37.0,
+    "avg": 24.1,
+    "gust": 38.5,
     "gustDir": null,
-    "min": 13.0,
-    "temp": 27.2,
+    "min": 9.6,
+    "temp": 27.3,
     "lum": null,
     "stale": false
    },
-   "period": 600
+   "period": 540
   }
  ]
 }

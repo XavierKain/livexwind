@@ -49,6 +49,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "feed"))
 import scrape  # noqa: E402  (source FFVL / balisemeteo.com)
 import windmorbihan  # noqa: E402  (source windmorbihan.com)
 import windguru  # noqa: E402  (source windguru.cz, mondiale)
+from cadence import observed_period  # noqa: E402
 
 PORT = 7110
 HOME = Path.home()
@@ -63,7 +64,6 @@ DEFAULT_BALISE = {"id": 64, "name": "Pyla Pilat", "altitude": 55, "provider": "f
 PROVIDERS = ("ffvl", "wm", "wg")
 BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # repli quand la cadence d'une balise est inconnue
-MIN_PERIOD = 55                 # aucune source observée ne publie plus vite
 MAX_PERIOD = 900
 CATCH_UP = 8                    # marge après l'heure attendue du prochain relevé
 # Guet rapide sur la balise affichée quand la source est une API JSON bon marché.
@@ -490,29 +490,6 @@ def _refresh_wg(balise: dict) -> dict | None:
             old = {"history": backfill}
 
     return _store_feed(path, info, reading, previous=old)
-
-
-def observed_period(history: list) -> int:
-    """Cadence réelle de publication, déduite des derniers relevés.
-
-    Elle varie d'une station à l'autre — windguru publie à la minute, une balise
-    FFVL toutes les 10 min — et parfois pour une même source. On la mesure donc
-    au lieu de la supposer.
-
-    On retient le **plus petit** écart récent, pas la médiane : un trou de
-    transmission allonge un écart, jamais l'inverse. C'est aussi ce qui fait
-    converger vite une station dont l'historique initial a été rééchantillonné
-    à 10 min alors qu'elle publie chaque minute.
-    """
-    stamps = []
-    for sample in history[-14:]:
-        try:
-            stamps.append(datetime.fromisoformat(sample["t"].replace("Z", "+00:00")))
-        except (KeyError, ValueError, AttributeError):
-            continue
-    gaps = [(b - a).total_seconds() for a, b in zip(stamps, stamps[1:])
-            if MIN_PERIOD <= (b - a).total_seconds() <= MAX_PERIOD]
-    return int(min(gaps)) if gaps else 600
 
 
 def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:

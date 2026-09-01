@@ -126,11 +126,8 @@ class RoseDesVentsTests(unittest.TestCase):
 class CadenceTests(unittest.TestCase):
     """La cadence est déduite du plus petit écart : un trou ne doit pas la fausser."""
 
-    def setUp(self):
-        sys.path.insert(0, str(ROOT / "server"))
-
     def test_plus_petit_ecart_retenu(self):
-        from livexwind_server import observed_period
+        from cadence import observed_period
         historique = [{"t": t} for t in (
             "2026-09-01T10:00:00Z", "2026-09-01T10:01:00Z",
             "2026-09-01T10:02:00Z", "2026-09-01T10:12:00Z",  # trou de transmission
@@ -139,7 +136,7 @@ class CadenceTests(unittest.TestCase):
         self.assertEqual(observed_period(historique), 60)
 
     def test_repli_quand_l_historique_est_trop_court(self):
-        from livexwind_server import observed_period
+        from cadence import observed_period
         self.assertEqual(observed_period([]), 600)
 
 

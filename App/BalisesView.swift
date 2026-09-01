@@ -322,10 +322,10 @@ struct BalisesView: View {
     /// dans le catalogue public si le téléphone n'est pas sur Tailscale — c'est
     /// le cas dès qu'on est en déplacement, précisément quand on cherche un spot.
     private func perform(query: String, near: (lat: Double, lon: Double)?, emptyMessage: String) async {
-        isLoading = true
+        isLoadingSensors = true
         errorMessage = nil
         indexNote = nil
-        defer { isLoading = false }
+        defer { isLoadingSensors = false }
 
         if let found = try? await ServerClient.shared.searchSensors(
             provider: searchProvider, query: query, near: near) {

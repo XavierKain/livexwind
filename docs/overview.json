@@ -6,11 +6,11 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-01T19:21:00Z",
+    "t": "2026-09-01T19:41:00Z",
     "dir": 0,
     "dirLabel": "N",
     "avg": 30.0,
-    "gust": 34.0,
+    "gust": 35.0,
     "gustDir": 0,
     "gustDirLabel": "N",
     "min": 21.0,
@@ -21,14 +21,33 @@
    "period": 540
   },
   {
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-01T19:44:00Z",
+    "dir": 321,
+    "dirLabel": "NO",
+    "avg": 14.8,
+    "gust": 16.7,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 240
+  },
+  {
    "key": "wm-73091265",
    "id": 73091265,
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-01T19:18:00Z",
-    "dir": 303,
-    "dirLabel": "ONO",
+    "t": "2026-09-01T19:42:00Z",
+    "dir": 310,
+    "dirLabel": "NO",
     "avg": 22.2,
     "gust": 24.1,
     "gustDir": null,
@@ -40,42 +59,42 @@
    "period": 480
   },
   {
-   "key": "wm-73091277",
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
-   "provider": "wm",
-   "current": {
-    "t": "2026-09-01T19:22:00Z",
-    "dir": 310,
-    "dirLabel": "NO",
-    "avg": 18.5,
-    "gust": 22.2,
-    "gustDir": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 240
-  },
-  {
    "key": "wg-2667",
    "id": 2667,
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-01T19:21:00Z",
-    "dir": 111,
-    "dirLabel": "ESE",
-    "avg": 14.4,
-    "gust": 27.4,
+    "t": "2026-09-01T19:39:00Z",
+    "dir": 55,
+    "dirLabel": "NE",
+    "avg": 13.0,
+    "gust": 14.4,
     "gustDir": null,
-    "min": 11.1,
-    "temp": 25.1,
+    "min": 4.6,
+    "temp": 25,
     "lum": null,
     "stale": false
    },
    "period": 540
+  },
+  {
+   "key": "mc-WQ",
+   "id": 1178,
+   "name": "Montsec d'Ares",
+   "provider": "mc",
+   "current": {
+    "t": "2026-09-01T19:30:00Z",
+    "dir": 42,
+    "dirLabel": "NE",
+    "avg": 22.3,
+    "gust": 25.2,
+    "gustDir": null,
+    "min": null,
+    "temp": 17.6,
+    "lum": null,
+    "stale": false
+   },
+   "period": 1800
   }
  ]
 }

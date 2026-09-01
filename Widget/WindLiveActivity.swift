@@ -140,17 +140,19 @@ struct LiveActivityContent: View {
         .padding(14)
     }
 
-    /// Pile intelligente de la montre : même contenu, disposé pour un écran étroit.
+    /// Pile intelligente de la montre.
+    ///
+    /// Pas de mini-courbe ici : la carte est trop basse, il n'en restait qu'un
+    /// filet illisible. La place gagnée profite aux chiffres, qui sont ce qu'on
+    /// vient lire au poignet.
     private var watch: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 5) {
             entete
-            HStack(alignment: .center, spacing: 10) {
+            HStack(alignment: .center, spacing: 12) {
                 boussole
                 chiffres
                 Spacer(minLength: 0)
             }
-            WindSparkline(values: state.trendKmh, color: color)
-                .frame(height: 22)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)

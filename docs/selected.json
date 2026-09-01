@@ -2,5 +2,6 @@
  "key": "ffvl-64",
  "id": 64,
  "name": "Pyla Pilat",
- "provider": "ffvl"
+ "provider": "ffvl",
+ "unit": "knots"
 }

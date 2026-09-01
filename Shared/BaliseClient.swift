@@ -98,7 +98,16 @@ struct BaliseClient: Sendable {
         return try FeedPayload.decode(data).snapshot
     }
 
-    /// GitHub Pages : secours quand le téléphone n'est pas sur Tailscale.
+    /// Miroir public : écrit à chaque relevé, joignable sans VPN.
+    func fetchPublicFeed() async throws -> WindSnapshot {
+        var request = URLRequest(url: AppConfig.publicFeedURL(key: balise.key))
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.timeoutInterval = 10
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try FeedPayload.decode(data).snapshot
+    }
+
+    /// GitHub Pages : dernier filet, si le serveur est carrément hors ligne.
     func fetchFeed() async throws -> WindSnapshot {
         var request = URLRequest(url: feedURL)
         request.cachePolicy = .reloadIgnoringLocalCacheData
@@ -109,6 +118,7 @@ struct BaliseClient: Sendable {
 
     private func fetchHistorySource() async -> WindSnapshot? {
         if let server = try? await fetchServerFeed(), !server.history.isEmpty { return server }
+        if let mirror = try? await fetchPublicFeed(), !mirror.history.isEmpty { return mirror }
         return try? await fetchFeed()
     }
 
@@ -273,7 +283,7 @@ enum BaliseParser {
 
 // MARK: - Flux JSON
 
-private struct FeedPayload: Decodable {
+struct FeedPayload: Decodable {
     struct BaliseInfo: Decodable { let id: Int; let name: String?; let altitude: Int? }
     struct Sample: Decodable {
         let t: String?

@@ -168,6 +168,7 @@ struct WindChart: View {
             }
         }
         .chartOverlay { proxy in
+            #if os(iOS)
             if interactive {
                 GeometryReader { geo in
                     // Reconnaisseur UIKit : il ne démarre que sur un geste
@@ -184,6 +185,7 @@ struct WindChart: View {
                     }
                 }
             }
+            #endif
         }
     }
 

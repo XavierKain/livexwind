@@ -11,6 +11,9 @@ default_platform(:ios)
 
 APP_ID = "com.xavierkain.livexwind"
 WIDGET_ID = "com.xavierkain.livexwind.widget"
+WATCH_ID = "com.xavierkain.livexwind.watchkitapp"
+WATCH_WIDGET_ID = "com.xavierkain.livexwind.watchkitapp.widget"
+ALL_IDS = [APP_ID, WIDGET_ID, WATCH_ID, WATCH_WIDGET_ID].freeze
 APP_NAME = "LiveXWind"
 
 def connect_token
@@ -28,7 +31,12 @@ end
 def ensure_bundle_ids
   connect_token
   existing = Spaceship::ConnectAPI::BundleId.all.map(&:identifier)
-  { APP_ID => APP_NAME, WIDGET_ID => "#{APP_NAME} Widget" }.each do |identifier, name|
+  {
+    APP_ID => APP_NAME,
+    WIDGET_ID => "#{APP_NAME} Widget",
+    WATCH_ID => "#{APP_NAME} Watch",
+    WATCH_WIDGET_ID => "#{APP_NAME} Watch Complication",
+  }.each do |identifier, name|
     next if existing.include?(identifier)
     UI.message("Création du bundle ID #{identifier}…")
     Spaceship::ConnectAPI::BundleId.create(name: name, identifier: identifier, platform: "IOS")
@@ -219,7 +227,7 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: [APP_ID, WIDGET_ID],
+      app_identifier: ALL_IDS,
       api_key: api_key,
       readonly: false,
       storage_mode: "git",
@@ -233,10 +241,7 @@ platform :ios do
       scheme: APP_NAME,
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: {
-          APP_ID => "match AppStore #{APP_ID}",
-          WIDGET_ID => "match AppStore #{WIDGET_ID}"
-        }
+        provisioningProfiles: ALL_IDS.to_h { |id| [id, "match AppStore #{id}"] }
       }
     )
 

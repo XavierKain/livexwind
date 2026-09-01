@@ -77,6 +77,10 @@ START_COOLDOWN = 3600
 PAGES_CLONE = DATA_DIR / "livexwind-pages"
 PAGES_REMOTE = "https://github.com/XavierKain/livexwind.git"
 PAGES_INTERVAL = 20 * 60        # on regroupe deux relevés par commit
+# Miroir HTTPS public servi par nginx : c'est par là que passe l'Apple Watch,
+# qui n'est pas sur Tailscale, et l'iPhone quand le VPN est coupé. Écriture de
+# fichiers locaux, donc rien n'empêche de le rafraîchir à chaque relevé.
+PUBLIC_DIR = Path("/var/www/livexwind")
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -680,6 +684,14 @@ def push_alerts(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     return state
 
 
+def publish_public(feeds: dict):
+    """Écrit les flux dans la racine nginx — immédiat, sans commit."""
+    try:
+        write_feed_files(PUBLIC_DIR, feeds)
+    except OSError as exc:
+        log.warning("miroir public indisponible : %s", exc)
+
+
 def write_feed_files(docs: Path, feeds: dict):
     docs.mkdir(parents=True, exist_ok=True)
     for key, feed in feeds.items():
@@ -688,6 +700,18 @@ def write_feed_files(docs: Path, feeds: dict):
     (docs / "balises.json").write_text(
         json.dumps({"balises": [f["balise"] for f in feeds.values()]},
                    ensure_ascii=False, indent=1) + "\n")
+
+    # Pointeur vers la balise affichée : c'est ainsi que l'Apple Watch sait quel
+    # spot montrer, sans avoir à dialoguer avec l'iPhone.
+    balises, selected = tracked_balises()
+    chosen = next((b for b in balises if b["id"] == selected), None)
+    if chosen:
+        (docs / "selected.json").write_text(json.dumps({
+            "key": balise_key(chosen),
+            "id": chosen["id"],
+            "name": chosen.get("name"),
+            "provider": chosen.get("provider", "ffvl"),
+        }, ensure_ascii=False, indent=1) + "\n")
 
 
 def publish_to_pages(feeds: dict, state: dict) -> dict:
@@ -828,6 +852,7 @@ def pusher_loop():
             sleep_for = min(sleep_for, ALERT_INTERVAL)
 
         if feeds:
+            publish_public(feeds)
             state = publish_to_pages(feeds, state)
         state["refreshed_at"] = refreshed_at
         save_json(STATE_PATH, state)

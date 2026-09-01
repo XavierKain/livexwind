@@ -1,5 +1,5 @@
 import SwiftUI
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
 
 /// Zone de saisie qui ne réagit qu'aux glissements horizontaux.

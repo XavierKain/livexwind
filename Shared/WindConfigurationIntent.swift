@@ -1,3 +1,4 @@
+#if os(iOS)
 import AppIntents
 import WidgetKit
 
@@ -108,3 +109,5 @@ struct BaliseQuery: EntityQuery {
 
     func defaultResult() async -> BaliseEntity? { .pyla }
 }
+
+#endif

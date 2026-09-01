@@ -54,6 +54,24 @@ def ensure_bundle_ids
       UI.message("Activation de Push Notifications sur #{APP_ID}…")
       main.create_capability(Spaceship::ConnectAPI::BundleIdCapability::Type::PUSH_NOTIFICATIONS)
     end
+
+    # iCloud clé-valeur : sauvegarde des spots et des seuils.
+    has_icloud = begin
+      main.get_capabilities.any? { |c| c.capability_type == "ICLOUD" }
+    rescue StandardError
+      false
+    end
+    unless has_icloud
+      UI.message("Activation d'iCloud sur #{APP_ID}…")
+      begin
+        main.create_capability(
+          Spaceship::ConnectAPI::BundleIdCapability::Type::ICLOUD,
+          settings: [{ key: "ICLOUD_VERSION", options: [{ key: "XCODE_6" }] }]
+        )
+      rescue StandardError => e
+        UI.important("iCloud non activable par l'API (#{e.message}). À cocher une fois sur developer.apple.com > Identifiers > #{APP_ID} > iCloud (Key-value storage).")
+      end
+    end
   end
 rescue StandardError => e
   UI.important("ensure_bundle_ids a échoué (#{e.message}).")

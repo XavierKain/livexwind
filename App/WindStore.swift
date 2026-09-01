@@ -26,6 +26,7 @@ final class WindStore: ObservableObject {
         didSet {
             guard alerts != oldValue else { return }
             SharedStore.shared.setAlertSettings(alerts, for: catalog.selectedKey)
+            CloudSync.push(catalog: catalog, unit: unit)
             Task { await syncAlertsWithServer() }
         }
     }
@@ -174,7 +175,19 @@ final class WindStore: ObservableObject {
 
     private func persistCatalog() {
         SharedStore.shared.catalog = catalog
+        CloudSync.push(catalog: catalog, unit: unit)
         Task { try? await ServerClient.shared.syncBalises(catalog) }
+    }
+
+    /// Restaure spots et seuils depuis iCloud si un autre appareil (ou une
+    /// réinstallation) a une version plus récente.
+    func adoptCloudState() async {
+        guard let restored = CloudSync.adoptIfNewer() else { return }
+        catalog = restored
+        alerts = SharedStore.shared.alertSettings(for: restored.selectedKey)
+        unit = SharedStore.shared.unit
+        await refresh(force: true)
+        await refreshOverview(force: true)
     }
 
     func checkServer() async {

@@ -44,6 +44,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
         .task {
+            await store.adoptCloudState()
             store.liveActivity.refreshActiveState()
             store.liveActivity.observePushToStartToken(unit: store.unit)
             await store.refreshNotificationStatus()

@@ -94,22 +94,22 @@ struct ComplicationView: View {
         .tint(color)
     }
 
-    /// Coin de cadran : la flèche et la valeur au centre, le secteur et la
-    /// rafale sur l'arc extérieur — c'est tout ce que watchOS permet d'y mettre.
+    /// Coin de cadran.
+    ///
+    /// watchOS rend le `widgetLabel` (le texte courbe du bord) nettement plus
+    /// gros que le contenu du coin : on y met donc la direction, et le vent
+    /// occupe seul le coin. Empiler trois éléments dans le coin les réduisait
+    /// tous à l'illisible.
     private var corner: some View {
-        VStack(spacing: -1) {
-            HStack(spacing: 1) {
-                WindArrow(degrees: reading.directionDegrees, color: color)
-                    .frame(width: 8, height: 8)
-                Text(reading.compass)
-                    .font(.system(size: 9, weight: .bold))
-            }
+        HStack(spacing: 2) {
+            WindArrow(degrees: reading.directionDegrees, color: color)
+                .frame(width: 11, height: 11)
             Text(speed)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .minimumScaleFactor(0.7)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .minimumScaleFactor(0.8)
         }
         .widgetLabel {
-            Text("\(entry.unit.shortSymbol) · raf \(entry.unit.format(kmh: reading.gustKmh))")
+            Text("\(reading.compass) · raf \(entry.unit.format(kmh: reading.gustKmh)) \(entry.unit.shortSymbol)")
         }
     }
 

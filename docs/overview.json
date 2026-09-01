@@ -1,0 +1,81 @@
+{
+ "spots": [
+  {
+   "key": "ffvl-64",
+   "id": 64,
+   "name": "Pyla Pilat",
+   "provider": "ffvl",
+   "current": {
+    "t": "2026-09-01T12:12:00Z",
+    "dir": 336,
+    "dirLabel": "NNO",
+    "avg": 18.0,
+    "gust": 22.0,
+    "gustDir": 336,
+    "gustDirLabel": "NNO",
+    "min": 14.0,
+    "temp": 24.0,
+    "lum": 100.0,
+    "stale": false
+   },
+   "period": 540
+  },
+  {
+   "key": "wm-73091265",
+   "id": 73091265,
+   "name": "Isthme",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-01T12:20:00Z",
+    "dir": 233,
+    "dirLabel": "SO",
+    "avg": 11.1,
+    "gust": 13.0,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 600
+  },
+  {
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-01T12:18:00Z",
+    "dir": 246,
+    "dirLabel": "OSO",
+    "avg": 18.5,
+    "gust": 20.4,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 480
+  },
+  {
+   "key": "wg-2667",
+   "id": 2667,
+   "name": "Tarifa — Campo de Futbol",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-01T12:20:00Z",
+    "dir": 342,
+    "dirLabel": "NNO",
+    "avg": 19.4,
+    "gust": 35.4,
+    "gustDir": null,
+    "min": 9.6,
+    "temp": 28.3,
+    "lum": null,
+    "stale": false
+   },
+   "period": 540
+  }
+ ]
+}

@@ -111,7 +111,9 @@ struct ComplicationView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetLabel {
-            Text("\(reading.compass) · R \(entry.unit.format(kmh: reading.gustKmh))")
+            // Le vent est répété ici : le coin est au bord de l'écran, l'arc se
+            // lit plus facilement d'un coup d'œil.
+            Text("\(speed) \(reading.compass) · R \(entry.unit.format(kmh: reading.gustKmh))")
         }
     }
 

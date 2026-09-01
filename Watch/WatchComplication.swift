@@ -27,8 +27,11 @@ struct WatchProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WatchEntry>) -> Void) {
         Task {
-            let snapshot = await WatchFeed.load()
-            let entry = WatchEntry(date: .now, snapshot: snapshot, unit: SharedStore.shared.unit)
+            // L'unité vient du serveur avec le relevé : c'est le seul moyen pour
+            // cette extension de connaître le choix fait sur l'iPhone.
+            let reading = await WatchFeed.load()
+            let snapshot = reading.snapshot
+            let entry = WatchEntry(date: .now, snapshot: snapshot, unit: reading.unit)
 
             // watchOS rationne les rafraîchissements de complication comme iOS ceux
             // des widgets : viser la minute ne ferait que griller le budget plus
@@ -78,21 +81,36 @@ struct ComplicationView: View {
         Gauge(value: min(reading.averageKmh ?? 0, 60), in: 0...60) {
             WindArrow(degrees: reading.directionDegrees).frame(width: 7, height: 7)
         } currentValueLabel: {
-            Text(speed)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .minimumScaleFactor(0.7)
+            VStack(spacing: -2) {
+                Text(speed)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.7)
+                Text(reading.compass)
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
         }
         .gaugeStyle(.accessoryCircular)
         .tint(color)
     }
 
+    /// Coin de cadran : la flèche et la valeur au centre, le secteur et la
+    /// rafale sur l'arc extérieur — c'est tout ce que watchOS permet d'y mettre.
     private var corner: some View {
-        Text(speed)
-            .font(.system(size: 17, weight: .bold, design: .rounded))
-            .widgetCurvesContent()
-            .widgetLabel {
-                Text("\(reading.compass) · raf \(entry.unit.format(kmh: reading.gustKmh))")
+        VStack(spacing: -1) {
+            HStack(spacing: 1) {
+                WindArrow(degrees: reading.directionDegrees, color: color)
+                    .frame(width: 8, height: 8)
+                Text(reading.compass)
+                    .font(.system(size: 9, weight: .bold))
             }
+            Text(speed)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .minimumScaleFactor(0.7)
+        }
+        .widgetLabel {
+            Text("\(entry.unit.shortSymbol) · raf \(entry.unit.format(kmh: reading.gustKmh))")
+        }
     }
 
     private var rectangular: some View {

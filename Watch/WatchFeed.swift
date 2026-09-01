@@ -11,11 +11,20 @@ enum WatchFeed {
         let id: Int
         let name: String?
         let provider: String?
+        let unit: String?
 
         var balise: Balise {
             Balise(id: id, name: name ?? "Balise \(id)",
                    provider: BaliseProvider(rawValue: provider ?? "ffvl") ?? .ffvl)
         }
+
+        var windUnit: WindUnit { WindUnit(rawValue: unit ?? "") ?? .kmh }
+    }
+
+    /// Ce que la montre affiche : le relevé et l'unité choisie sur l'iPhone.
+    struct Reading {
+        var snapshot: WindSnapshot
+        var unit: WindUnit
     }
 
     private static func get(_ url: URL, timeout: TimeInterval = 12) async throws -> Data {
@@ -26,23 +35,29 @@ enum WatchFeed {
         return data
     }
 
-    static func selectedBalise() async -> Balise {
-        if let data = try? await get(AppConfig.selectedPointerURL),
-           let pointer = try? JSONDecoder().decode(Pointer.self, from: data) {
-            return pointer.balise
-        }
-        return SharedStore.shared.catalog.selected
+    private static func pointer() async -> Pointer? {
+        guard let data = try? await get(AppConfig.selectedPointerURL) else { return nil }
+        return try? JSONDecoder().decode(Pointer.self, from: data)
     }
 
-    /// Balise affichée sur l'iPhone + son relevé. Retombe sur le cache local
-    /// quand la montre n'a pas de réseau.
-    static func load() async -> WindSnapshot {
-        let balise = await selectedBalise()
+    /// Balise affichée sur l'iPhone, son relevé et son unité. Retombe sur le
+    /// cache local quand la montre n'a pas de réseau.
+    ///
+    /// L'unité vient du serveur et non des réglages locaux : la complication
+    /// tourne dans un autre processus que l'app Watch, elle ne verrait sinon
+    /// jamais le choix fait sur le téléphone.
+    static func load() async -> Reading {
+        let pointer = await pointer()
+        let balise = pointer?.balise ?? SharedStore.shared.catalog.selected
+        let unit = pointer?.windUnit ?? SharedStore.shared.unit
+        SharedStore.shared.unit = unit
+
         if let data = try? await get(AppConfig.publicFeedURL(key: balise.key)),
            let snapshot = try? FeedPayload.decode(data).snapshot {
             SharedStore.shared.save(snapshot: snapshot)
-            return snapshot
+            return Reading(snapshot: snapshot, unit: unit)
         }
-        return SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
+        let cached = SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
+        return Reading(snapshot: cached, unit: unit)
     }
 }

@@ -683,11 +683,15 @@ def write_feed_files(docs: Path, feeds: dict):
     balises, selected = tracked_balises()
     chosen = next((b for b in balises if b["id"] == selected), None)
     if chosen:
+        # L'unité voyage avec le pointeur : la complication de l'Apple Watch est
+        # un processus à part, elle ne peut pas lire les réglages de l'app Watch.
+        # En la lisant ici, montre et téléphone affichent forcément la même chose.
         (docs / "selected.json").write_text(json.dumps({
             "key": balise_key(chosen),
             "id": chosen["id"],
             "name": chosen.get("name"),
             "provider": chosen.get("provider", "ffvl"),
+            "unit": tokens().get("prefs", {}).get("unit", "kmh"),
         }, ensure_ascii=False, indent=1) + "\n")
 
 

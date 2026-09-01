@@ -14,13 +14,14 @@ struct LiveXWindWatchApp: App {
 final class WatchWindStore: ObservableObject {
     @Published private(set) var snapshot: WindSnapshot = .placeholder()
     @Published private(set) var isLoading = false
-    @Published var unit: WindUnit = SharedStore.shared.unit {
-        didSet { SharedStore.shared.unit = unit }
-    }
+    /// Suit l'iPhone : l'unité se règle là-bas, la montre s'aligne.
+    @Published private(set) var unit: WindUnit = SharedStore.shared.unit
 
     func refresh() async {
         isLoading = true
-        snapshot = await WatchFeed.load()
+        let reading = await WatchFeed.load()
+        snapshot = reading.snapshot
+        unit = reading.unit
         isLoading = false
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -73,14 +74,9 @@ struct WatchWindView: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
 
-                // watchOS n'a pas de picker segmenté : un simple bouton bascule.
-                Button {
-                    store.unit = store.unit.next
-                } label: {
-                    Text(store.unit == .kmh ? "→ nœuds" : "→ km/h")
-                        .font(.caption2)
-                }
-                .buttonStyle(.bordered)
+                Text("unité réglée sur l'iPhone")
+                    .font(.system(size: 9))
+                    .foregroundStyle(.tertiary)
             }
             .padding(.horizontal, 4)
         }

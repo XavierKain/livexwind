@@ -78,11 +78,14 @@ struct WatchSpotsView: View {
         Task {
             let delivered = await WatchLink.shared.requestSelection(baliseID: spot.id)
             if delivered {
-                // Le serveur met un instant à republier le pointeur : on laisse
-                // passer un cycle avant de recharger, sinon on relit l'ancien.
-                try? await Task.sleep(nanoseconds: 2_500_000_000)
-                await store.refresh()
-                dismiss()
+                // On attend que le pointeur publié désigne bien ce spot, sinon
+                // on rechargerait l'ancien et la montre afficherait le mauvais.
+                if await WatchFeed.waitForSelection(id: spot.id) {
+                    await store.refresh()
+                    dismiss()
+                } else {
+                    message = "L'iPhone n'a pas encore appliqué le changement."
+                }
             } else {
                 message = "iPhone hors de portée — le changement sera appliqué dès qu'il revient."
             }

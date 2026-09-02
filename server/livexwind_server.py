@@ -356,6 +356,9 @@ def balises():
         return jsonify({"error": "liste vide ou invalide"}), 400
 
     set_prefs({"balises": cleaned, "selected": body.get("selected") or cleaned[0]["id"]})
+    # Republié tout de suite : l'Apple Watch lit ce pointeur pour savoir quel
+    # spot afficher, et la boucle de relevés peut dormir plusieurs minutes.
+    publish_pointer()
     log.info("balises suivies : %s (sélectionnée %s)",
              [b["id"] for b in cleaned], body.get("selected"))
     return jsonify({"ok": True})
@@ -726,6 +729,31 @@ def publish_catalogs():
             log.info("catalogue %s publié (%d stations)", provider, len(stations))
 
 
+def publish_pointer(docs: Path = PUBLIC_DIR):
+    """Publie la balise affichée : c'est ainsi que l'Apple Watch sait quel spot
+    montrer, sans dialoguer avec l'iPhone.
+
+    L'unité voyage avec, parce que la complication de la montre tourne dans un
+    processus à part et ne peut pas lire les réglages de l'app Watch.
+    """
+    balises, selected = tracked_balises()
+    chosen = next((b for b in balises if b["id"] == selected), None)
+    if not chosen:
+        return
+    try:
+        docs.mkdir(parents=True, exist_ok=True)
+        (docs / "selected.json").write_text(json.dumps({
+            "key": balise_key(chosen),
+            "id": chosen["id"],
+            "name": chosen.get("name"),
+            "provider": chosen.get("provider", "ffvl"),
+            "code": balise_code(chosen),
+            "unit": tokens().get("prefs", {}).get("unit", "kmh"),
+        }, ensure_ascii=False, indent=1) + "\n")
+    except OSError as exc:
+        log.warning("pointeur non publié : %s", exc)
+
+
 def write_feed_files(docs: Path, feeds: dict):
     docs.mkdir(parents=True, exist_ok=True)
     for key, feed in feeds.items():
@@ -748,22 +776,7 @@ def write_feed_files(docs: Path, feeds: dict):
         } for key, feed in feeds.items()]
     }, ensure_ascii=False, indent=1) + "\n")
 
-    # Pointeur vers la balise affichée : c'est ainsi que l'Apple Watch sait quel
-    # spot montrer, sans avoir à dialoguer avec l'iPhone.
-    balises, selected = tracked_balises()
-    chosen = next((b for b in balises if b["id"] == selected), None)
-    if chosen:
-        # L'unité voyage avec le pointeur : la complication de l'Apple Watch est
-        # un processus à part, elle ne peut pas lire les réglages de l'app Watch.
-        # En la lisant ici, montre et téléphone affichent forcément la même chose.
-        (docs / "selected.json").write_text(json.dumps({
-            "key": balise_key(chosen),
-            "id": chosen["id"],
-            "name": chosen.get("name"),
-            "provider": chosen.get("provider", "ffvl"),
-            "code": balise_code(chosen),
-            "unit": tokens().get("prefs", {}).get("unit", "kmh"),
-        }, ensure_ascii=False, indent=1) + "\n")
+    publish_pointer(docs)
 
 
 def publish_to_pages(feeds: dict, state: dict) -> dict:

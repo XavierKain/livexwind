@@ -11,11 +11,17 @@ enum WatchFeed {
         let id: Int
         let name: String?
         let provider: String?
+        let code: String?
         let unit: String?
 
+        /// On reprend le `code` publié par le serveur au lieu de le déduire de
+        /// l'identifiant : chez meteo.cat les deux diffèrent (« WQ » contre
+        /// 1178), et une clé reconstruite pointait vers un flux inexistant.
         var balise: Balise {
-            Balise(id: id, name: name ?? "Balise \(id)",
-                   provider: BaliseProvider(rawValue: provider ?? "ffvl") ?? .ffvl)
+            let source = BaliseProvider(rawValue: provider ?? "ffvl") ?? .ffvl
+            return Balise(code: code ?? String(id),
+                          name: name ?? "Balise \(id)",
+                          provider: source)
         }
 
         var windUnit: WindUnit { WindUnit(rawValue: unit ?? "") ?? .kmh }
@@ -60,6 +66,18 @@ enum WatchFeed {
     private static func pointer() async -> Pointer? {
         guard let data = try? await get(AppConfig.selectedPointerURL) else { return nil }
         return try? JSONDecoder().decode(Pointer.self, from: data)
+    }
+
+    /// Attend que le serveur ait pris en compte le changement de spot demandé.
+    /// L'iPhone doit d'abord recevoir le message, l'appliquer, puis le serveur
+    /// republie le pointeur : quelques secondes, pas un délai fixe deviné.
+    static func waitForSelection(id: Int, timeout: TimeInterval = 8) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if let pointer = await pointer(), pointer.id == id { return true }
+            try? await Task.sleep(nanoseconds: 700_000_000)
+        }
+        return false
     }
 
     /// Balise affichée sur l'iPhone, son relevé et son unité. Retombe sur le

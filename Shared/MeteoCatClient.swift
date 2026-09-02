@@ -28,10 +28,13 @@ struct MeteoCatClient: Sendable {
         guard var name = Self.match("<title>([^<]+)</title>", in: html) else {
             throw WindError.unknownBalise
         }
+        // Décoder d'abord : le titre contient « estaci&oacute; autom&agrave;tica »,
+        // et retirer le préfixe avant décodage ne trouvait rien à retirer.
         name = name
-            .replacingOccurrences(of: "Dades de l'estació automàtica", with: "")
             .replacingOccurrences(of: "&oacute;", with: "ó")
             .replacingOccurrences(of: "&agrave;", with: "à")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .replacingOccurrences(of: "Dades de l'estació automàtica", with: "")
         if let bar = name.range(of: "|") { name = String(name[..<bar.lowerBound]) }
         // Le titre finit par « (1.571 m) » : l'altitude s'y lit avant d'être ôtée.
         let altitude = Self.match("\\((\\d[\\d. ]*)\\s*m\\)", in: name)

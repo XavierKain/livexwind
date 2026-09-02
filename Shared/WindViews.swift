@@ -52,22 +52,23 @@ struct CompassDial: View {
                 Text(["N", "E", "S", "O"][i])
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(.secondary)
-                    .offset(y: -78)
+                    .offset(y: -82)
                     .rotationEffect(.degrees(Double(i) * 90))
             }
 
-            // Marqueur posé sur le cercle au relèvement d'où vient le vent,
-            // pointe tournée vers le centre.
+            // Marqueur au relèvement d'où vient le vent, pointe tournée vers le
+            // centre. Il est nettement rentré vers l'intérieur : posé contre
+            // l'anneau, il chevauchait les lettres de la rose.
             Image(systemName: "arrowtriangle.down.fill")
-                .font(.system(size: 15))
+                .font(.system(size: 26))
                 .foregroundStyle(color)
-                .offset(y: -70)
+                .offset(y: -60)
                 .rotationEffect(.degrees(Double(reading.directionDegrees ?? 0)))
                 .opacity(reading.directionDegrees == nil ? 0.2 : 1)
 
             VStack(spacing: 0) {
                 Text(unit.format(kmh: reading.averageKmh))
-                    .font(.system(size: 52, weight: .bold, design: .rounded))
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText())
                 Text(unit.symbol)
@@ -78,7 +79,7 @@ struct CompassDial: View {
                     .padding(.top, 4)
             }
         }
-        .frame(width: 190, height: 190)
+        .frame(width: 200, height: 200)
     }
 }
 

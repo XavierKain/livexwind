@@ -61,9 +61,16 @@ struct WindLiveActivity: Widget {
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundStyle(.orange)
             } minimal: {
-                Text(unit.format(kmh: state.averageKmh))
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(color)
+                // Emplacement partagé avec une autre activité : il n'y tient que
+                // deux éléments. On garde la force et la direction — la rafale
+                // ne rentre pas, et un chiffre sans direction ne dit rien.
+                HStack(spacing: 1) {
+                    Text(unit.format(kmh: state.averageKmh))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(color)
+                    WindArrow(degrees: state.directionDegrees, color: color)
+                        .frame(width: 9, height: 9)
+                }
             }
             .keylineTint(color)
             .widgetURL(AppConfig.pageURL(balise: context.attributes.baliseID))

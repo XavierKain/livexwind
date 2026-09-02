@@ -101,13 +101,15 @@ struct ComplicationView: View {
     /// règle sur l'iPhone et ne change pas d'un coup d'œil à l'autre, alors
     /// qu'elle faisait tronquer le reste de la ligne.
     private var corner: some View {
-        HStack(spacing: 1) {
-            WindArrow(degrees: reading.directionDegrees, color: color)
-                .frame(width: 14, height: 14)
+        // Chiffre puis flèche, comme dans l'île dynamique : on lit la force,
+        // puis d'où vient le vent.
+        HStack(spacing: 2) {
             Text(speed)
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
+            WindArrow(degrees: reading.directionDegrees, color: color)
+                .frame(width: 19, height: 19)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetLabel {

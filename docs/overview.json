@@ -6,76 +6,19 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-02T16:22:00Z",
-    "dir": 336,
-    "dirLabel": "NNO",
-    "avg": 29.0,
-    "gust": 33.0,
+    "t": "2026-09-02T16:42:00Z",
+    "dir": 314,
+    "dirLabel": "NO",
+    "avg": 30.0,
+    "gust": 37.0,
     "gustDir": 314,
     "gustDirLabel": "NO",
-    "min": 22.0,
-    "temp": 24.0,
+    "min": 25.0,
+    "temp": 23.0,
     "lum": 70.0,
     "stale": false
    },
    "period": 600
-  },
-  {
-   "key": "wm-73091265",
-   "id": 73091265,
-   "name": "Isthme",
-   "provider": "wm",
-   "current": {
-    "t": "2026-09-02T16:27:00Z",
-    "dir": 259,
-    "dirLabel": "O",
-    "avg": 20.4,
-    "gust": 22.2,
-    "gustDir": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 240
-  },
-  {
-   "key": "wm-73091277",
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
-   "provider": "wm",
-   "current": {
-    "t": "2026-09-02T16:29:00Z",
-    "dir": 252,
-    "dirLabel": "OSO",
-    "avg": 22.2,
-    "gust": 24.1,
-    "gustDir": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 120
-  },
-  {
-   "key": "wg-2667",
-   "id": 2667,
-   "name": "Tarifa — Campo de Futbol",
-   "provider": "wg",
-   "current": {
-    "t": "2026-09-02T16:29:00Z",
-    "dir": 122,
-    "dirLabel": "ESE",
-    "avg": 14.4,
-    "gust": 20.9,
-    "gustDir": null,
-    "min": 3.1,
-    "temp": 28.1,
-    "lum": null,
-    "stale": false
-   },
-   "period": 300
   },
   {
    "key": "mc-WQ",
@@ -95,6 +38,63 @@
     "stale": false
    },
    "period": 1800
+  },
+  {
+   "key": "wg-2667",
+   "id": 2667,
+   "name": "Tarifa — Campo de Futbol",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-02T16:46:00Z",
+    "dir": 81,
+    "dirLabel": "E",
+    "avg": 16.1,
+    "gust": 38.5,
+    "gustDir": null,
+    "min": 8.0,
+    "temp": 27.6,
+    "lum": null,
+    "stale": false
+   },
+   "period": 60
+  },
+  {
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-02T16:47:00Z",
+    "dir": 253,
+    "dirLabel": "OSO",
+    "avg": 20.4,
+    "gust": 24.1,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 120
+  },
+  {
+   "key": "wm-73091265",
+   "id": 73091265,
+   "name": "Isthme",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-02T16:47:00Z",
+    "dir": 258,
+    "dirLabel": "OSO",
+    "avg": 18.5,
+    "gust": 22.2,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 240
   }
  ]
 }

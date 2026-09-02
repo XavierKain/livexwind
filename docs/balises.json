@@ -9,20 +9,13 @@
    "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
   },
   {
-   "id": 73091265,
-   "name": "Isthme",
-   "lat": 47.550833,
-   "lon": -3.134722,
-   "altitude": null,
-   "url": "https://www.windmorbihan.com/?spot=isthme"
-  },
-  {
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
-   "lat": 47.646112,
-   "lon": -3.214433,
-   "altitude": null,
-   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
+   "id": 1178,
+   "code": "WQ",
+   "name": "Montsec d'Ares",
+   "lat": null,
+   "lon": null,
+   "altitude": 1571,
+   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
   },
   {
    "id": 2667,
@@ -33,13 +26,20 @@
    "url": "https://www.windguru.cz/station/2667"
   },
   {
-   "id": 1178,
-   "code": "WQ",
-   "name": "Montsec d'Ares",
-   "lat": null,
-   "lon": null,
-   "altitude": 1571,
-   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "lat": 47.646112,
+   "lon": -3.214433,
+   "altitude": null,
+   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
+  },
+  {
+   "id": 73091265,
+   "name": "Isthme",
+   "lat": 47.550833,
+   "lon": -3.134722,
+   "altitude": null,
+   "url": "https://www.windmorbihan.com/?spot=isthme"
   }
  ]
 }

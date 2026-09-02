@@ -6,66 +6,28 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-02T19:21:00Z",
-    "dir": 336,
-    "dirLabel": "NNO",
-    "avg": 29.0,
-    "gust": 34.0,
-    "gustDir": 336,
-    "gustDirLabel": "NNO",
-    "min": 22.0,
-    "temp": 20.0,
+    "t": "2026-09-02T19:51:00Z",
+    "dir": 0,
+    "dirLabel": "N",
+    "avg": 27.0,
+    "gust": 33.0,
+    "gustDir": 0,
+    "gustDirLabel": "N",
+    "min": 18.0,
+    "temp": 19.0,
     "lum": null,
     "stale": false
    },
    "period": 600
   },
   {
-   "key": "mc-WQ",
-   "id": 1178,
-   "name": "Montsec d'Ares",
-   "provider": "mc",
-   "current": {
-    "t": "2026-09-02T19:00:00Z",
-    "dir": 259,
-    "dirLabel": "O",
-    "avg": 14.0,
-    "gust": 18.0,
-    "gustDir": null,
-    "min": null,
-    "temp": 20.7,
-    "lum": null,
-    "stale": false
-   },
-   "period": 1800
-  },
-  {
-   "key": "wg-2667",
-   "id": 2667,
-   "name": "Tarifa — Campo de Futbol",
-   "provider": "wg",
-   "current": {
-    "t": "2026-09-02T19:30:00Z",
-    "dir": 70,
-    "dirLabel": "ENE",
-    "avg": 14.4,
-    "gust": 27.4,
-    "gustDir": null,
-    "min": 9.6,
-    "temp": 25.7,
-    "lum": null,
-    "stale": false
-   },
-   "period": 300
-  },
-  {
-   "key": "wm-73091277",
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
+   "key": "wm-73091265",
+   "id": 73091265,
+   "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-02T19:21:00Z",
-    "dir": 254,
+    "t": "2026-09-02T19:57:00Z",
+    "dir": 246,
     "dirLabel": "OSO",
     "avg": 18.5,
     "gust": 20.4,
@@ -75,26 +37,64 @@
     "lum": null,
     "stale": false
    },
-   "period": 120
+   "period": 240
   },
   {
-   "key": "wm-73091265",
-   "id": 73091265,
-   "name": "Isthme",
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-02T19:27:00Z",
-    "dir": 254,
+    "t": "2026-09-02T19:57:00Z",
+    "dir": 255,
     "dirLabel": "OSO",
-    "avg": 16.7,
-    "gust": 18.5,
+    "avg": 20.4,
+    "gust": 24.1,
     "gustDir": null,
     "min": null,
     "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 120
+  },
+  {
+   "key": "wg-2667",
+   "id": 2667,
+   "name": "Tarifa — Campo de Futbol",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-02T20:00:00Z",
+    "dir": 75,
+    "dirLabel": "ENE",
+    "avg": 14.4,
+    "gust": 27.4,
+    "gustDir": null,
+    "min": 11.1,
+    "temp": 25.8,
+    "lum": null,
+    "stale": false
+   },
+   "period": 300
+  },
+  {
+   "key": "mc-WQ",
+   "id": 1178,
+   "name": "Montsec d'Ares",
+   "provider": "mc",
+   "current": {
+    "t": "2026-09-02T19:30:00Z",
+    "dir": 267,
+    "dirLabel": "O",
+    "avg": 14.8,
+    "gust": 19.4,
+    "gustDir": null,
+    "min": null,
+    "temp": 21.1,
+    "lum": null,
+    "stale": false
+   },
+   "period": 1800
   }
  ]
 }

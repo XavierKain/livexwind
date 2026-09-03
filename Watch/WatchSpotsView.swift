@@ -6,7 +6,10 @@ import SwiftUI
 /// changement de spot passe par l'iPhone, qui reste seul à écrire côté serveur.
 struct WatchSpotsView: View {
     @ObservedObject var store: WatchWindStore
-    @Environment(\.dismiss) private var dismiss
+    /// Revient sur l'écran principal une fois le nouveau spot confirmé —
+    /// remplace le `dismiss()` d'une navigation poussée, puisque les deux
+    /// écrans sont désormais deux pages d'un même `TabView`.
+    @Binding var page: Int
 
     @State private var spots: [WatchFeed.Spot] = []
     @State private var isLoading = true
@@ -82,7 +85,7 @@ struct WatchSpotsView: View {
                 // on rechargerait l'ancien et la montre afficherait le mauvais.
                 if await WatchFeed.waitForSelection(id: spot.id) {
                     await store.refresh()
-                    dismiss()
+                    withAnimation { page = 0 }
                 } else {
                     message = "L'iPhone n'a pas encore appliqué le changement."
                 }

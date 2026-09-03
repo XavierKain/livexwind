@@ -5,9 +5,7 @@ import WidgetKit
 struct LiveXWindWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                WatchWindView()
-            }
+            WatchWindView()
         }
     }
 }
@@ -33,64 +31,89 @@ final class WatchWindStore: ObservableObject {
     }
 }
 
+/// Écran principal + liste des spots, en deux pages qu'on feuillette
+/// horizontalement — pas de défilement vertical à faire pour changer de spot.
 struct WatchWindView: View {
     @StateObject private var store = WatchWindStore()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var page = 0
+
+    var body: some View {
+        TabView(selection: $page) {
+            WatchMainView(store: store)
+                .tag(0)
+            NavigationStack {
+                WatchSpotsView(store: store, page: $page)
+            }
+            .tag(1)
+        }
+        .tabViewStyle(.page(indexDisplayMode: .always))
+        .task { await store.refresh() }
+        .onChange(of: scenePhase) { _, phase in
+            // Un `.task` ne se rejoue pas quand on rouvre l'app depuis une
+            // complication : la vue existait déjà, elle affichait le dernier
+            // relevé chargé avant la mise en arrière-plan. On force donc un
+            // rafraîchissement à chaque retour au premier plan.
+            if phase == .active {
+                Task { await store.refresh() }
+            }
+        }
+    }
+}
+
+/// Page 1 : le relevé du spot sélectionné, sans rien à faire défiler.
+struct WatchMainView: View {
+    @ObservedObject var store: WatchWindStore
 
     private var reading: WindReading { store.snapshot.current }
     private var color: Color { WindPalette.color(kmh: reading.averageKmh) }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                HStack(spacing: 4) {
-                    WindArrow(degrees: reading.directionDegrees, color: color)
-                        .frame(width: 13, height: 13)
-                    Text(reading.directionText)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(color)
-                    Spacer()
-                    if store.isLoading {
-                        ProgressView().controlSize(.mini)
-                    }
+        VStack(spacing: 4) {
+            HStack(spacing: 4) {
+                Text(store.snapshot.baliseName)
+                    .font(.system(size: 12, weight: .semibold))
+                    .lineLimit(1)
+                Spacer(minLength: 4)
+                if store.isLoading {
+                    ProgressView().controlSize(.mini)
                 }
+            }
 
-                HStack(alignment: .firstTextBaseline, spacing: 3) {
+            Spacer(minLength: 0)
+
+            HStack(alignment: .center, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(store.unit.format(kmh: reading.averageKmh))
-                        .font(.system(size: 46, weight: .bold, design: .rounded))
+                        .font(.system(size: 44, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .foregroundStyle(color)
                     Text(store.unit.shortSymbol)
-                        .font(.caption2)
+                        .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
-
-                Text("raf. \(store.unit.format(kmh: reading.gustKmh)) \(store.unit.shortSymbol)")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
-
-                WindSparkline(values: store.snapshot.window(hours: 3).compactMap(\.averageKmh),
-                              color: color)
-                    .frame(height: 30)
-
-                HStack {
-                    Text(reading.date, style: .time)
-                    Text("·")
-                    Text(store.snapshot.cadenceText)
-                }
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
-
-                NavigationLink {
-                    WatchSpotsView(store: store)
-                } label: {
-                    Label("Changer de spot", systemImage: "list.bullet")
-                        .font(.caption2)
-                }
+                WindArrow(degrees: reading.directionDegrees, color: color)
+                    .frame(width: 34, height: 34)
             }
-            .padding(.horizontal, 4)
+            Text(reading.directionText)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(color)
+
+            Text("raf. \(store.unit.format(kmh: reading.gustKmh)) \(store.unit.shortSymbol)")
+                .font(.system(size: 12))
+                .foregroundStyle(.orange)
+
+            Spacer(minLength: 0)
+
+            HStack(spacing: 3) {
+                Text(reading.date, style: .time)
+                Text("·")
+                Text(store.snapshot.cadenceText)
+            }
+            .font(.system(size: 9))
+            .foregroundStyle(.secondary)
         }
-        .navigationTitle(store.snapshot.baliseName)
-        .task { await store.refresh() }
-        .refreshable { await store.refresh() }
+        .padding(.horizontal, 6)
+        .padding(.top, 2)
     }
 }

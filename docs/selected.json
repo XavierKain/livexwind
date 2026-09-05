@@ -1,8 +1,8 @@
 {
- "key": "mc-WQ",
- "id": 1178,
- "name": "Dades de l'estació automàtica Montsec d'Ares",
- "provider": "mc",
- "code": "WQ",
+ "key": "wg-2667",
+ "id": 2667,
+ "name": "Tarifa — Campo de Futbol",
+ "provider": "wg",
+ "code": "2667",
  "unit": "knots"
 }

@@ -9,21 +9,12 @@
    "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
   },
   {
-   "id": 1178,
-   "code": "WQ",
-   "name": "Montsec d'Ares",
-   "lat": null,
-   "lon": null,
-   "altitude": 1571,
-   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
-  },
-  {
-   "id": 2667,
-   "name": "Tarifa — Campo de Futbol",
-   "lat": 36.02441,
-   "lon": -5.613491,
-   "altitude": 17,
-   "url": "https://www.windguru.cz/station/2667"
+   "id": 73091265,
+   "name": "Isthme",
+   "lat": 47.550833,
+   "lon": -3.134722,
+   "altitude": null,
+   "url": "https://www.windmorbihan.com/?spot=isthme"
   },
   {
    "id": 73091277,
@@ -34,21 +25,39 @@
    "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
   },
   {
-   "id": 73091265,
-   "name": "Isthme",
-   "lat": 47.550833,
-   "lon": -3.134722,
-   "altitude": null,
-   "url": "https://www.windmorbihan.com/?spot=isthme"
+   "id": 2667,
+   "name": "Tarifa — Campo de Futbol",
+   "lat": 36.02441,
+   "lon": -5.613491,
+   "altitude": 17,
+   "url": "https://www.windguru.cz/station/2667"
   },
   {
-   "id": 901,
+   "id": 1178,
+   "code": "WQ",
+   "name": "Montsec d'Ares",
+   "lat": null,
+   "lon": null,
+   "altitude": 1571,
+   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
+  },
+  {
+   "id": 1310907781,
    "code": "6a84ad4f865d8d8278583ca6",
    "name": "Balneario Tarifa",
    "lat": 36.006900536253404,
    "lon": -5.608240069848412,
    "altitude": null,
    "url": "https://kwind.app/station/6a84ad4f865d8d8278583ca6"
+  },
+  {
+   "id": 3357180078,
+   "code": "6a84ab7d865d8d8278581963",
+   "name": "Balneario Tarifa",
+   "lat": 36.00800511202453,
+   "lon": -5.607393836546295,
+   "altitude": null,
+   "url": "https://kwind.app/station/6a84ab7d865d8d8278581963"
   }
  ]
 }

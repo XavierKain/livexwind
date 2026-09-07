@@ -1,8 +1,8 @@
 {
- "key": "wg-2667",
- "id": 2667,
- "name": "Tarifa — Campo de Futbol",
- "provider": "wg",
- "code": "2667",
+ "key": "kw-6a84ad4f865d8d8278583ca6",
+ "id": 901,
+ "name": "Balneario Tarifa",
+ "provider": "kw",
+ "code": "6a84ad4f865d8d8278583ca6",
  "unit": "knots"
 }

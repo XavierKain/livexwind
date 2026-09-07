@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-07T12:32:00Z",
+    "t": "2026-09-07T12:52:00Z",
     "dir": 246,
     "dirLabel": "OSO",
-    "avg": 11.0,
-    "gust": 12.0,
+    "avg": 12.0,
+    "gust": 15.0,
     "gustDir": 246,
     "gustDirLabel": "OSO",
-    "min": 8.0,
+    "min": 10.0,
     "temp": 25.0,
     "lum": 100.0,
     "stale": false
@@ -21,42 +21,23 @@
    "period": 600
   },
   {
-   "key": "wm-73091265",
-   "id": 73091265,
-   "name": "Isthme",
-   "provider": "wm",
+   "key": "mc-WQ",
+   "id": 1178,
+   "name": "Montsec d'Ares",
+   "provider": "mc",
    "current": {
-    "t": "2026-09-07T12:33:00Z",
-    "dir": 220,
-    "dirLabel": "SO",
-    "avg": 14.8,
-    "gust": 16.7,
+    "t": "2026-09-07T12:30:00Z",
+    "dir": 186,
+    "dirLabel": "S",
+    "avg": 12.2,
+    "gust": 28.1,
     "gustDir": null,
     "min": null,
-    "temp": null,
+    "temp": 26.2,
     "lum": null,
     "stale": false
    },
-   "period": 240
-  },
-  {
-   "key": "wm-73091277",
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
-   "provider": "wm",
-   "current": {
-    "t": "2026-09-07T12:28:00Z",
-    "dir": 238,
-    "dirLabel": "OSO",
-    "avg": 20.4,
-    "gust": 22.2,
-    "gustDir": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 240
+   "period": 1800
   },
   {
    "key": "wg-2667",
@@ -64,37 +45,75 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-07T12:35:00Z",
-    "dir": 79,
-    "dirLabel": "E",
-    "avg": 25.9,
-    "gust": 43.5,
+    "t": "2026-09-07T12:51:00Z",
+    "dir": 74,
+    "dirLabel": "ENE",
+    "avg": 28.9,
+    "gust": 37.0,
     "gustDir": null,
-    "min": 25.9,
-    "temp": 29.3,
+    "min": 19.4,
+    "temp": 29.6,
     "lum": null,
     "stale": false
    },
    "period": 60
   },
   {
-   "key": "mc-WQ",
-   "id": 1178,
-   "name": "Montsec d'Ares",
-   "provider": "mc",
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "provider": "wm",
    "current": {
-    "t": "2026-09-07T12:00:00Z",
-    "dir": 170,
-    "dirLabel": "S",
-    "avg": 15.1,
-    "gust": 30.2,
+    "t": "2026-09-07T12:49:00Z",
+    "dir": 244,
+    "dirLabel": "OSO",
+    "avg": 22.2,
+    "gust": 24.1,
     "gustDir": null,
     "min": null,
-    "temp": 25.7,
+    "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 1800
+   "period": 240
+  },
+  {
+   "key": "wm-73091265",
+   "id": 73091265,
+   "name": "Isthme",
+   "provider": "wm",
+   "current": {
+    "t": "2026-09-07T12:49:00Z",
+    "dir": 232,
+    "dirLabel": "SO",
+    "avg": 13.0,
+    "gust": 14.8,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 240
+  },
+  {
+   "key": "kw-6a84ad4f865d8d8278583ca6",
+   "id": 901,
+   "name": "Balneario Tarifa",
+   "provider": "kw",
+   "current": {
+    "t": "2026-09-07T12:54:00Z",
+    "dir": 110,
+    "dirLabel": "ESE",
+    "avg": 30.2,
+    "gust": 44.8,
+    "gustDir": null,
+    "min": 17.2,
+    "temp": 29.9,
+    "lum": null,
+    "stale": false
+   },
+   "period": 60
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T05:32:00Z",
+ "generatedAt": "2026-09-07T05:52:32Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-09-07T05:32:00Z",
+  "t": "2026-09-07T05:46:00Z",
   "dir": 44,
   "dirLabel": "NE",
   "avg": 24.1,
-  "gust": 33.9,
+  "gust": null,
   "gustDir": null,
-  "min": 11.1,
-  "temp": 25.3,
+  "min": null,
+  "temp": null,
   "lum": null,
   "stale": false
  },
@@ -17101,6 +17101,118 @@
    "gust": 33.9,
    "min": 11.1,
    "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:33:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 11.1,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:34:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 20.9,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:35:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 20.9,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:36:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 20.9,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:37:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 20.9,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:38:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": 20.9,
+   "min": 20.9,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:39:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:40:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": 25.3
+  },
+  {
+   "t": "2026-09-07T05:41:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T05:42:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T05:43:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T05:44:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T05:45:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T05:46:00Z",
+   "dir": 44,
+   "avg": 24.1,
+   "gust": null,
+   "min": null,
+   "temp": null
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T18:18:05Z",
+ "generatedAt": "2026-09-07T18:38:53Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-07T18:15:00Z",
-  "dir": 272,
+  "t": "2026-09-07T18:37:00Z",
+  "dir": 273,
   "dirLabel": "O",
   "avg": 11.1,
-  "gust": 14.8,
+  "gust": 13.0,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -22,14 +22,6 @@
  },
  "period": 240,
  "history": [
-  {
-   "t": "2026-09-05T18:30:00Z",
-   "dir": 315,
-   "avg": 9.3,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-05T18:46:00Z",
    "dir": 321,
@@ -1175,32 +1167,8 @@
    "temp": null
   },
   {
-   "t": "2026-09-07T06:22:00Z",
-   "dir": 251,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T06:28:00Z",
-   "dir": 251,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-07T06:32:00Z",
    "dir": 254,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T06:38:00Z",
-   "dir": 251,
    "avg": 16.7,
    "gust": 18.5,
    "min": null,
@@ -1927,14 +1895,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-07T15:19:00Z",
-   "dir": 239,
-   "avg": 11.1,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-07T15:25:00Z",
    "dir": 251,
    "avg": 11.1,
@@ -2203,6 +2163,38 @@
    "dir": 272,
    "avg": 11.1,
    "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T18:21:00Z",
+   "dir": 272,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T18:25:00Z",
+   "dir": 272,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T18:31:00Z",
+   "dir": 272,
+   "avg": 13.0,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-07T18:37:00Z",
+   "dir": 273,
+   "avg": 11.1,
+   "gust": 13.0,
    "min": null,
    "temp": null
   }

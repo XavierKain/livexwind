@@ -116,9 +116,13 @@ struct WindSnapshot: Codable, Hashable, Sendable {
         Date().timeIntervalSince(current.date) > max(periodSeconds * 3, 12 * 60)
     }
 
+    /// Relevés de la fenêtre demandée. Sur une station lente, une fenêtre
+    /// courte peut n'en contenir aucun : on montre alors les deux derniers
+    /// plutôt qu'un graphe vide — mais pas douze, ce qui contredirait
+    /// l'étiquette de la fenêtre.
     func window(hours: Double) -> [WindReading] {
         let cutoff = Date().addingTimeInterval(-hours * 3600)
         let inWindow = history.filter { $0.date >= cutoff }
-        return inWindow.isEmpty ? history.suffix(12).map { $0 } : inWindow
+        return inWindow.count >= 2 ? inWindow : history.suffix(2).map { $0 }
     }
 }

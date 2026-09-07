@@ -7,3 +7,6 @@ fastlane/report.xml
 fastlane/README.md
 asc_key.p8
 .DS_Store
+
+__pycache__/
+*.pyc

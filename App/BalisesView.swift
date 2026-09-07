@@ -25,6 +25,25 @@ struct BalisesView: View {
     /// La recherche s'exécute chez la source choisie dans le sélecteur.
     private var searchProvider: BaliseProvider { source }
 
+    private var searchPlaceholder: String {
+        switch source {
+        case .meteoCat: return "Rechercher (Montsec, Àger…) ou coller un lien"
+        case .kwind: return "Rechercher (Tarifa, Balneario…) ou coller un lien"
+        default: return "Rechercher (Tarifa, Leucate…) ou coller un lien"
+        }
+    }
+
+    private var searchFooter: String {
+        switch source {
+        case .meteoCat:
+            return "Le réseau XEMA couvre la Catalogne — Montsec d'Ares pour Àger, et 188 autres stations. Cherche par nom ou par code, ou colle une adresse meteo.cat/observacions/xema/dades?codi=…."
+        case .kwind:
+            return "KWind rassemble des stations posées par la communauté kite, souvent au ras du spot. Cherche par nom, ou colle une adresse kwind.app/station/…."
+        default:
+            return "Windguru couvre le monde entier — Tarifa / Campo de Futbol, Leucate, Almanarre… Tu peux chercher par nom, ou coller directement une adresse windguru.cz/station/…."
+        }
+    }
+
     private var filteredSensors: [Balise] {
         let query = search.trimmingCharacters(in: .whitespaces)
         guard !query.isEmpty else { return sensors }
@@ -38,7 +57,7 @@ struct BalisesView: View {
                 sourcePicker
                 switch source {
                 case .ffvl: ajoutParLien
-                case .windguru, .meteoCat: ajoutParRecherche
+                case .windguru, .meteoCat, .kwind: ajoutParRecherche
                 case .windMorbihan: ajoutWindMorbihan
                 }
             }
@@ -136,15 +155,14 @@ struct BalisesView: View {
 
     private var ajoutParRecherche: some View {
         Section {
-            TextField(source == .meteoCat
-                      ? "Rechercher (Montsec, Àger…) ou coller un lien"
-                      : "Rechercher (Tarifa, Leucate…) ou coller un lien", text: $search)
+            TextField(searchPlaceholder, text: $search)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .onSubmit { runSearch() }
 
-            if search.contains("windguru.cz") || search.contains("meteo.cat") {
+            if search.contains("windguru.cz") || search.contains("meteo.cat")
+                || search.contains("kwind.app") {
                 Button {
                     addLink(source: searchProvider, value: search)
                 } label: {
@@ -156,7 +174,7 @@ struct BalisesView: View {
                     .disabled(search.trimmingCharacters(in: .whitespaces).count < 2 || isLoadingSensors)
             }
 
-            if source == .windguru {
+            if source == .windguru || source == .kwind {
             HStack(spacing: 14) {
                 Button {
                     Task { await searchNearMe() }
@@ -219,9 +237,7 @@ struct BalisesView: View {
             }
             statusLines
         } footer: {
-            Text(source == .meteoCat
-                 ? "Le réseau XEMA couvre la Catalogne — Montsec d'Ares pour Àger, et 188 autres stations. Cherche par nom ou par code, ou colle une adresse meteo.cat/observacions/xema/dades?codi=…."
-                 : "Windguru couvre le monde entier — Tarifa / Campo de Futbol, Leucate, Almanarre… Tu peux chercher par nom, ou coller directement une adresse windguru.cz/station/….")
+            Text(searchFooter)
         }
     }
 

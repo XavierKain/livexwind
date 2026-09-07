@@ -57,6 +57,12 @@ struct BaliseClient: Sendable {
             return try await WindMorbihanClient.shared.latest(id: sourceID)
         case .windguru:
             return try await WindguruClient.shared.latest(id: sourceID)
+        case .kwind:
+            // kwind ne parle que WebSocket, avec un protocole applicatif propre.
+            // Plutôt que d'embarquer ce client dans l'app, le widget et la montre,
+            // on s'appuie sur le relevé que le serveur publie — il interroge la
+            // station toutes les 25 s, la fraîcheur est la même.
+            throw WindError.masked
         case .meteoCat:
             return try await MeteoCatClient.shared.latest(code: balise.code)
         case .ffvl:
@@ -77,6 +83,13 @@ struct BaliseClient: Sendable {
             return try await WindguruClient.shared.station(id: sourceID)
         case .meteoCat:
             return try await MeteoCatClient.shared.station(code: balise.code)
+        case .kwind:
+            // La fiche vient du catalogue public : pas besoin de WebSocket ici.
+            guard let found = await StationCatalog.stations(for: .kwind)
+                .first(where: { $0.code == balise.code }) else {
+                throw WindError.unknownBalise
+            }
+            return found
         case .ffvl:
             let html = try await fetchPage()
             guard let found = BaliseParser.parseBalise(html: html, id: sourceID) else {

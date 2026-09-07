@@ -4,9 +4,9 @@ Vent live de la balise FFVL **Pyla / Dune du Pilat** ([balise 64](https://www.ba
 
 ## Ce que ça fait
 
-- **Plusieurs balises, quatre sources** : FFVL (balisemeteo.com, France, ajout par URL),
-  Wind Morbihan (baie de Quiberon, liste de capteurs), Windguru (le monde entier, dont
-  Tarifa / Campo de Futbol) et Meteo.cat (réseau XEMA de Catalogne, dont Àger).
+- **Plusieurs balises, cinq sources** : FFVL (balisemeteo.com, France), Wind Morbihan (baie de
+  Quiberon), Windguru (le monde entier, dont Tarifa / Campo de Futbol), Meteo.cat (réseau XEMA de
+  Catalogne, dont Àger) et KWind (stations de la communauté kite, relevé à la minute).
   On bascule d'un spot à l'autre depuis le titre. Le serveur relève toutes les balises suivies ;
   seule celle qui est sélectionnée déclenche l'activité en direct et les alertes.
 - **Vue d'ensemble** : l'onglet *Mes spots* liste les balises suivies avec leur vent du moment,
@@ -42,7 +42,7 @@ toute façon toutes les 10 min, le réveil est programmé juste après le relev�
 Le widget, lui, est plafonné à 5 min : iOS ne rafraîchit un widget que quelques dizaines de fois par
 jour, viser la minute ne ferait que gaspiller ce budget.
 
-## Les quatre sources
+## Les cinq sources
 
 **FFVL / balisemeteo.com** masque les valeurs (`!!! WARNING !!!`) tant que le client n'a pas de
 session PHP : on fait une requête d'amorçage sur l'accueil pour obtenir le cookie, puis on lit la
@@ -81,6 +81,17 @@ km/h et en heures TU — donc en UTC, sans conversion. C'est la source d'Àger, 
 d'Ares ». Ses stations sont identifiées par un **code alphabétique** et non par un nombre : c'est
 pour elles que `Balise` porte un `code` distinct de son identifiant numérique interne.
 
+**kwind.app** est la seule source sans page lisible ni API REST : son serveur HTTP ne fait qu'écho,
+tout passe par une **WebSocket** à la racine de `api.kwind.app`, sous-protocole `2.11.0`, avec un
+protocole applicatif en JSON simple (`identify` puis `subscribe` sur les canaux `station`,
+`winddata` et `stations`). Vitesses en nœuds, converties. Chaque station peut porter une correction
+d'étalonnage de son propriétaire (`windspeedAdjusted`) : on affiche la valeur corrigée, comme le
+site, sinon on n'afficherait pas la même chose que lui.
+
+Comme ce protocole n'a rien de standard, il n'est implémenté que côté serveur : l'app, le widget et
+la montre lisent le relevé publié plutôt que d'embarquer un client WebSocket. La fraîcheur est la
+même — le serveur interroge la station toutes les 25 s.
+
 > Windfinder a été écarté : son API exige un en-tête `WF-AUTH` qu'il faudrait extraire de leur
 > client web, ce qui serait fragile autant que discutable.
 
@@ -118,7 +129,7 @@ Le JWT ES256 est signé directement avec `cryptography` — pas de dépendance P
 App/        app SwiftUI (dial, graphe, activité en direct, réveil BGTask)
 Widget/     extension WidgetKit + activité en direct
 Shared/     modèles, client balise, vues partagées, intent de configuration
-feed/       sources de données Python (scrape.py = FFVL, windmorbihan.py = API JSON)
+feed/       sources de données Python (une par site) + cadence.py (mesure et allègement)
 server/     API d'enregistrement + pousseur APNs (systemd)
 fastlane/   build signé + upload TestFlight
 docs/       flux JSON publié sur GitHub Pages

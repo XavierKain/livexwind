@@ -50,7 +50,8 @@ import scrape  # noqa: E402  (source FFVL / balisemeteo.com)
 import windmorbihan  # noqa: E402  (source windmorbihan.com)
 import windguru  # noqa: E402  (source windguru.cz, mondiale)
 import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
-from cadence import observed_period  # noqa: E402
+import kwind  # noqa: E402  (source kwind.app, WebSocket)
+from cadence import observed_period, thin_history  # noqa: E402
 
 PORT = 7110
 HOME = Path.home()
@@ -62,7 +63,7 @@ STATE_PATH = DATA_DIR / "livexwind_state.json"
 APNS_HOST = "https://api.push.apple.com"   # production : l'environnement des builds TestFlight
 JWT_TTL = 40 * 60
 DEFAULT_BALISE = {"id": 64, "code": "64", "name": "Pyla Pilat", "altitude": 55, "provider": "ffvl"}
-PROVIDERS = ("ffvl", "wm", "wg", "mc")
+PROVIDERS = ("ffvl", "wm", "wg", "mc", "kw")
 BACKFILL_MIN_POINTS = 20
 POLL_INTERVAL = 30              # repli quand la cadence d'une balise est inconnue
 MAX_PERIOD = 2400
@@ -70,7 +71,7 @@ CATCH_UP = 8                    # marge après l'heure attendue du prochain rele
 # Guet rapide sur la balise affichée quand la source est une API JSON bon marché.
 # balisemeteo demande deux requêtes HTML par lecture et publie de toute façon
 # toutes les 10 min : là, on programme le réveil au lieu de guetter.
-FAST_WATCH = {"wm": 25, "wg": 25}
+FAST_WATCH = {"wm": 25, "wg": 25, "kw": 25}
 ALERT_INTERVAL = 120            # balise non affichée mais sous surveillance d'alerte
 SECONDARY_INTERVAL = 5 * 60     # les autres balises suivies, moins souvent
 ACTIVITY_MAX_AGE = 7.5 * 3600   # iOS coupe l'activité à 8 h → on la relance avant
@@ -311,6 +312,9 @@ def sensors():
     if provider == "mc":
         return jsonify({"provider": "mc", "sensors": meteocat.search(query) if query else []})
 
+    if provider == "kw":
+        return jsonify({"provider": "kw", "sensors": kwind.search(query) if query else []})
+
     if provider == "wg":
         lat, lon = request.args.get("lat"), request.args.get("lon")
         if lat and lon:
@@ -440,6 +444,8 @@ def refresh_feed(balise: dict) -> dict | None:
         return _refresh_wg(balise)
     if provider == "mc":
         return _refresh_mc(balise)
+    if provider == "kw":
+        return _refresh_kw(balise)
     return _refresh_ffvl(balise)
 
 
@@ -528,9 +534,29 @@ def _refresh_mc(balise: dict) -> dict | None:
     return _store_feed(path, info, reading, previous=old)
 
 
+def _refresh_kw(balise: dict) -> dict | None:
+    """kwind.app : relevé pris par WebSocket, en nœuds et déjà étalonné."""
+    code = balise_code(balise)
+    path = feed_path(code, "kw")
+    reading = kwind.latest(code)
+    info = kwind.station(code)
+    if not reading or not info:
+        return load_json(path, None)
+
+    old = load_json(path, {})
+    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
+        backfill = kwind.history(code)
+        if backfill:
+            log.info("balise kw %s : historique initial (%d points)", code, len(backfill))
+            old = {"history": backfill}
+
+    info = {**info, "id": balise["id"], "code": code}
+    return _store_feed(path, info, reading, previous=old)
+
+
 def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:
     old = previous if previous is not None else load_json(path, {})
-    history = scrape.merge_history(old.get("history", []), reading)
+    history = thin_history(scrape.merge_history(old.get("history", []), reading))
     payload = {"generatedAt": datetime.now(timezone.utc).replace(microsecond=0)
                               .isoformat().replace("+00:00", "Z"),
                "balise": info,
@@ -718,6 +744,8 @@ def publish_catalogs():
                for st in windguru.load_index().get("stations", {}).values()],
         "mc": [{"c": st["code"], "n": st["name"], "a": None, "o": None,
                 "e": st.get("altitude")} for st in meteocat.stations()],
+        "kw": [{"c": st["code"], "n": st["name"], "a": st.get("lat"),
+                "o": st.get("lon"), "e": st.get("altitude")} for st in kwind.stations()],
     }
     for provider, stations in catalogs.items():
         if not stations:

@@ -8,6 +8,7 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
     case windMorbihan = "wm"
     case windguru = "wg"
     case meteoCat = "mc"
+    case kwind = "kw"
 
     var label: String {
         switch self {
@@ -15,6 +16,7 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
         case .windMorbihan: return "Morbihan"
         case .windguru: return "Windguru"
         case .meteoCat: return "Meteo.cat"
+        case .kwind: return "KWind"
         }
     }
 
@@ -28,6 +30,8 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
             return "windguru.cz — des milliers de stations dans le monde, dont Tarifa"
         case .meteoCat:
             return "meteo.cat — réseau XEMA de Catalogne, dont Àger, relevé toutes les 30 min"
+        case .kwind:
+            return "kwind.app — stations de la communauté kite, relevé à la minute"
         }
     }
 
@@ -70,19 +74,36 @@ struct Balise: Codable, Hashable, Identifiable, Sendable {
                   latitude: latitude, longitude: longitude, provider: provider, code: code)
     }
 
-    /// Un code alphanumérique lu en base 36 — court, stable et sans collision
-    /// entre codes différents.
+    /// Identifiant numérique dérivé du code, stable d'un lancement à l'autre.
+    ///
+    /// Les codes courts (meteo.cat : « WQ ») sont lus en base 36, ce qui reste
+    /// lisible. Les longs — kwind identifie ses stations par 24 caractères
+    /// hexadécimaux — passent par un FNV-1a : une base 36 sur 24 caractères
+    /// déborderait, et un dépassement d'entier fait planter Swift.
+    ///
+    /// `hashValue` est exclu volontairement : Swift le rend imprévisible d'une
+    /// exécution à l'autre, ce qui casserait les réglages enregistrés.
     static func handle(for code: String) -> Int {
         if let numeric = Int(code) { return numeric }
-        return code.uppercased().unicodeScalars.reduce(0) { total, scalar in
-            let digit: Int
-            switch scalar {
-            case "0"..."9": digit = Int(scalar.value - 48)
-            case "A"..."Z": digit = Int(scalar.value - 55)
-            default: digit = 0
+
+        if code.count <= 8 {
+            return code.uppercased().unicodeScalars.reduce(0) { total, scalar in
+                let digit: Int
+                switch scalar {
+                case "0"..."9": digit = Int(scalar.value - 48)
+                case "A"..."Z": digit = Int(scalar.value - 55)
+                default: digit = 0
+                }
+                return total * 36 + digit
             }
-            return total * 36 + digit
         }
+
+        var hash: UInt32 = 2_166_136_261
+        for byte in code.utf8 {
+            hash ^= UInt32(byte)
+            hash = hash &* 16_777_619
+        }
+        return Int(hash)
     }
 
     // Les balises enregistrées avant l'arrivée des sources multiples n'ont pas
@@ -113,6 +134,8 @@ struct Balise: Codable, Hashable, Identifiable, Sendable {
             return URL(string: "https://www.windguru.cz/station/\(code)")!
         case .meteoCat:
             return URL(string: "https://www.meteo.cat/observacions/xema/dades?codi=\(code)")!
+        case .kwind:
+            return URL(string: "https://kwind.app/station/\(code)")!
         }
     }
 
@@ -136,6 +159,9 @@ struct Balise: Codable, Hashable, Identifiable, Sendable {
         let text = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return nil }
 
+        if let code = firstText("kwind\\.app/station/([A-Za-z0-9]{6,40})", in: text) {
+            return (.kwind, code)
+        }
         if let code = firstText("meteo\\.cat[^\\s]*codi=([A-Za-z0-9]{1,5})", in: text) {
             return (.meteoCat, code.uppercased())
         }

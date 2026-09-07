@@ -110,6 +110,31 @@ class WindguruTests(unittest.TestCase):
         self.assertTrue(lecture["t"].endswith("Z"))
 
 
+class HistoriqueTests(unittest.TestCase):
+    """Une station à la minute ne doit pas produire un flux de 300 Ko."""
+
+    def test_detail_conserve_sur_les_dernieres_heures(self):
+        from cadence import thin_history
+        from datetime import datetime, timedelta, timezone
+
+        now = datetime(2026, 9, 7, 12, 0, tzinfo=timezone.utc)
+        # 48 h de relevés à la minute, comme en publie windguru.
+        history = [{"t": (now - timedelta(minutes=i)).isoformat().replace("+00:00", "Z"),
+                    "avg": 20.0} for i in range(48 * 60, 0, -1)]
+
+        thinned = thin_history(history, now=now)
+        self.assertLess(len(thinned), 500, "l'historique doit être allégé")
+
+        recents = [s for s in thinned
+                   if (now - datetime.fromisoformat(s["t"].replace("Z", "+00:00"))).total_seconds() <= 3 * 3600]
+        self.assertGreaterEqual(len(recents), 175,
+                                "les 3 dernières heures gardent leur résolution")
+
+    def test_historique_vide(self):
+        from cadence import thin_history
+        self.assertEqual(thin_history([]), [])
+
+
 class RoseDesVentsTests(unittest.TestCase):
     """La rose est partagée : une erreur de secteur fausserait les alertes."""
 

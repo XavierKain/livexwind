@@ -12,28 +12,39 @@ struct SpotsOverviewView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 8) {
-                    ForEach(store.catalog.balises) { balise in
-                        Button {
-                            Task {
-                                await store.select(baliseID: balise.id)
-                                onSelect()
-                            }
-                        } label: {
-                            SpotRow(balise: balise,
-                                    snapshot: store.overview[balise.key],
-                                    unit: store.unit,
-                                    isSelected: balise.id == store.catalog.selectedID,
-                                    hasAlerts: store.alertBadge(for: balise))
+            // Une `List` plutôt qu'une pile : c'est ce qui apporte le glissement
+            // pour supprimer. Retirer une balise passait jusqu'ici par l'écran
+            // d'ajout, ce qui n'avait rien d'évident.
+            List {
+                ForEach(store.catalog.balises) { balise in
+                    Button {
+                        Task {
+                            await store.select(baliseID: balise.id)
+                            onSelect()
                         }
-                        .buttonStyle(.plain)
+                    } label: {
+                        SpotRow(balise: balise,
+                                snapshot: store.overview[balise.key],
+                                unit: store.unit,
+                                isSelected: balise.id == store.catalog.selectedID,
+                                hasAlerts: store.alertBadge(for: balise))
+                    }
+                    .buttonStyle(.plain)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 14, bottom: 4, trailing: 14))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing) {
+                        if store.catalog.balises.count > 1 {
+                            Button(role: .destructive) {
+                                Task { await store.removeBalise(id: balise.id) }
+                            } label: {
+                                Label("Retirer", systemImage: "trash")
+                            }
+                        }
                     }
                 }
-                .padding(.horizontal, 14)
-                .padding(.top, 6)
-                .padding(.bottom, 20)
             }
+            .listStyle(.plain)
             .navigationTitle("Mes spots")
             .navigationBarTitleDisplayMode(.inline)
             .refreshable { await store.refreshOverview(force: true) }

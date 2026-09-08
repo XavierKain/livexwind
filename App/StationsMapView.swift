@@ -28,12 +28,23 @@ struct StationsMapView: View {
 
     var body: some View {
         NavigationStack {
-            Map(position: $camera) {
-                ForEach(stations) { station in
-                    Annotation(station.balise.name, coordinate: station.coordinate) {
-                        pin(for: station)
+            // Les pastilles ne captent plus le toucher : un bouton posé sur la
+            // carte avalait le début d'un pincement dès qu'un doigt s'y trouvait,
+            // et le zoom ne partait pas. C'est la carte qui reçoit le tap, et on
+            // cherche ensuite la balise la plus proche du point touché.
+            MapReader { proxy in
+                Map(position: $camera) {
+                    ForEach(stations) { station in
+                        Annotation(station.balise.name, coordinate: station.coordinate) {
+                            pin(for: station)
+                                .allowsHitTesting(false)
+                        }
+                        .annotationTitles(.hidden)
                     }
-                    .annotationTitles(.hidden)
+                }
+                .onTapGesture { point in
+                    guard let touched = proxy.convert(point, from: .local) else { return }
+                    selected = nearestStation(to: touched)
                 }
             }
             .mapControls { MapUserLocationButton(); MapCompass() }
@@ -82,10 +93,7 @@ struct StationsMapView: View {
         let wind = station.reading?.averageKmh
         let tint = wind != nil ? WindPalette.color(kmh: wind) : color(of: station.balise.provider)
 
-        return Button {
-            selected = station
-        } label: {
-            HStack(spacing: 2) {
+        return HStack(spacing: 2) {
                 if let direction = station.reading?.directionDegrees {
                     WindArrow(degrees: direction, color: .white)
                         .frame(width: 8, height: 8)
@@ -95,13 +103,21 @@ struct StationsMapView: View {
                     .monospacedDigit()
                     .foregroundStyle(.white)
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(tint, in: Capsule())
-            .overlay(Capsule().stroke(.white.opacity(tracked ? 1 : 0.35),
-                                      lineWidth: tracked ? 2 : 1))
-        }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(tint, in: Capsule())
+        .overlay(Capsule().stroke(.white.opacity(tracked ? 1 : 0.35),
+                                  lineWidth: tracked ? 2 : 1))
+    }
+
+    /// Balise la plus proche du point touché, dans une tolérance qui suit le
+    /// zoom : environ 4 % de la largeur visible.
+    private func nearestStation(to coordinate: CLLocationCoordinate2D) -> MapStation? {
+        let toleranceKm = max(0.5, visibleSpan * 111 * 0.04)
+        return stations
+            .map { ($0, distanceKm($0.coordinate, coordinate)) }
+            .filter { $0.1 <= toleranceKm }
+            .min { $0.1 < $1.1 }?.0
     }
 
     @ViewBuilder

@@ -37,6 +37,15 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
 
     /// Vrai quand on peut ajouter une balise en collant un lien.
     var acceptsLink: Bool { self != .windMorbihan }
+
+    /// Vrai quand notre catalogue porte la position des stations, donc qu'on
+    /// peut proposer « autour de moi ».
+    var supportsProximity: Bool {
+        switch self {
+        case .windguru, .kwind, .meteoCat: return true
+        case .ffvl, .windMorbihan: return false
+        }
+    }
 }
 
 /// Une balise météo suivie par l'app.

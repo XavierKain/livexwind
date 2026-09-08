@@ -174,7 +174,7 @@ struct BalisesView: View {
                     .disabled(search.trimmingCharacters(in: .whitespaces).count < 2 || isLoadingSensors)
             }
 
-            if source == .windguru || source == .kwind {
+            if source.supportsProximity {
             HStack(spacing: 14) {
                 Button {
                     Task { await searchNearMe() }
@@ -343,8 +343,12 @@ struct BalisesView: View {
         indexNote = nil
         defer { isLoadingSensors = false }
 
+        // Une réponse vide n'est pas une réponse : le serveur peut ne pas
+        // couvrir cette source, ou son catalogue être encore incomplet. On
+        // bascule alors sur le catalogue public plutôt que d'annoncer « rien ».
         if let found = try? await ServerClient.shared.searchSensors(
-            provider: searchProvider, query: query, near: near) {
+            provider: searchProvider, query: query, near: near),
+           !found.sensors.isEmpty {
             results = found.sensors.map {
                 Balise(code: $0.sourceCode, name: $0.name, altitude: $0.altitude,
                        latitude: $0.lat, longitude: $0.lon, provider: searchProvider)

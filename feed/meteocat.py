@@ -152,12 +152,14 @@ def station(code: str) -> dict | None:
         return None
 
     altitude = re.search(r"Altitud.{0,80}?(\d[\d.\s]*)\s*m", doc, re.S)
+    # La fiche ne donne pas la position : on la prend dans le catalogue.
+    listed = next((st for st in stations() if st["code"] == code), {})
     return {
         "id": code,
         "code": code,
         "name": re.sub(r"\s*\(.*?\)\s*$", "", name).strip(),
-        "lat": None,
-        "lon": None,
+        "lat": listed.get("lat"),
+        "lon": listed.get("lon"),
         "altitude": int(altitude.group(1).replace(".", "").replace(" ", "")) if altitude else None,
         "url": f"{BASE}/dades?codi={code}",
     }
@@ -192,14 +194,29 @@ def stations() -> list[dict]:
     except Exception:
         return []
 
+    # Le tableau donne, après le lien : latitude, longitude, altitude — avec la
+    # virgule décimale catalane. C'est la seule page de meteo.cat qui publie la
+    # position des stations ; la fiche d'une station, elle, ne la donne pas.
+    row = re.compile(
+        r'dades\?codi=([A-Z0-9]+)[^>]*>([^<]{2,80})</a>.{0,200}?'
+        r'<td>\s*(-?\d+[.,]\d+)\s*</td>\s*<td>\s*(-?\d+[.,]\d+)\s*</td>',
+        re.S)
+
+    def decimal(value: str):
+        try:
+            return float(value.replace(",", "."))
+        except ValueError:
+            return None
+
     found = {}
-    for code, label in re.findall(r'dades\?codi=([A-Z0-9]+)[^>]*>([^<]{2,80})</a>', doc):
+    for code, label, lat, lon in row.findall(doc):
         name = re.sub(r"\s*\[[A-Z0-9]+\]\s*$", "", html_lib.unescape(label)).strip()
         altitude = re.search(r"\((\d[\d.\s]*)\s*m\)\s*$", name)
         name = re.sub(r"\s*\(.*?\)\s*$", "", name).strip()
         if name:
             found[code] = {
-                "id": code, "code": code, "name": name, "lat": None, "lon": None,
+                "id": code, "code": code, "name": name,
+                "lat": decimal(lat), "lon": decimal(lon),
                 "altitude": int(altitude.group(1).replace(".", "").replace(" ", "")) if altitude else None,
             }
     result = sorted(found.values(), key=lambda s: s["name"])

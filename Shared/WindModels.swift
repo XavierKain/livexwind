@@ -68,6 +68,8 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     var baliseKey: String = "ffvl-0"
     var baliseName: String
     var altitude: Int?
+    var latitude: Double?
+    var longitude: Double?
     var current: WindReading
     var history: [WindReading]
     var fetchedAt: Date
@@ -81,6 +83,8 @@ struct WindSnapshot: Codable, Hashable, Sendable {
             baliseKey: balise.key,
             baliseName: balise.name,
             altitude: balise.altitude,
+            latitude: balise.latitude,
+            longitude: balise.longitude,
             current: WindReading(date: .now, directionDegrees: 270, directionLabel: "O",
                                  averageKmh: 21, gustKmh: 28, gustDirectionDegrees: 292,
                                  minKmh: 16, temperature: 24, luminosity: 100),

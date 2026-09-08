@@ -171,6 +171,8 @@ struct BaliseClient: Sendable {
             baliseKey: balise.key,
             baliseName: balise.name,
             altitude: balise.altitude ?? feed?.altitude ?? cached?.altitude,
+            latitude: balise.latitude ?? feed?.latitude ?? cached?.latitude,
+            longitude: balise.longitude ?? feed?.longitude ?? cached?.longitude,
             current: current,
             history: history,
             fetchedAt: .now,
@@ -303,7 +305,13 @@ enum BaliseParser {
 // MARK: - Flux JSON
 
 struct FeedPayload: Decodable {
-    struct BaliseInfo: Decodable { let id: Int; let name: String?; let altitude: Int? }
+    struct BaliseInfo: Decodable {
+        let id: Int
+        let name: String?
+        let altitude: Int?
+        let lat: Double?
+        let lon: Double?
+    }
     struct Sample: Decodable {
         let t: String?
         let dir: Int?
@@ -335,6 +343,8 @@ struct FeedPayload: Decodable {
             baliseKey: identity.key,
             baliseName: identity.name,
             altitude: balise.altitude,
+            latitude: balise.lat,
+            longitude: balise.lon,
             current: latest ?? WindSnapshot.placeholder(balise: identity).current,
             history: readings,
             fetchedAt: .now,

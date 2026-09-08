@@ -299,73 +299,90 @@ def wind():
     return jsonify(load_json(feed_path(code, provider), {"error": "pas encore de relevé"}))
 
 
+def catalog_for(provider: str) -> list:
+    """Catalogue de stations d'une source, avec leurs positions quand elles existent."""
+    if provider == "wg":
+        return list(windguru.load_index().get("stations", {}).values())
+    if provider == "mc":
+        return meteocat.stations()
+    if provider == "kw":
+        return kwind.stations()
+    return []
+
+
+def nearby_in(stations: list, lat: float, lon: float,
+              radius_km: float = 60, limit: int = 30) -> list:
+    """Stations les plus proches d'un point, triées par distance.
+
+    Générique : toutes les sources dont le catalogue porte des coordonnées en
+    profitent, pas seulement windguru comme au départ.
+    """
+    import math
+
+    def distance_km(lat1, lon1, lat2, lon2):
+        r = 6371.0
+        p1, p2 = math.radians(lat1), math.radians(lat2)
+        dp, dl = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+        a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+        return 2 * r * math.asin(min(1.0, math.sqrt(a)))
+
+    hits = []
+    for station in stations:
+        s_lat, s_lon = station.get("lat"), station.get("lon")
+        if s_lat is None or s_lon is None:
+            continue
+        km = distance_km(lat, lon, s_lat, s_lon)
+        if km <= radius_km:
+            hits.append({**station, "km": round(km, 1)})
+    hits.sort(key=lambda s: s["km"])
+    return hits[:limit]
+
+
+def search_in(provider: str, query: str, limit: int = 40) -> list:
+    if provider == "wg":
+        return windguru.search(query, limit)
+    if provider == "mc":
+        return meteocat.search(query, limit)
+    if provider == "kw":
+        return kwind.search(query, limit)
+    return []
+
+
 @app.route("/api/sensors")
 def sensors():
-    """Capteurs d'une source, pour le sélecteur de l'app.
+    """Capteurs d'une source, par nom ou autour d'un point.
 
-    windmorbihan publie une liste complète ; windguru compte des milliers de
-    stations et n'ouvre pas sa recherche, alors on interroge notre propre index.
+    windmorbihan publie une liste complète et courte, qu'on renvoie telle quelle.
+    Les autres sources comptent des centaines ou des milliers de stations : on
+    interroge alors le catalogue qu'on tient de notre côté.
     """
     provider = request.args.get("provider", "wm")
     query = (request.args.get("q") or "").strip()
+    lat, lon = request.args.get("lat"), request.args.get("lon")
 
-    if provider == "mc":
-        return jsonify({"provider": "mc", "sensors": meteocat.search(query) if query else []})
-
-    if provider == "kw":
-        return jsonify({"provider": "kw", "sensors": kwind.search(query) if query else []})
-
-    if provider == "wg":
-        lat, lon = request.args.get("lat"), request.args.get("lon")
-        if lat and lon:
-            try:
-                hits = windguru.nearby(float(lat), float(lon),
-                                       radius_km=float(request.args.get("radius", 60)))
-            except (TypeError, ValueError):
-                hits = []
-        else:
-            hits = windguru.search(query) if query else []
-        return jsonify({"provider": "wg", "sensors": hits,
-                        "index": windguru.index_progress()})
-
-    if provider != "wm":
-        return jsonify({"error": "source inconnue"}), 400
-    try:
-        return jsonify({"provider": "wm", "sensors": windmorbihan.sensors()})
-    except Exception as exc:
-        log.warning("liste des capteurs windmorbihan indisponible : %s", exc)
-        return jsonify({"provider": "wm", "sensors": []}), 502
-
-
-@app.route("/api/balises", methods=["GET", "POST"])
-def balises():
-    if request.method == "GET":
-        tracked, selected = tracked_balises()
-        return jsonify({"balises": tracked, "selected": selected})
-
-    body = request.get_json(silent=True) or {}
-    cleaned = []
-    for b in body.get("balises") or []:
+    if provider == "wm":
         try:
-            balise_id = int(b["id"])
-        except (KeyError, TypeError, ValueError):
-            continue
-        provider = b.get("provider")
-        cleaned.append({"id": balise_id,
-                        "code": str(b.get("code") or balise_id),
-                        "name": b.get("name") or f"Balise {balise_id}",
-                        "altitude": b.get("altitude"),
-                        "provider": provider if provider in PROVIDERS else "ffvl"})
-    if not cleaned:
-        return jsonify({"error": "liste vide ou invalide"}), 400
+            return jsonify({"provider": "wm", "sensors": windmorbihan.sensors()})
+        except Exception as exc:
+            log.warning("liste des capteurs windmorbihan indisponible : %s", exc)
+            return jsonify({"provider": "wm", "sensors": []}), 502
 
-    set_prefs({"balises": cleaned, "selected": body.get("selected") or cleaned[0]["id"]})
-    # Republié tout de suite : l'Apple Watch lit ce pointeur pour savoir quel
-    # spot afficher, et la boucle de relevés peut dormir plusieurs minutes.
-    publish_pointer()
-    log.info("balises suivies : %s (sélectionnée %s)",
-             [b["id"] for b in cleaned], body.get("selected"))
-    return jsonify({"ok": True})
+    if provider not in PROVIDERS:
+        return jsonify({"error": "source inconnue"}), 400
+
+    if lat and lon:
+        try:
+            hits = nearby_in(catalog_for(provider), float(lat), float(lon),
+                             radius_km=float(request.args.get("radius", 60)))
+        except (TypeError, ValueError):
+            hits = []
+    else:
+        hits = search_in(provider, query) if query else []
+
+    payload = {"provider": provider, "sensors": hits}
+    if provider == "wg":
+        payload["index"] = windguru.index_progress()
+    return jsonify(payload)
 
 
 @app.route("/api/live-activity/register", methods=["POST"])

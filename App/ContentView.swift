@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import CoreLocation
 
 struct ContentView: View {
     @ObservedObject var store: WindStore
@@ -26,6 +27,9 @@ struct ContentView: View {
                     metrics
                     chartCard
                     alertsCard
+                    if let coordinate = baliseCoordinate {
+                        BaliseMapCard(balise: store.balise, coordinate: coordinate)
+                    }
                     liveActivityCard
                     serverCard
                     footer
@@ -74,6 +78,17 @@ struct ContentView: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
         }
+    }
+
+    /// La position n'est pas toujours publiée : le catalogue local peut être
+    /// antérieur à son ajout, auquel cas le flux du serveur la fournit.
+    private var baliseCoordinate: CLLocationCoordinate2D? {
+        let latitude = store.balise.latitude ?? store.snapshot.latitude
+        let longitude = store.balise.longitude ?? store.snapshot.longitude
+        guard let latitude, let longitude,
+              CLLocationCoordinate2DIsValid(CLLocationCoordinate2D(latitude: latitude, longitude: longitude)),
+              !(latitude == 0 && longitude == 0) else { return nil }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 
     // MARK: Sections

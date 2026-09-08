@@ -170,7 +170,9 @@ struct MapStation: Identifiable, Hashable {
     /// Interroge le serveur, qui interroge toutes les sources d'un coup ; à
     /// défaut, on recompose depuis les catalogues publics.
     static func around(_ coordinate: CLLocationCoordinate2D, radiusKm: Double) async -> [MapStation] {
-        if let remote = try? await ServerClient.shared.mapStations(near: coordinate, radiusKm: radiusKm),
+        if let remote = try? await ServerClient.shared.mapStations(
+            near: (latitude: coordinate.latitude, longitude: coordinate.longitude),
+            radiusKm: radiusKm),
            !remote.isEmpty {
             return remote.compactMap { hit in
                 guard let provider = BaliseProvider(rawValue: hit.provider),

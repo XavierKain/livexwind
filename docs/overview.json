@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-08T05:42:00Z",
-    "dir": 314,
-    "dirLabel": "NO",
-    "avg": 1.0,
-    "gust": 6.0,
-    "gustDir": 202,
-    "gustDirLabel": "SSO",
+    "t": "2026-09-08T06:02:00Z",
+    "dir": 202,
+    "dirLabel": "SSO",
+    "avg": 3.0,
+    "gust": 5.0,
+    "gustDir": 224,
+    "gustDirLabel": "SO",
     "min": 0.0,
     "temp": 20.0,
-    "lum": 50.0,
+    "lum": 65.0,
     "stale": false
    },
    "period": 600
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T05:46:00Z",
-    "dir": 221,
+    "t": "2026-09-08T06:06:00Z",
+    "dir": 222,
     "dirLabel": "SO",
-    "avg": 24.1,
-    "gust": 27.8,
+    "avg": 33.3,
+    "gust": 42.6,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T05:43:00Z",
-    "dir": 227,
+    "t": "2026-09-08T06:05:00Z",
+    "dir": 222,
     "dirLabel": "SO",
     "avg": 40.7,
-    "gust": 44.4,
+    "gust": 48.2,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -64,7 +64,7 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-08T05:47:00Z",
+    "t": "2026-09-08T05:53:00Z",
     "dir": 29,
     "dirLabel": "NNE",
     "avg": 1.5,
@@ -75,7 +75,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 60
   },
   {
    "key": "mc-WQ",
@@ -102,7 +102,7 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-08T05:50:00Z",
+    "t": "2026-09-08T05:53:00Z",
     "dir": 29,
     "dirLabel": "NNE",
     "avg": 4.3,
@@ -113,7 +113,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 180
   },
   {
    "key": "kw-6a84ab7d865d8d8278581963",
@@ -121,7 +121,7 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-08T05:50:00Z",
+    "t": "2026-09-08T05:53:00Z",
     "dir": 29,
     "dirLabel": "NNE",
     "avg": 5.7,

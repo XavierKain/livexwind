@@ -129,6 +129,34 @@ struct ServerClient: Sendable {
         return try JSONDecoder().decode(SensorSearch.self, from: data)
     }
 
+    struct MapHit: Decodable {
+        let provider: String
+        let code: String
+        let name: String?
+        let lat: Double?
+        let lon: Double?
+        let altitude: Int?
+        let km: Double?
+    }
+
+    /// Balises de toutes les sources autour d'un point — ce que consomme la carte.
+    func mapStations(near coordinate: (latitude: Double, longitude: Double),
+                     radiusKm: Double) async throws -> [MapHit] {
+        guard let baseURL else { throw ServerError.notConfigured }
+        var components = URLComponents(url: baseURL.appendingPathComponent("api/map"),
+                                       resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "lat", value: String(coordinate.latitude)),
+                                  URLQueryItem(name: "lon", value: String(coordinate.longitude)),
+                                  URLQueryItem(name: "radius", value: String(Int(radiusKm)))]
+        guard let url = components?.url else { throw ServerError.notConfigured }
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 12
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        let (data, _) = try await URLSession.shared.data(for: request)
+        struct Payload: Decodable { let stations: [MapHit] }
+        return try JSONDecoder().decode(Payload.self, from: data).stations
+    }
+
     func fetchBalises() async throws -> [RemoteBalise] {
         guard let baseURL else { throw ServerError.notConfigured }
         var request = URLRequest(url: baseURL.appendingPathComponent("api/balises"))

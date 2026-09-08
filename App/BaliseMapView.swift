@@ -10,6 +10,7 @@ struct BaliseMapCard: View {
     let balise: Balise
     let coordinate: CLLocationCoordinate2D
     @State private var showFullMap = false
+    @State private var camera: MapCameraPosition = .automatic
 
     var body: some View {
         Button {
@@ -25,18 +26,16 @@ struct BaliseMapCard: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Map(initialPosition: .region(MKCoordinateRegion(
-                    center: coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
-                ))) {
+                // Caméra liée à un état plutôt que `initialPosition` : avec
+                // celle-ci, l'épingle n'apparaissait qu'après un déplacement.
+                Map(position: $camera, interactionModes: []) {
                     Marker(balise.name, systemImage: "wind", coordinate: coordinate)
                         .tint(Color.accentColor)
                 }
                 .frame(height: 130)
+                .onAppear { camera = .region(region(span: 0.04)) }
+                .onChange(of: coordinate.latitude) { _, _ in camera = .region(region(span: 0.04)) }
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                // Aperçu seulement : sans ça, la carte capterait le défilement
-                // de la page dès qu'on passe le doigt dessus.
-                .allowsHitTesting(false)
 
                 HStack(spacing: 4) {
                     Text("Toucher pour agrandir")
@@ -55,6 +54,11 @@ struct BaliseMapCard: View {
         }
     }
 
+    private func region(span: Double) -> MKCoordinateRegion {
+        MKCoordinateRegion(center: coordinate,
+                           span: MKCoordinateSpan(latitudeDelta: span, longitudeDelta: span))
+    }
+
     static func formatted(_ coordinate: CLLocationCoordinate2D) -> String {
         String(format: "%.5f, %.5f", coordinate.latitude, coordinate.longitude)
     }
@@ -67,18 +71,21 @@ struct BaliseMapSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var satellite = true
+    @State private var camera: MapCameraPosition = .automatic
 
     /// `MapStyle` est un protocole aux types concrets distincts : `.standard` et
     /// `.hybrid` ne peuvent pas se rejoindre dans un ternaire, d'où les deux
     /// branches plutôt qu'une valeur stockée.
     @ViewBuilder
     private var map: some View {
-        let content = Map(initialPosition: .region(MKCoordinateRegion(
-            center: coordinate,
-            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        ))) {
+        let content = Map(position: $camera) {
             Marker(balise.name, systemImage: "wind", coordinate: coordinate)
                 .tint(Color.accentColor)
+        }
+        .onAppear {
+            camera = .region(MKCoordinateRegion(
+                center: coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
         }
         if satellite {
             content.mapStyle(.hybrid(elevation: .realistic))
@@ -104,7 +111,16 @@ struct BaliseMapSheet: View {
                     .pickerStyle(.segmented)
 
                     HStack(spacing: 10) {
-                        openButton("Plans", "map", url: appleMapsURL)
+                        Button {
+                            openInAppleMaps()
+                        } label: {
+                            Label("Plans", systemImage: "map")
+                                .font(.caption.weight(.medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
+                        }
+                        .buttonStyle(.plain)
                         openButton("Google", "globe", url: googleMapsURL)
                         openButton("OSM", "point.topleft.down.to.point.bottomright.curvepath",
                                    url: openStreetMapURL)
@@ -144,11 +160,17 @@ struct BaliseMapSheet: View {
         "\(coordinate.latitude),\(coordinate.longitude)"
     }
 
-    private var appleMapsURL: URL {
-        var components = URLComponents(string: "https://maps.apple.com/")!
-        components.queryItems = [URLQueryItem(name: "ll", value: query),
-                                 URLQueryItem(name: "q", value: balise.name)]
-        return components.url!
+    /// Une URL `maps.apple.com?q=` fait une *recherche* : Plans peut alors
+    /// pointer un lieu voisin plutôt que la balise. Un `MKMapItem` construit sur
+    /// les coordonnées pose l'épingle exactement au bon endroit.
+    private func openInAppleMaps() {
+        let item = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        item.name = balise.name
+        item.openInMaps(launchOptions: [
+            MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: coordinate),
+            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan:
+                MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)),
+        ])
     }
 
     private var googleMapsURL: URL {

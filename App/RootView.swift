@@ -5,7 +5,7 @@ struct RootView: View {
     @StateObject private var store = WindStore()
     @State private var tab = Tab.detail
 
-    enum Tab { case detail, spots }
+    enum Tab { case detail, spots, map }
 
     var body: some View {
         TabView(selection: $tab) {
@@ -16,6 +16,10 @@ struct RootView: View {
             SpotsOverviewView(store: store) { tab = .detail }
                 .tabItem { Label("Mes spots", systemImage: "list.bullet") }
                 .tag(Tab.spots)
+
+            StationsMapView(store: store) { tab = .detail }
+                .tabItem { Label("Carte", systemImage: "map") }
+                .tag(Tab.map)
         }
     }
 }

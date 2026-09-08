@@ -51,6 +51,7 @@ import windmorbihan  # noqa: E402  (source windmorbihan.com)
 import windguru  # noqa: E402  (source windguru.cz, mondiale)
 import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
 import kwind  # noqa: E402  (source kwind.app, WebSocket)
+import ffvl_index  # noqa: E402  (catalogue géolocalisé des balises FFVL)
 from cadence import observed_period, thin_history  # noqa: E402
 
 PORT = 7110
@@ -282,7 +283,8 @@ def health():
                     "selected": selected,
                     "last_reading": state.get("last_reading"),
                     "last_push": state.get("last_push"),
-                    "windguru_index": windguru.index_progress()})
+                    "windguru_index": windguru.index_progress(),
+                    "ffvl_index": ffvl_index.progress()})
 
 
 @app.route("/api/wind")
@@ -303,6 +305,8 @@ def catalog_for(provider: str) -> list:
     """Catalogue de stations d'une source, avec leurs positions quand elles existent."""
     if provider == "wg":
         return list(windguru.load_index().get("stations", {}).values())
+    if provider == "ffvl":
+        return ffvl_index.stations()
     if provider == "mc":
         return meteocat.stations()
     if provider == "kw":
@@ -339,6 +343,8 @@ def nearby_in(stations: list, lat: float, lon: float,
 
 
 def search_in(provider: str, query: str, limit: int = 40) -> list:
+    if provider == "ffvl":
+        return ffvl_index.search(query, limit)
     if provider == "wg":
         return windguru.search(query, limit)
     if provider == "mc":
@@ -383,6 +389,39 @@ def sensors():
     if provider == "wg":
         payload["index"] = windguru.index_progress()
     return jsonify(payload)
+
+
+@app.route("/api/map")
+def map_stations():
+    """Toutes les balises connues autour d'un point, toutes sources confondues.
+
+    C'est ce que consomme l'onglet Carte : on ne veut pas y choisir sa source
+    avant de savoir ce qui existe là où on est.
+    """
+    try:
+        lat, lon = float(request.args["lat"]), float(request.args["lon"])
+    except (KeyError, TypeError, ValueError):
+        return jsonify({"error": "lat et lon requis"}), 400
+
+    radius = min(float(request.args.get("radius", 60)), 300)
+    limit_per_source = int(request.args.get("limit", 40))
+
+    stations = []
+    for provider in ("ffvl", "wg", "kw", "mc"):
+        try:
+            hits = nearby_in(catalog_for(provider), lat, lon, radius_km=radius, limit=limit_per_source)
+        except Exception as exc:
+            log.warning("carte : source %s indisponible (%s)", provider, exc)
+            continue
+        for hit in hits:
+            stations.append({"provider": provider,
+                             "code": str(hit.get("code") or hit.get("id")),
+                             "name": hit.get("name"),
+                             "lat": hit.get("lat"), "lon": hit.get("lon"),
+                             "altitude": hit.get("altitude"), "km": hit.get("km")})
+
+    stations.sort(key=lambda s: s["km"])
+    return jsonify({"stations": stations, "radius": radius})
 
 
 @app.route("/api/live-activity/register", methods=["POST"])
@@ -763,6 +802,8 @@ def publish_catalogs():
                 "e": st.get("altitude")} for st in meteocat.stations()],
         "kw": [{"c": st["code"], "n": st["name"], "a": st.get("lat"),
                 "o": st.get("lon"), "e": st.get("altitude")} for st in kwind.stations()],
+        "ffvl": [{"c": st["code"], "n": st["name"], "a": st.get("lat"),
+                  "o": st.get("lon"), "e": st.get("altitude")} for st in ffvl_index.stations()],
     }
     for provider, stations in catalogs.items():
         if not stations:
@@ -993,11 +1034,37 @@ def windguru_index_loop():
         time.sleep(5)
 
 
+def ffvl_index_loop():
+    """Balaye le catalogue FFVL : les départements, puis la fiche de chaque balise.
+
+    La FFVL réserve ses données ouvertes à qui détient une clé API ; en attendant
+    d'en demander une, on reconstitue les positions à partir des pages publiques,
+    lentement.
+    """
+    log.info("indexation FFVL démarrée")
+    while True:
+        try:
+            progress = ffvl_index.progress()
+            if progress["departments"] >= progress["total_departments"] and progress["queue"] == 0:
+                time.sleep(7 * 24 * 3600)   # catalogue complet : on repasse dans une semaine
+                continue
+            ffvl_index.index_step()
+            after = ffvl_index.progress()
+            if after["indexed"] != progress["indexed"] and after["indexed"] % 100 < 25:
+                log.info("index FFVL : %d balises situées, %d en attente",
+                         after["indexed"], after["queue"])
+        except Exception as exc:
+            log.warning("indexation FFVL : %s", exc)
+            time.sleep(300)
+        time.sleep(5)
+
+
 def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     migrate_legacy_feed()
     threading.Thread(target=pusher_loop, daemon=True).start()
     threading.Thread(target=windguru_index_loop, daemon=True).start()
+    threading.Thread(target=ffvl_index_loop, daemon=True).start()
     log.info("API LiveXWind sur le port %d", PORT)
     app.run(host="0.0.0.0", port=PORT, debug=False, use_reloader=False)
 

@@ -42,8 +42,8 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
     /// peut proposer « autour de moi ».
     var supportsProximity: Bool {
         switch self {
-        case .windguru, .kwind, .meteoCat: return true
-        case .ffvl, .windMorbihan: return false
+        case .windguru, .kwind, .meteoCat, .ffvl: return true
+        case .windMorbihan: return false
         }
     }
 }

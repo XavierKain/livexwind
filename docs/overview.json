@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-08T09:42:00Z",
-    "dir": 224,
-    "dirLabel": "SO",
+    "t": "2026-09-08T10:02:00Z",
+    "dir": 202,
+    "dirLabel": "SSO",
     "avg": 21.0,
     "gust": 26.0,
-    "gustDir": 224,
-    "gustDirLabel": "SO",
+    "gustDir": 202,
+    "gustDirLabel": "SSO",
     "min": 15.0,
-    "temp": 22.0,
-    "lum": 65.0,
+    "temp": 23.0,
+    "lum": 100.0,
     "stale": false
    },
    "period": 600
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T09:48:00Z",
-    "dir": 256,
-    "dirLabel": "OSO",
-    "avg": 40.7,
-    "gust": 46.3,
+    "t": "2026-09-08T10:10:00Z",
+    "dir": 273,
+    "dirLabel": "O",
+    "avg": 37.0,
+    "gust": 42.6,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,18 +45,18 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T09:48:00Z",
-    "dir": 269,
-    "dirLabel": "O",
-    "avg": 46.3,
-    "gust": 53.7,
+    "t": "2026-09-08T10:06:00Z",
+    "dir": 290,
+    "dirLabel": "ONO",
+    "avg": 38.9,
+    "gust": 46.3,
     "gustDir": null,
     "min": null,
     "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 120
   },
   {
    "key": "wg-2667",
@@ -64,7 +64,7 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-08T09:51:00Z",
+    "t": "2026-09-08T09:56:00Z",
     "dir": 252,
     "dirLabel": "OSO",
     "avg": 8.0,
@@ -102,7 +102,7 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-08T09:52:00Z",
+    "t": "2026-09-08T09:56:00Z",
     "dir": 252,
     "dirLabel": "OSO",
     "avg": 10.7,
@@ -113,7 +113,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 240
   },
   {
    "key": "kw-6a84ab7d865d8d8278581963",
@@ -121,7 +121,7 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-08T09:52:00Z",
+    "t": "2026-09-08T09:56:00Z",
     "dir": 252,
     "dirLabel": "OSO",
     "avg": 12.2,

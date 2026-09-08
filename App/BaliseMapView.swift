@@ -30,7 +30,7 @@ struct BaliseMapCard: View {
                     span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
                 ))) {
                     Marker(balise.name, systemImage: "wind", coordinate: coordinate)
-                        .tint(.accentColor)
+                        .tint(Color.accentColor)
                 }
                 .frame(height: 130)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -78,7 +78,7 @@ struct BaliseMapSheet: View {
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         ))) {
             Marker(balise.name, systemImage: "wind", coordinate: coordinate)
-                .tint(.accentColor)
+                .tint(Color.accentColor)
         }
         if satellite {
             content.mapStyle(.hybrid(elevation: .realistic))

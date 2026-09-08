@@ -271,8 +271,13 @@ struct MapStationSheet: View {
         }
         .padding(18)
         .task {
-            reading = station.reading
-                ?? (try? await BaliseClient(balise: station.balise).fetchPublicFeed().current)
+            // `??` place son membre droit dans une fermeture non asynchrone :
+            // l'attente doit être écrite explicitement.
+            if let known = station.reading {
+                reading = known
+            } else {
+                reading = try? await BaliseClient(balise: station.balise).fetchPublicFeed().current
+            }
         }
     }
 

@@ -35,12 +35,21 @@ jobs:
           BUILD_NUMBER: "1"
 
       - name: Build for iOS Simulator (no signing)
+        # On garde le journal complet : un `tail` avalait les diagnostics du
+        # compilateur, noyés sous les lignes de commande de clang.
         run: |
           set -o pipefail
-          xcodebuild build \
+          if ! xcodebuild build \
             -project LiveXWind.xcodeproj \
             -scheme LiveXWind \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
-            | tail -80
+            > /tmp/build.log 2>&1; then
+              echo "::group::Erreurs de compilation"
+              grep -E "error:" /tmp/build.log | sort -u | head -40
+              echo "::endgroup::"
+              tail -30 /tmp/build.log
+              exit 1
+          fi
+          tail -3 /tmp/build.log

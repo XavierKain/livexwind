@@ -66,25 +66,30 @@ struct BaliseMapSheet: View {
     let coordinate: CLLocationCoordinate2D
 
     @Environment(\.dismiss) private var dismiss
-    @State private var style = MapStyleChoice.hybride
+    @State private var satellite = true
 
-    enum MapStyleChoice: String, CaseIterable {
-        case plan = "Plan"
-        case hybride = "Satellite"
-
-        var style: MapStyle { self == .plan ? .standard : .hybrid(elevation: .realistic) }
+    /// `MapStyle` est un protocole aux types concrets distincts : `.standard` et
+    /// `.hybrid` ne peuvent pas se rejoindre dans un ternaire, d'où les deux
+    /// branches plutôt qu'une valeur stockée.
+    @ViewBuilder
+    private var map: some View {
+        let content = Map(initialPosition: .region(MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        ))) {
+            Marker(balise.name, systemImage: "wind", coordinate: coordinate)
+                .tint(.accentColor)
+        }
+        if satellite {
+            content.mapStyle(.hybrid(elevation: .realistic))
+        } else {
+            content.mapStyle(.standard)
+        }
     }
 
     var body: some View {
         NavigationStack {
-            Map(initialPosition: .region(MKCoordinateRegion(
-                center: coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-            ))) {
-                Marker(balise.name, systemImage: "wind", coordinate: coordinate)
-                    .tint(.accentColor)
-            }
-            .mapStyle(style.style)
+            map
             .mapControls {
                 MapCompass()
                 MapScaleView()
@@ -92,8 +97,9 @@ struct BaliseMapSheet: View {
             }
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: 8) {
-                    Picker("Fond de carte", selection: $style) {
-                        ForEach(MapStyleChoice.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    Picker("Fond de carte", selection: $satellite) {
+                        Text("Plan").tag(false)
+                        Text("Satellite").tag(true)
                     }
                     .pickerStyle(.segmented)
 

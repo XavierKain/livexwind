@@ -391,6 +391,39 @@ def sensors():
     return jsonify(payload)
 
 
+_map_live: dict = {"data": {}, "ts": 0.0}
+MAP_LIVE_TTL = 90
+MAP_FETCH_LIMIT = 20        # requêtes unitaires acceptées par appel
+
+
+def live_snapshot() -> dict:
+    """Relevés du moment, par clé de balise, pour les sources qui les livrent en bloc.
+
+    KWind et Wind Morbihan renvoient l'ensemble de leurs stations en un appel :
+    c'est gratuit pour la carte. Les autres sources demandent une requête par
+    station, on les complète au coup par coup et sous plafond.
+    """
+    if time.time() - _map_live["ts"] < MAP_LIVE_TTL:
+        return _map_live["data"]
+
+    readings = {}
+    for provider, loader in (("kw", kwind.live_all), ("wm", windmorbihan.live_all)):
+        try:
+            for code, reading in loader().items():
+                readings[f"{provider}-{code}"] = reading
+        except Exception as exc:
+            log.warning("relevés groupés %s indisponibles : %s", provider, exc)
+
+    _map_live.update(data=readings, ts=time.time())
+    return readings
+
+
+def cached_reading(provider: str, code: str) -> dict | None:
+    """Relevé déjà connu : celui d'une balise suivie, sinon rien."""
+    feed = load_json(feed_path(code, provider), None)
+    return (feed or {}).get("current")
+
+
 @app.route("/api/map")
 def map_stations():
     """Toutes les balises connues autour d'un point, toutes sources confondues.
@@ -421,6 +454,26 @@ def map_stations():
                              "altitude": hit.get("altitude"), "km": hit.get("km")})
 
     stations.sort(key=lambda s: s["km"])
+
+    # On habille les balises de leur vent du moment : en bloc quand la source le
+    # permet, depuis les flux déjà suivis sinon, et enfin par quelques requêtes
+    # unitaires — plafonnées, pour ne pas transformer un déplacement de carte en
+    # rafale de requêtes chez les sources.
+    bulk = live_snapshot()
+    budget = MAP_FETCH_LIMIT
+    for station in stations:
+        key = f"{station['provider']}-{station['code']}"
+        reading = bulk.get(key) or cached_reading(station["provider"], station["code"])
+        if reading is None and budget > 0 and station["provider"] == "wg":
+            try:
+                reading = windguru.latest(int(station["code"]))
+                budget -= 1
+            except Exception:
+                reading = None
+        if reading:
+            station["current"] = {"avg": reading.get("avg"), "gust": reading.get("gust"),
+                                  "dir": reading.get("dir"), "t": reading.get("t")}
+
     return jsonify({"stations": stations, "radius": radius})
 
 

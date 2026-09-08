@@ -130,6 +130,21 @@ struct ServerClient: Sendable {
     }
 
     struct MapHit: Decodable {
+        struct Current: Decodable {
+            let avg: Double?
+            let gust: Double?
+            let dir: Int?
+            let t: String?
+
+            var reading: WindReading? {
+                guard avg != nil || gust != nil else { return nil }
+                let date = t.flatMap { ISO8601DateFormatter().date(from: $0) } ?? Date()
+                return WindReading(date: date, directionDegrees: dir, directionLabel: nil,
+                                   averageKmh: avg, gustKmh: gust, gustDirectionDegrees: nil,
+                                   minKmh: nil, temperature: nil, luminosity: nil)
+            }
+        }
+
         let provider: String
         let code: String
         let name: String?
@@ -137,6 +152,7 @@ struct ServerClient: Sendable {
         let lon: Double?
         let altitude: Int?
         let km: Double?
+        let current: Current?
     }
 
     /// Balises de toutes les sources autour d'un point — ce que consomme la carte.

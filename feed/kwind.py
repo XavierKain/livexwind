@@ -197,6 +197,25 @@ def stations(force: bool = False) -> list[dict]:
     return result
 
 
+def live_all() -> dict:
+    """Dernier relevé de toutes les stations, en un seul appel.
+
+    Le canal `stations` renvoie déjà `lastWindData` : autant s'en servir plutôt
+    que d'interroger chaque station une par une pour la carte.
+    """
+    data = _query("stations", {"limit": 2000, "where": {"source": {"$ne": "airports"}}}, timeout=30)
+    rows = data if isinstance(data, list) else (data or {}).get("data") or []
+    out = {}
+    for row in rows:
+        wind = row.get("lastWindData") if isinstance(row, dict) else None
+        if not wind:
+            continue
+        reading = _reading(wind, wind.get("timestamp"))
+        if reading:
+            out[str(row.get("_id"))] = reading
+    return out
+
+
 def search(query: str, limit: int = 40) -> list[dict]:
     import unicodedata
 

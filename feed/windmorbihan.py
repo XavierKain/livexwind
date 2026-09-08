@@ -119,6 +119,16 @@ def latest(nid: int, force: bool = False) -> dict | None:
     return _reading_from(_latest_map(force=force).get(str(nid)))
 
 
+def live_all(force: bool = False) -> dict:
+    """Dernier relevé de tous les capteurs — un seul fichier de 15 Ko."""
+    out = {}
+    for nid, row in _latest_map(force=force).items():
+        reading = _reading_from(row)
+        if reading:
+            out[str(nid)] = reading
+    return out
+
+
 def history(nid: int, limit_hours: int = 48) -> list[dict]:
     """Historique complet — appelé une seule fois, au premier suivi d'une balise."""
     try:

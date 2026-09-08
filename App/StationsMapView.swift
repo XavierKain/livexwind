@@ -55,24 +55,35 @@ struct StationsMapView: View {
 
     // MARK: Pièces
 
+    /// Pastille du vent plutôt qu'une épingle : sur une carte, ce qu'on cherche
+    /// c'est « combien ça souffle là-bas », pas où est le capteur.
+    ///
+    /// Volontairement légère — pas de matériau translucide ni de pile de vues :
+    /// avec plusieurs dizaines d'annotations, le flou temps réel faisait saccader
+    /// le zoom.
     private func pin(for station: MapStation) -> some View {
         let tracked = store.catalog.balises.contains { $0.key == station.balise.key }
+        let wind = station.reading?.averageKmh
+        let tint = wind != nil ? WindPalette.color(kmh: wind) : color(of: station.balise.provider)
+
         return Button {
             selected = station
         } label: {
-            VStack(spacing: 1) {
-                Image(systemName: tracked ? "star.fill" : "wind")
-                    .font(.system(size: 11, weight: .bold))
+            HStack(spacing: 2) {
+                if let direction = station.reading?.directionDegrees {
+                    WindArrow(degrees: direction, color: .white)
+                        .frame(width: 8, height: 8)
+                }
+                Text(wind != nil ? store.unit.format(kmh: wind) : "—")
+                    .font(.system(size: 12, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
                     .foregroundStyle(.white)
-                    .padding(5)
-                    .background(color(of: station.balise.provider), in: Circle())
-                    .overlay(Circle().stroke(.white.opacity(tracked ? 0.9 : 0.4), lineWidth: 1.5))
-                Text(station.balise.name)
-                    .font(.system(size: 9, weight: .semibold))
-                    .lineLimit(1)
-                    .padding(.horizontal, 3)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 3))
             }
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(tint, in: Capsule())
+            .overlay(Capsule().stroke(.white.opacity(tracked ? 1 : 0.35),
+                                      lineWidth: tracked ? 2 : 1))
         }
         .buttonStyle(.plain)
     }
@@ -92,13 +103,10 @@ struct StationsMapView: View {
     }
 
     private var legend: some View {
-        HStack(spacing: 12) {
-            ForEach(BaliseProvider.allCases.filter(\.supportsProximity) + [.ffvl], id: \.self) { provider in
-                HStack(spacing: 3) {
-                    Circle().fill(color(of: provider)).frame(width: 7, height: 7)
-                    Text(provider.label).font(.system(size: 9))
-                }
-            }
+        HStack(spacing: 10) {
+            Text("Vent en \(store.unit.symbol) · couleur = force")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
             Spacer()
             Button {
                 Task { await reload(around: center) }
@@ -161,6 +169,8 @@ struct StationsMapView: View {
 struct MapStation: Identifiable, Hashable {
     let balise: Balise
     let distanceKm: Double?
+    /// Vent du moment, quand la source sait le livrer sans requête dédiée.
+    var reading: WindReading?
 
     var id: String { balise.key }
     var coordinate: CLLocationCoordinate2D {
@@ -180,7 +190,8 @@ struct MapStation: Identifiable, Hashable {
                 return MapStation(balise: Balise(code: hit.code, name: hit.name ?? hit.code,
                                                  altitude: hit.altitude, latitude: lat, longitude: lon,
                                                  provider: provider),
-                                  distanceKm: hit.km)
+                                  distanceKm: hit.km,
+                                  reading: hit.current?.reading)
             }
         }
 
@@ -189,7 +200,7 @@ struct MapStation: Identifiable, Hashable {
             let hits = await StationCatalog.nearby(latitude: coordinate.latitude,
                                                    longitude: coordinate.longitude,
                                                    provider: provider, radiusKm: radiusKm)
-            found += hits.map { MapStation(balise: $0.balise, distanceKm: $0.km) }
+            found += hits.map { MapStation(balise: $0.balise, distanceKm: $0.km, reading: nil) }
         }
         return found.sorted { ($0.distanceKm ?? 0) < ($1.distanceKm ?? 0) }
     }
@@ -203,6 +214,7 @@ struct MapStationSheet: View {
 
     @State private var reading: WindReading?
     @State private var isAdding = false
+
 
     private var alreadyTracked: Bool {
         store.catalog.balises.contains { $0.key == station.balise.key }
@@ -258,7 +270,10 @@ struct MapStationSheet: View {
             .disabled(alreadyTracked || isAdding)
         }
         .padding(18)
-        .task { reading = try? await BaliseClient(balise: station.balise).fetchPublicFeed().current }
+        .task {
+            reading = station.reading
+                ?? (try? await BaliseClient(balise: station.balise).fetchPublicFeed().current)
+        }
     }
 
     private func add() {

@@ -17,6 +17,14 @@ struct StationsMapView: View {
     @State private var selected: MapStation?
     @State private var isLoading = false
     @State private var message: String?
+    @State private var visibleSpan: Double = 0.5
+    /// Dernière zone effectivement chargée, pour ne pas tout redemander à chaque
+    /// petit déplacement.
+    @State private var lastFetch: (center: CLLocationCoordinate2D, radius: Double)?
+
+    /// Au-delà d'environ 220 km de large, afficher des balises n'a pas de sens :
+    /// elles se chevaucheraient, et il faudrait charger le monde entier.
+    private static let maxSpanDegrees = 2.0
 
     var body: some View {
         NavigationStack {
@@ -29,6 +37,14 @@ struct StationsMapView: View {
                 }
             }
             .mapControls { MapUserLocationButton(); MapCompass() }
+            // `.onEnd` : rien ne se charge pendant le geste, seulement quand la
+            // carte s'immobilise.
+            .onMapCameraChange(frequency: .onEnd) { context in
+                let region = context.region
+                center = region.center
+                visibleSpan = max(region.span.latitudeDelta, region.span.longitudeDelta)
+                Task { await reloadIfNeeded(region: region) }
+            }
             .overlay(alignment: .top) { banner }
             .safeAreaInset(edge: .bottom) { legend }
             .navigationTitle("Carte")
@@ -90,7 +106,13 @@ struct StationsMapView: View {
 
     @ViewBuilder
     private var banner: some View {
-        if isLoading || message != nil {
+        if visibleSpan > Self.maxSpanDegrees {
+            Label("Zoome pour voir les balises", systemImage: "plus.magnifyingglass")
+                .font(.caption)
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .background(.regularMaterial, in: Capsule())
+                .padding(.top, 6)
+        } else if isLoading || message != nil {
             HStack(spacing: 6) {
                 if isLoading { ProgressView().controlSize(.mini) }
                 Text(message ?? "Recherche des balises…")
@@ -109,9 +131,10 @@ struct StationsMapView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             Button {
-                Task { await reload(around: center) }
+                lastFetch = nil
+                Task { await reload(around: center, radiusKm: min(150, max(10, visibleSpan * 111 * 0.7))) }
             } label: {
-                Label("Ici", systemImage: "arrow.clockwise")
+                Label("Actualiser", systemImage: "arrow.clockwise")
                     .font(.caption2.weight(.semibold))
             }
         }
@@ -139,7 +162,34 @@ struct StationsMapView: View {
         }
         camera = .region(MKCoordinateRegion(center: center,
                                             span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)))
-        await reload(around: center)
+        await reload(around: center, radiusKm: 40)
+    }
+
+    /// Recharge seulement si la vue est assez resserrée, et si elle a assez
+    /// bougé depuis la dernière fois.
+    private func reloadIfNeeded(region: MKCoordinateRegion) async {
+        guard visibleSpan <= Self.maxSpanDegrees else {
+            stations = []
+            message = nil
+            lastFetch = nil
+            return
+        }
+
+        // Un degré de latitude ≈ 111 km ; on couvre la diagonale visible.
+        let radius = min(150, max(10, visibleSpan * 111 * 0.7))
+
+        if let last = lastFetch {
+            let moved = distanceKm(last.center, region.center)
+            let sameScale = abs(last.radius - radius) / last.radius < 0.4
+            if sameScale && moved < last.radius * 0.35 { return }
+        }
+
+        await reload(around: region.center, radiusKm: radius)
+    }
+
+    private func distanceKm(_ a: CLLocationCoordinate2D, _ b: CLLocationCoordinate2D) -> Double {
+        CLLocation(latitude: a.latitude, longitude: a.longitude)
+            .distance(from: CLLocation(latitude: b.latitude, longitude: b.longitude)) / 1000
     }
 
     private func locateMe() async {
@@ -148,19 +198,20 @@ struct StationsMapView: View {
             center = here
             camera = .region(MKCoordinateRegion(center: here,
                                                 span: MKCoordinateSpan(latitudeDelta: 0.4, longitudeDelta: 0.4)))
-            await reload(around: here)
+            await reload(around: here, radiusKm: 35)
         } catch {
             message = error.localizedDescription
         }
     }
 
-    private func reload(around coordinate: CLLocationCoordinate2D) async {
+    private func reload(around coordinate: CLLocationCoordinate2D, radiusKm: Double) async {
         isLoading = true
         message = nil
-        stations = await MapStation.around(coordinate, radiusKm: 60)
+        stations = await MapStation.around(coordinate, radiusKm: radiusKm)
+        lastFetch = (coordinate, radiusKm)
         isLoading = false
         if stations.isEmpty {
-            message = "Aucune balise connue dans un rayon de 60 km"
+            message = "Aucune balise connue dans un rayon de \(Int(radiusKm)) km"
         }
     }
 }

@@ -36,8 +36,8 @@
    "id": 1178,
    "code": "WQ",
    "name": "Montsec d'Ares",
-   "lat": null,
-   "lon": null,
+   "lat": 42.0513,
+   "lon": 0.72952,
    "altitude": 1571,
    "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
   },
@@ -58,6 +58,30 @@
    "lon": -5.607393836546295,
    "altitude": null,
    "url": "https://kwind.app/station/6a84ab7d865d8d8278581963"
+  },
+  {
+   "id": 12491,
+   "name": "Tarifa — WMO",
+   "lat": 36.014,
+   "lon": -5.5988,
+   "altitude": 32,
+   "url": "https://www.windguru.cz/station/12491"
+  },
+  {
+   "id": 269,
+   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
+   "lat": 36.066792,
+   "lon": -5.684362,
+   "altitude": 7,
+   "url": "https://www.windguru.cz/station/269"
+  },
+  {
+   "id": 3275,
+   "name": "Zahara de los Atunes — Zahara",
+   "lat": 36.104912,
+   "lon": -5.824476,
+   "altitude": 10,
+   "url": "https://www.windguru.cz/station/3275"
   }
  ]
 }

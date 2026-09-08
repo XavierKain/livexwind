@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-08T13:22:00Z",
+    "t": "2026-09-08T13:52:00Z",
     "dir": 224,
     "dirLabel": "SO",
     "avg": 34.0,
     "gust": 39.0,
     "gustDir": 224,
     "gustDirLabel": "SO",
-    "min": 31.0,
+    "min": 29.0,
     "temp": 23.0,
-    "lum": 100.0,
+    "lum": 70.0,
     "stale": false
    },
    "period": 600
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T13:34:00Z",
-    "dir": 284,
+    "t": "2026-09-08T13:50:00Z",
+    "dir": 283,
     "dirLabel": "ONO",
-    "avg": 37.0,
-    "gust": 42.6,
+    "avg": 35.2,
+    "gust": 38.9,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-08T13:33:00Z",
-    "dir": 279,
-    "dirLabel": "O",
-    "avg": 38.9,
-    "gust": 42.6,
+    "t": "2026-09-08T13:46:00Z",
+    "dir": 283,
+    "dirLabel": "ONO",
+    "avg": 35.2,
+    "gust": 38.9,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -83,14 +83,14 @@
    "name": "Montsec d'Ares",
    "provider": "mc",
    "current": {
-    "t": "2026-09-08T13:00:00Z",
-    "dir": 282,
-    "dirLabel": "ONO",
-    "avg": 35.6,
-    "gust": 83.5,
+    "t": "2026-09-08T13:30:00Z",
+    "dir": 224,
+    "dirLabel": "SO",
+    "avg": 27.0,
+    "gust": 62.3,
     "gustDir": null,
     "min": null,
-    "temp": 19.4,
+    "temp": 21.1,
     "lum": null,
     "stale": false
    },
@@ -133,6 +133,63 @@
     "stale": false
    },
    "period": 240
+  },
+  {
+   "key": "wg-12491",
+   "id": 12491,
+   "name": "Tarifa — WMO",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-08T13:00:00Z",
+    "dir": 299,
+    "dirLabel": "ONO",
+    "avg": 18.0,
+    "gust": 26.7,
+    "gustDir": null,
+    "min": null,
+    "temp": 24.9,
+    "lum": null,
+    "stale": false
+   },
+   "period": 600
+  },
+  {
+   "key": "wg-269",
+   "id": 269,
+   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-08T13:49:00Z",
+    "dir": 93,
+    "dirLabel": "E",
+    "avg": 23.4,
+    "gust": 28.8,
+    "gustDir": null,
+    "min": 16.5,
+    "temp": 25.6,
+    "lum": null,
+    "stale": false
+   },
+   "period": 600
+  },
+  {
+   "key": "wg-3275",
+   "id": 3275,
+   "name": "Zahara de los Atunes — Zahara",
+   "provider": "wg",
+   "current": {
+    "t": "2026-09-07T14:42:00Z",
+    "dir": 118,
+    "dirLabel": "ESE",
+    "avg": 6.5,
+    "gust": 17.6,
+    "gustDir": null,
+    "min": 1.5,
+    "temp": 33.9,
+    "lum": null,
+    "stale": false
+   },
+   "period": 600
   }
  ]
 }

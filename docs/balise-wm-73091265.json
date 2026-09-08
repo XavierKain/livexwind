@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-08T04:06:57Z",
+ "generatedAt": "2026-09-08T04:28:07Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,10 +9,10 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-08T04:06:00Z",
-  "dir": 222,
-  "dirLabel": "SO",
-  "avg": 16.7,
+  "t": "2026-09-08T04:26:00Z",
+  "dir": 212,
+  "dirLabel": "SSO",
+  "avg": 14.8,
   "gust": 20.4,
   "gustDir": null,
   "min": null,
@@ -22,14 +22,6 @@
  },
  "period": 240,
  "history": [
-  {
-   "t": "2026-09-06T04:16:00Z",
-   "dir": 89,
-   "avg": 11.1,
-   "gust": 14.8,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-06T04:31:00Z",
    "dir": 87,
@@ -1175,42 +1167,10 @@
    "temp": null
   },
   {
-   "t": "2026-09-07T16:07:00Z",
-   "dir": 254,
-   "avg": 13.0,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T16:13:00Z",
-   "dir": 252,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-07T16:19:00Z",
    "dir": 251,
    "avg": 14.8,
    "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T16:23:00Z",
-   "dir": 248,
-   "avg": 13.0,
-   "gust": 14.8,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T16:27:00Z",
-   "dir": 250,
-   "avg": 13.0,
-   "gust": 14.8,
    "min": null,
    "temp": null
   },
@@ -2146,6 +2106,38 @@
    "t": "2026-09-08T04:06:00Z",
    "dir": 222,
    "avg": 16.7,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-08T04:10:00Z",
+   "dir": 220,
+   "avg": 18.5,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-08T04:16:00Z",
+   "dir": 220,
+   "avg": 18.5,
+   "gust": 20.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-08T04:22:00Z",
+   "dir": 212,
+   "avg": 16.7,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-08T04:26:00Z",
+   "dir": 212,
+   "avg": 14.8,
    "gust": 20.4,
    "min": null,
    "temp": null

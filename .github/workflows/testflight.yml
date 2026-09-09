@@ -2,6 +2,12 @@ name: TestFlight
 
 on:
   workflow_dispatch:
+    inputs:
+      match_force:
+        description: "Reissue provisioning profiles (needed once after switching certificate)"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write # match pousse les certificats chiffrés sur la branche match-certs
@@ -39,5 +45,6 @@ jobs:
           # per team; this app holding its own was consuming one of them.
           MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
           MATCH_GIT_TOKEN: ${{ secrets.MATCH_GIT_TOKEN }}
+          MATCH_FORCE: ${{ inputs.match_force && '1' || '0' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BUILD_NUMBER: ${{ github.run_number }}

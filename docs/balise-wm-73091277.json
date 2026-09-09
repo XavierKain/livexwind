@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T11:14:25Z",
+ "generatedAt": "2026-09-09T11:34:47Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,10 +9,10 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-09-09T11:06:00Z",
-  "dir": 290,
-  "dirLabel": "ONO",
-  "avg": 25.9,
+  "t": "2026-09-09T11:33:00Z",
+  "dir": 279,
+  "dirLabel": "O",
+  "avg": 24.1,
   "gust": 25.9,
   "gustDir": null,
   "min": null,
@@ -22,22 +22,6 @@
  },
  "period": 240,
  "history": [
-  {
-   "t": "2026-09-07T11:21:00Z",
-   "dir": 226,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-07T11:31:00Z",
-   "dir": 225,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-07T11:46:00Z",
    "dir": 237,
@@ -1167,22 +1151,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-08T23:23:00Z",
-   "dir": 329,
-   "avg": 16.7,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-08T23:27:00Z",
-   "dir": 328,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-08T23:33:00Z",
    "dir": 327,
    "avg": 14.8,
@@ -1919,14 +1887,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-09T08:22:00Z",
-   "dir": 311,
-   "avg": 11.1,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-09T08:30:00Z",
    "dir": 309,
    "avg": 7.4,
@@ -2162,6 +2122,38 @@
    "t": "2026-09-09T11:06:00Z",
    "dir": 290,
    "avg": 25.9,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-09T11:14:00Z",
+   "dir": 286,
+   "avg": 24.1,
+   "gust": 25.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-09T11:21:00Z",
+   "dir": 289,
+   "avg": 25.9,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-09T11:25:00Z",
+   "dir": 284,
+   "avg": 25.9,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-09T11:33:00Z",
+   "dir": 279,
+   "avg": 24.1,
    "gust": 25.9,
    "min": null,
    "temp": null

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T07:34:27Z",
+ "generatedAt": "2026-09-09T07:54:38Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -22,14 +22,6 @@
  },
  "period": 600,
  "history": [
-  {
-   "t": "2026-09-07T07:50:00Z",
-   "dir": 64,
-   "avg": 0.2,
-   "gust": 0.4,
-   "min": 0.0,
-   "temp": 27
-  },
   {
    "t": "2026-09-07T08:00:00Z",
    "dir": 64,

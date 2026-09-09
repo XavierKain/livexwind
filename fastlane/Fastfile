@@ -248,13 +248,6 @@ platform :ios do
       app_identifier: ALL_IDS,
       api_key: api_key,
       readonly: false,
-      # One-off during the migration to the shared certificate: Apple still holds
-      # the old profiles under the same names, bound to FJXQ99DD56, and Xcode
-      # resolves PROVISIONING_PROFILE_SPECIFIER by name — so it picks a profile
-      # whose certificate is not in the runner keychain. force makes match delete
-      # them and reissue against the shared identity.
-      # Remove once a build is green.
-      force: ENV["MATCH_FORCE"] == "1",
       storage_mode: "git",
       git_url: ENV.fetch("MATCH_GIT_URL"),
       git_branch: "match-certs",

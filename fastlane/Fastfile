@@ -251,7 +251,9 @@ platform :ios do
       storage_mode: "git",
       git_url: ENV.fetch("MATCH_GIT_URL"),
       git_branch: "match-certs",
-      git_basic_authorization: Base64.strict_encode64("x-access-token:#{ENV.fetch('GITHUB_TOKEN')}")
+      git_basic_authorization: Base64.strict_encode64(
+        "x-access-token:#{ENV.fetch('MATCH_GIT_TOKEN') { ENV.fetch('GITHUB_TOKEN') }}"
+      )
     )
 
     build_app(

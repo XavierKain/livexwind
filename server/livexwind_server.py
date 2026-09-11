@@ -418,10 +418,9 @@ def live_snapshot() -> dict:
     return readings
 
 
-def cached_reading(provider: str, code: str) -> dict | None:
-    """Relevé déjà connu : celui d'une balise suivie, sinon rien."""
-    feed = load_json(feed_path(code, provider), None)
-    return (feed or {}).get("current")
+def cached_feed(provider: str, code: str) -> dict:
+    """Flux déjà connu : celui d'une balise suivie, sinon vide."""
+    return load_json(feed_path(code, provider), None) or {}
 
 
 @app.route("/api/map")
@@ -463,7 +462,8 @@ def map_stations():
     budget = MAP_FETCH_LIMIT
     for station in stations:
         key = f"{station['provider']}-{station['code']}"
-        reading = bulk.get(key) or cached_reading(station["provider"], station["code"])
+        feed = cached_feed(station["provider"], station["code"])
+        reading = bulk.get(key) or feed.get("current")
         if reading is None and budget > 0 and station["provider"] == "wg":
             try:
                 reading = windguru.latest(int(station["code"]))
@@ -473,6 +473,11 @@ def map_stations():
         if reading:
             station["current"] = {"avg": reading.get("avg"), "gust": reading.get("gust"),
                                   "dir": reading.get("dir"), "t": reading.get("t")}
+            # La cadence mesurée, quand on suit déjà la balise : sans elle, l'app
+            # doit deviner, et une station Windguru qui publie aux 10 min était
+            # grisée à tort au bout de 3.
+            if feed.get("period"):
+                station["period"] = feed["period"]
 
     return jsonify({"stations": stations, "radius": radius})
 

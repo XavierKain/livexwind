@@ -74,7 +74,7 @@ struct StationsMapView: View {
                     selected = nil
                     onAdded()
                 }
-                .presentationDetents([.height(280)])
+                .presentationDetents([.height(340)])
             }
             .task { await start() }
         }
@@ -241,15 +241,22 @@ struct MapStation: Identifiable, Hashable {
     let distanceKm: Double?
     /// Vent du moment, quand la source sait le livrer sans requête dédiée.
     var reading: WindReading?
+    /// Cadence mesurée par le serveur, quand il suit déjà cette balise.
+    var periodSeconds: Double?
 
     var id: String { balise.key }
 
-    /// Hors ligne : plus de deux fois la cadence habituelle de la source sans
-    /// relevé. On n'a pas mesuré la cadence d'une balise qu'on ne suit pas, d'où
-    /// l'estimation par source.
+    /// Hors ligne : deux fois la cadence sans relevé.
+    ///
+    /// Quand la cadence est inconnue — balise qu'on ne suit pas encore — on
+    /// retient un seuil large de 20 min plutôt qu'une estimation par source :
+    /// celle-ci grisait des stations parfaitement vivantes qui publient aux
+    /// 10 min, et sur une carte c'est le pire des deux torts. L'écran de la
+    /// balise, lui, dispose de la cadence exacte.
     var isOffline: Bool {
         guard let date = reading?.date else { return false }
-        return Date().timeIntervalSince(date) > balise.provider.typicalPeriod * 2 + 60
+        let limit = periodSeconds.map { $0 * 2 + 60 } ?? 20 * 60
+        return Date().timeIntervalSince(date) > limit
     }
 
     var coordinate: CLLocationCoordinate2D {
@@ -270,7 +277,8 @@ struct MapStation: Identifiable, Hashable {
                                                  altitude: hit.altitude, latitude: lat, longitude: lon,
                                                  provider: provider),
                                   distanceKm: hit.km,
-                                  reading: hit.current?.reading)
+                                  reading: hit.current?.reading,
+                                  periodSeconds: hit.period)
             }
         }
 
@@ -279,13 +287,16 @@ struct MapStation: Identifiable, Hashable {
             let hits = await StationCatalog.nearby(latitude: coordinate.latitude,
                                                    longitude: coordinate.longitude,
                                                    provider: provider, radiusKm: radiusKm)
-            found += hits.map { MapStation(balise: $0.balise, distanceKm: $0.km, reading: nil) }
+            found += hits.map {
+                MapStation(balise: $0.balise, distanceKm: $0.km, reading: nil, periodSeconds: nil)
+            }
         }
         return found.sorted { ($0.distanceKm ?? 0) < ($1.distanceKm ?? 0) }
     }
 }
 
-/// Fiche d'une balise touchée sur la carte, avec son vent du moment.
+/// Fiche d'une balise touchée sur la carte : ses informations, son vent du
+/// moment, son appartenance à tes spots, et un accès à sa page d'origine.
 struct MapStationSheet: View {
     let station: MapStation
     @ObservedObject var store: WindStore
@@ -294,50 +305,93 @@ struct MapStationSheet: View {
     @State private var reading: WindReading?
     @State private var isAdding = false
 
-
     private var alreadyTracked: Bool {
         store.catalog.balises.contains { $0.key == station.balise.key }
     }
 
+    private var offline: Bool { station.isOffline }
+    private var tint: Color {
+        offline ? .secondary : WindPalette.color(kmh: reading?.averageKmh)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(station.balise.name).font(.headline)
-                HStack(spacing: 6) {
-                    Text(station.balise.provider.label)
-                    if let km = station.distanceKm { Text("· \(Int(km)) km") }
-                    if let altitude = station.balise.altitude { Text("· \(altitude) m") }
-                }
-                .font(.caption).foregroundStyle(.secondary)
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                entete
+                releve
+                Spacer(minLength: 0)
+                actions
             }
-
-            if let reading {
-                HStack(spacing: 12) {
-                    WindArrow(degrees: reading.directionDegrees,
-                              color: WindPalette.color(kmh: reading.averageKmh))
-                        .frame(width: 26, height: 26)
-                    HStack(alignment: .firstTextBaseline, spacing: 3) {
-                        Text(store.unit.format(kmh: reading.averageKmh))
-                            .font(.system(size: 34, weight: .bold, design: .rounded))
-                            .foregroundStyle(WindPalette.color(kmh: reading.averageKmh))
-                        Text(store.unit.symbol).font(.caption).foregroundStyle(.secondary)
-                    }
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("raf. \(store.unit.format(kmh: reading.gustKmh))")
-                            .foregroundStyle(.orange)
-                        Text(reading.directionText).foregroundStyle(.secondary)
-                    }
-                    .font(.caption)
-                }
+            .padding(18)
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .task {
+            // `??` place son membre droit dans une fermeture non asynchrone :
+            // l'attente doit être écrite explicitement.
+            if let known = station.reading {
+                reading = known
             } else {
-                HStack(spacing: 6) {
-                    ProgressView().controlSize(.small)
-                    Text("Relevé en cours…").font(.caption).foregroundStyle(.secondary)
+                reading = try? await BaliseClient(balise: station.balise).fetchPublicFeed().current
+            }
+        }
+    }
+
+    private var entete: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(station.balise.name).font(.headline)
+                if alreadyTracked {
+                    Label("Dans mes spots", systemImage: "star.fill")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.yellow)
+                        .labelStyle(.titleAndIcon)
                 }
             }
+            HStack(spacing: 6) {
+                Text(station.balise.provider.label)
+                if let km = station.distanceKm { Text("· \(Int(km)) km") }
+                if let altitude = station.balise.altitude { Text("· \(altitude) m") }
+                if let date = reading?.date, !offline {
+                    Text("·")
+                    Text(date, style: .time)
+                }
+            }
+            .font(.caption).foregroundStyle(.secondary)
+        }
+    }
 
-            Spacer(minLength: 0)
+    @ViewBuilder
+    private var releve: some View {
+        if offline {
+            Label("Balise hors ligne — dernière valeur périmée", systemImage: "bolt.horizontal.circle")
+                .font(.caption).foregroundStyle(.secondary)
+        } else if let reading {
+            HStack(spacing: 12) {
+                WindArrow(degrees: reading.directionDegrees, color: tint)
+                    .frame(width: 26, height: 26)
+                HStack(alignment: .firstTextBaseline, spacing: 3) {
+                    Text(store.unit.format(kmh: reading.averageKmh))
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(tint)
+                    Text(store.unit.symbol).font(.caption).foregroundStyle(.secondary)
+                }
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("raf. \(store.unit.format(kmh: reading.gustKmh))")
+                        .foregroundStyle(.orange)
+                    Text(reading.directionText).foregroundStyle(.secondary)
+                }
+                .font(.caption)
+            }
+        } else {
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.small)
+                Text("Relevé en cours…").font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
 
+    private var actions: some View {
+        VStack(spacing: 8) {
             Button {
                 add()
             } label: {
@@ -347,16 +401,14 @@ struct MapStationSheet: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(alreadyTracked || isAdding)
-        }
-        .padding(18)
-        .task {
-            // `??` place son membre droit dans une fermeture non asynchrone :
-            // l'attente doit être écrite explicitement.
-            if let known = station.reading {
-                reading = known
-            } else {
-                reading = try? await BaliseClient(balise: station.balise).fetchPublicFeed().current
+
+            // La page d'origine porte tout ce qu'on ne reprend pas : graphiques
+            // détaillés, historiques longs, photos du site, prévisions.
+            Link(destination: station.balise.pageURL) {
+                Label("Ouvrir la page de la balise", systemImage: "safari")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.bordered)
         }
     }
 

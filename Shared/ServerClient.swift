@@ -153,6 +153,8 @@ struct ServerClient: Sendable {
         let altitude: Int?
         let km: Double?
         let current: Current?
+        /// Cadence mesurée, présente seulement pour les balises déjà suivies.
+        let period: Double?
     }
 
     /// Balises de toutes les sources autour d'un point — ce que consomme la carte.

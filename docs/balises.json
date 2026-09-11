@@ -1,6 +1,14 @@
 {
  "balises": [
   {
+   "id": 64,
+   "name": "Pyla Pilat",
+   "lat": 44.5761111,
+   "lon": -1.2247222,
+   "altitude": 55,
+   "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
+  },
+  {
    "id": 73091265,
    "name": "Isthme",
    "lat": 47.550833,

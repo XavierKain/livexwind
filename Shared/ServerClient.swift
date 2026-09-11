@@ -32,9 +32,15 @@ struct ServerClient: Sendable {
     // MARK: Tokens
 
     /// `kind` = "update" (activité en cours) ou "start" (push-to-start, iOS 17.2+).
-    func registerActivityToken(_ token: String, kind: String, unit: WindUnit) async throws {
-        try await post("api/live-activity/register",
-                       body: ["token": token, "kind": kind, "unit": unit.rawValue])
+    ///
+    /// La clé de balise accompagne le token d'une activité en cours : son titre
+    /// est figé au lancement, le serveur doit donc y pousser cette balise et pas
+    /// celle qui se trouve affichée au moment du relevé.
+    func registerActivityToken(_ token: String, kind: String, unit: WindUnit,
+                               balise: String? = nil) async throws {
+        var body: [String: Any] = ["token": token, "kind": kind, "unit": unit.rawValue]
+        if let balise { body["balise"] = balise }
+        try await post("api/live-activity/register", body: body)
     }
 
     func registerDeviceToken(_ token: String) async throws {

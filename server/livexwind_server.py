@@ -230,6 +230,34 @@ def tokens() -> dict:
     return load_json(TOKENS_PATH, {"update": [], "start": [], "device": [], "prefs": {}})
 
 
+def activity_tokens() -> list:
+    """Tokens d'activité en direct, chacun lié à la balise pour laquelle
+    l'activité a été lancée.
+
+    Une activité affiche un titre figé — celui de la balise de départ. Pousser
+    n'importe quel relevé dedans affichait donc le vent d'un spot sous le nom
+    d'un autre. Les anciens tokens, enregistrés avant ce lien, n'ont pas de
+    balise : ils ne reçoivent que la balise affichée.
+    """
+    out = []
+    for entry in tokens().get("update", []):
+        if isinstance(entry, str):
+            out.append({"token": entry, "balise": None})
+        elif isinstance(entry, dict) and entry.get("token"):
+            out.append({"token": entry["token"], "balise": entry.get("balise")})
+    return out
+
+
+def put_activity_token(token: str, balise: str | None):
+    with _lock:
+        data = tokens()
+        kept = [e for e in data.get("update", [])
+                if not (e == token or (isinstance(e, dict) and e.get("token") == token))]
+        kept.append({"token": token, "balise": balise})
+        data["update"] = kept[-5:]
+        save_json(TOKENS_PATH, data)
+
+
 def put_token(kind: str, value: str):
     with _lock:
         data = tokens()
@@ -243,7 +271,8 @@ def put_token(kind: str, value: str):
 def drop_token(kind: str, value: str):
     with _lock:
         data = tokens()
-        data[kind] = [t for t in data.get(kind, []) if t != value]
+        data[kind] = [t for t in data.get(kind, [])
+                      if not (t == value or (isinstance(t, dict) and t.get("token") == value))]
         save_json(TOKENS_PATH, data)
 
 
@@ -489,9 +518,15 @@ def la_register():
     kind = body.get("kind", "update")
     if not token or kind not in ("update", "start"):
         return jsonify({"error": "token ou kind invalide"}), 400
-    put_token(kind, token)
+
+    if kind == "update":
+        put_activity_token(token, body.get("balise"))
+        log.info("token activité enregistré (%s… → %s)", token[:8], body.get("balise") or "balise affichée")
+    else:
+        put_token(kind, token)
+        log.info("token %s enregistré (%s…)", kind, token[:8])
+
     set_prefs({"unit": body.get("unit")})
-    log.info("token %s enregistré (%s…)", kind, token[:8])
     return jsonify({"ok": True})
 
 
@@ -756,7 +791,7 @@ def evaluate_alert(reading: dict, settings: dict, unit: str, state: dict):
     return None, state
 
 
-def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
+def push_all(cfg: dict, feed: dict, balise: dict, state: dict, is_selected: bool = True) -> dict:
     data = tokens()
     prefs = data.get("prefs", {})
     unit = prefs.get("unit", "kmh")
@@ -770,9 +805,15 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     stale = iso_to_epoch(reading.get("t")) + max(period * 2 + 60, 300)
     name = feed["balise"].get("name") or balise.get("name") or "Balise"
 
-    # 1. mise à jour de l'activité en direct
+    # 1. mise à jour des activités lancées pour *cette* balise
+    key = balise_key(balise)
     delivered = 0
-    for token in list(data.get("update", [])):
+    for entry in activity_tokens():
+        if entry["balise"] not in (None, key):
+            continue
+        if entry["balise"] is None and not is_selected:
+            continue          # token d'avant le lien : réservé à la balise affichée
+        token = entry["token"]
         code, text = apns_post(cfg, token, update_payload(body_state, stale),
                                "liveactivity", ".push-type.liveactivity")
         if code == 200:
@@ -784,7 +825,7 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
 
     # 2. relance à distance quand plus aucune activité n'est vivante
     started_at = state.get("activity_started_at", 0)
-    needs_start = delivered == 0 or (time.time() - started_at) > ACTIVITY_MAX_AGE
+    needs_start = is_selected and (delivered == 0 or (time.time() - started_at) > ACTIVITY_MAX_AGE)
     if needs_start and (time.time() - state.get("last_start", 0)) > START_COOLDOWN:
         for token in data.get("start", []):
             code, text = apns_post(cfg, token,
@@ -802,7 +843,9 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
         state["activity_started_at"] = time.time()
 
     state["last_push"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    state["pushed_reading"] = reading.get("t")
+    state.setdefault("pushed", {})[key] = reading.get("t")
+    if is_selected:
+        state["pushed_reading"] = reading.get("t")
     return state
 
 
@@ -1018,7 +1061,9 @@ def pusher_loop():
             period = cached_feed.get("period") or 600
             # La balise affichée est guettée à sa propre cadence ; celles qui ont
             # une alerte armée un peu moins souvent ; les autres au ralenti.
-            interval = max(period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
+            has_activity = any(e["balise"] == key for e in activity_tokens())
+            interval = period if has_activity else max(
+                period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
             if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
                 if cached_feed:
                     feeds[key] = cached_feed
@@ -1036,18 +1081,21 @@ def pusher_loop():
             except Exception as exc:
                 log.exception("échec des alertes sur %s : %s", key, exc)
 
-            # …mais l'activité en direct ne suit que la balise affichée.
-            if not is_selected:
+            # …et l'activité en direct suit la balise pour laquelle elle a été
+            # lancée, pas forcément celle affichée dans l'app.
+            if not is_selected and not has_activity:
                 continue
 
             current_t = feed["current"].get("t")
-            if current_t and current_t != state.get("pushed_reading"):
+            if current_t and current_t != state.get("pushed", {}).get(key):
                 log.info("balise %s : nouveau relevé %s — %s km/h",
                          balise_id, current_t, feed["current"].get("avg"))
                 try:
-                    state = push_all(cfg, feed, balise, state)
+                    state = push_all(cfg, feed, balise, state, is_selected=is_selected)
                 except Exception as exc:
                     log.exception("échec du push : %s", exc)
+                if not is_selected:
+                    continue
                 state["last_reading"] = current_t
                 fast = FAST_WATCH.get(balise.get("provider"))
                 if fast:

@@ -135,6 +135,7 @@ final class WindStore: ObservableObject {
 
     func select(baliseID: Int) async {
         guard catalog.selectedID != baliseID else { return }
+        let wasRunning = liveActivity.isActive
         catalog.selectedID = baliseID
         alerts = SharedStore.shared.alertSettings(for: catalog.selectedKey)
         persistCatalog()
@@ -142,6 +143,13 @@ final class WindStore: ObservableObject {
         snapshot = SharedStore.shared.loadSnapshot(key: catalog.selectedKey)
             ?? .placeholder(balise: catalog.selected)
         await refresh(force: true)
+
+        // Le titre d'une activité en direct est figé à son lancement : pour
+        // suivre le nouveau spot, il faut la relancer, sinon on lirait le vent
+        // d'ici sous le nom de là-bas.
+        if wasRunning {
+            await liveActivity.start(snapshot: snapshot, unit: unit)
+        }
     }
 
     /// Ajoute une balise depuis un lien collé (ou un numéro). La source est

@@ -9,6 +9,8 @@ final class LiveActivityManager: ObservableObject {
     @Published var lastError: String?
     @Published var pushTokenRegistered = false
     @Published var pushToStartRegistered = false
+    /// Balise pour laquelle l'activité en cours a été lancée.
+    @Published private(set) var activityBaliseKey: String?
 
     private var tokenTask: Task<Void, Never>?
     private var startTokenTask: Task<Void, Never>?
@@ -60,24 +62,27 @@ final class LiveActivityManager: ObservableObject {
             let attributes = WindActivityAttributes(baliseName: snapshot.baliseName, baliseID: snapshot.baliseID)
             let content = ActivityContent(
                 state: Self.state(from: snapshot, unit: unit),
-                staleDate: snapshot.current.date.addingTimeInterval(25 * 60)
+                staleDate: staleDate(for: snapshot)
             )
             // pushType .token : le serveur prend le relais dès que l'app est fermée.
             let activity = try Activity.request(attributes: attributes, content: content, pushType: .token)
             isActive = true
-            observeUpdateToken(of: activity, unit: unit)
+            activityBaliseKey = snapshot.baliseKey
+            observeUpdateToken(of: activity, unit: unit, baliseKey: snapshot.baliseKey)
         } catch {
             lastError = error.localizedDescription
         }
     }
 
-    private func observeUpdateToken(of activity: Activity<WindActivityAttributes>, unit: WindUnit) {
+    private func observeUpdateToken(of activity: Activity<WindActivityAttributes>,
+                                    unit: WindUnit, baliseKey: String) {
         tokenTask?.cancel()
         tokenTask = Task { [weak self] in
             for await tokenData in activity.pushTokenUpdates {
                 let hex = tokenData.hexString
                 do {
-                    try await ServerClient.shared.registerActivityToken(hex, kind: "update", unit: unit)
+                    try await ServerClient.shared.registerActivityToken(
+                        hex, kind: "update", unit: unit, balise: baliseKey)
                     self?.pushTokenRegistered = true
                 } catch {
                     self?.pushTokenRegistered = false
@@ -89,19 +94,33 @@ final class LiveActivityManager: ObservableObject {
 
     /// Mise à jour locale, utilisée quand l'app est au premier plan (le serveur
     /// fait la même chose par push le reste du temps).
+    ///
+    /// On n'écrit que si l'instantané concerne bien la balise de l'activité :
+    /// sinon on afficherait le vent du spot consulté sous le nom de celui pour
+    /// lequel l'activité a été lancée.
     func push(snapshot: WindSnapshot, unit: WindUnit) async {
         guard !Activity<WindActivityAttributes>.activities.isEmpty else {
             isActive = false
+            activityBaliseKey = nil
             return
         }
+        isActive = true
+        guard activityBaliseKey == nil || activityBaliseKey == snapshot.baliseKey else { return }
+
         let content = ActivityContent(
             state: Self.state(from: snapshot, unit: unit),
-            staleDate: snapshot.current.date.addingTimeInterval(25 * 60)
+            staleDate: staleDate(for: snapshot)
         )
         for activity in Activity<WindActivityAttributes>.activities {
             await activity.update(content)
         }
-        isActive = true
+    }
+
+    /// Péremption alignée sur la cadence de la balise, comme côté serveur :
+    /// 25 minutes fixes laissaient une valeur morte affichée pour une station
+    /// qui publie à la minute.
+    private func staleDate(for snapshot: WindSnapshot) -> Date {
+        snapshot.current.date.addingTimeInterval(max(snapshot.periodSeconds * 2 + 60, 300))
     }
 
     func stop() async {
@@ -112,6 +131,7 @@ final class LiveActivityManager: ObservableObject {
         }
         isActive = false
         pushTokenRegistered = false
+        activityBaliseKey = nil
         try? await ServerClient.shared.stopActivity()
     }
     #else

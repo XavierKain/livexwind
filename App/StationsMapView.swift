@@ -15,6 +15,7 @@ struct StationsMapView: View {
     @State private var center = CLLocationCoordinate2D(latitude: 44.5761, longitude: -1.2247)
     @State private var stations: [MapStation] = []
     @State private var selected: MapStation?
+    @State private var detail: MapStation?
     @State private var isLoading = false
     @State private var message: String?
     @State private var visibleSpan: Double = 0.5
@@ -70,11 +71,19 @@ struct StationsMapView: View {
                 }
             }
             .sheet(item: $selected) { station in
-                MapStationSheet(station: station, store: store) {
+                MapStationSheet(station: station, store: store, onAdded: {
                     selected = nil
                     onAdded()
-                }
+                }, onOpenDetail: {
+                    // On referme la fiche avant d'ouvrir la page : empiler deux
+                    // feuilles donnerait un écran écrasé dans une hauteur figée.
+                    selected = nil
+                    detail = station
+                })
                 .presentationDetents([.height(340)])
+            }
+            .sheet(item: $detail) { station in
+                BalisePreviewView(balise: station.balise, store: store)
             }
             .task { await start() }
         }
@@ -301,6 +310,7 @@ struct MapStationSheet: View {
     let station: MapStation
     @ObservedObject var store: WindStore
     var onAdded: () -> Void
+    var onOpenDetail: () -> Void
 
     @State private var reading: WindReading?
     @State private var isAdding = false
@@ -402,10 +412,12 @@ struct MapStationSheet: View {
             .buttonStyle(.borderedProminent)
             .disabled(alreadyTracked || isAdding)
 
-            // La page d'origine porte tout ce qu'on ne reprend pas : graphiques
-            // détaillés, historiques longs, photos du site, prévisions.
-            Link(destination: station.balise.pageURL) {
-                Label("Ouvrir la page de la balise", systemImage: "safari")
+            // La page complète dans l'app : cadran, chiffres, courbe, position —
+            // sans avoir à ajouter la balise à ses spots pour la consulter.
+            Button {
+                onOpenDetail()
+            } label: {
+                Label("Voir la page de la balise", systemImage: "chart.xyaxis.line")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

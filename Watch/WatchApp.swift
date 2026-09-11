@@ -66,7 +66,10 @@ struct WatchMainView: View {
     @ObservedObject var store: WatchWindStore
 
     private var reading: WindReading { store.snapshot.current }
-    private var color: Color { WindPalette.color(kmh: reading.averageKmh) }
+    private var isOffline: Bool { store.snapshot.isOffline }
+    private var color: Color {
+        isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
+    }
 
     var body: some View {
         VStack(spacing: 4) {
@@ -92,16 +95,16 @@ struct WatchMainView: View {
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
-                WindArrow(degrees: reading.directionDegrees, color: color)
+                WindArrow(degrees: isOffline ? nil : reading.directionDegrees, color: color)
                     .frame(width: 34, height: 34)
             }
-            Text(reading.directionText)
+            Text(isOffline ? store.snapshot.offlineText : reading.directionText)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(color)
 
             Text("raf. \(store.unit.format(kmh: reading.gustKmh)) \(store.unit.shortSymbol)")
                 .font(.system(size: 12))
-                .foregroundStyle(.orange)
+                .foregroundStyle(isOffline ? .secondary : .orange)
 
             Spacer(minLength: 0)
 

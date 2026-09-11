@@ -64,8 +64,15 @@ struct ComplicationView: View {
     let entry: WatchEntry
 
     private var reading: WindReading { entry.snapshot.current }
-    private var color: Color { WindPalette.color(kmh: reading.averageKmh) }
-    private var speed: String { entry.unit.format(kmh: reading.averageKmh) }
+    private var isOffline: Bool { entry.snapshot.isOffline }
+    private var color: Color {
+        isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
+    }
+    /// Un tiret plutôt qu'un chiffre : au poignet, une valeur périmée serait
+    /// prise pour le vent du moment sans qu'on puisse la mettre en doute.
+    private var speed: String {
+        isOffline ? "—" : entry.unit.format(kmh: reading.averageKmh)
+    }
 
     var body: some View {
         switch family {
@@ -108,7 +115,7 @@ struct ComplicationView: View {
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-            WindArrow(degrees: reading.directionDegrees, color: color)
+            WindArrow(degrees: isOffline ? nil : reading.directionDegrees, color: color)
                 .frame(width: 19, height: 19)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

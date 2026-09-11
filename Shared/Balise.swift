@@ -38,6 +38,19 @@ enum BaliseProvider: String, Codable, CaseIterable, Sendable {
     /// Vrai quand on peut ajouter une balise en collant un lien.
     var acceptsLink: Bool { self != .windMorbihan }
 
+    /// Cadence habituelle de la source, en secondes. Sert à juger si une balise
+    /// est hors ligne quand on ne la suit pas encore et qu'on n'a donc pas
+    /// mesuré sa cadence réelle.
+    var typicalPeriod: Double {
+        switch self {
+        case .ffvl: return 600
+        case .windMorbihan: return 240
+        case .windguru: return 60
+        case .meteoCat: return 1800
+        case .kwind: return 60
+        }
+    }
+
     /// Vrai quand notre catalogue porte la position des stations, donc qu'on
     /// peut proposer « autour de moi ».
     var supportsProximity: Bool {

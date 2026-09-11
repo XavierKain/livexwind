@@ -60,7 +60,10 @@ struct WindWidgetView: View {
     let entry: WindEntry
 
     private var reading: WindReading { entry.snapshot.current }
-    private var color: Color { WindPalette.color(kmh: reading.averageKmh) }
+    private var isOffline: Bool { entry.snapshot.isOffline }
+    private var color: Color {
+        isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
+    }
 
     var body: some View {
         switch family {
@@ -78,9 +81,10 @@ struct WindWidgetView: View {
     private var small: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 4) {
-                WindArrow(degrees: reading.directionDegrees, color: color)
+                WindArrow(degrees: isOffline ? nil : reading.directionDegrees, color: color)
                     .frame(width: 13, height: 13)
-                Text(reading.compass).font(.caption2.weight(.bold)).foregroundStyle(color)
+                Text(isOffline ? "hors ligne" : reading.compass)
+                    .font(.caption2.weight(.bold)).foregroundStyle(color)
                 Spacer()
                 Text(reading.date, style: .time)
                     .font(.system(size: 10)).foregroundStyle(.secondary)
@@ -104,9 +108,10 @@ struct WindWidgetView: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 4) {
-                    WindArrow(degrees: reading.directionDegrees, color: color)
+                    WindArrow(degrees: isOffline ? nil : reading.directionDegrees, color: color)
                         .frame(width: 14, height: 14)
-                    Text(reading.directionText).font(.caption.weight(.bold)).foregroundStyle(color)
+                    Text(isOffline ? entry.snapshot.offlineText : reading.directionText)
+                        .font(.caption.weight(.bold)).foregroundStyle(color).lineLimit(1)
                 }
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
                     Text(entry.unit.format(kmh: reading.averageKmh))
@@ -115,7 +120,7 @@ struct WindWidgetView: View {
                     Text(entry.unit.shortSymbol).font(.caption2).foregroundStyle(.secondary)
                 }
                 Text("raf. \(entry.unit.format(kmh: reading.gustKmh))")
-                    .font(.caption2).foregroundStyle(.orange)
+                    .font(.caption2).foregroundStyle(isOffline ? .secondary : .orange)
                 Spacer(minLength: 0)
                 Text(reading.date, style: .time)
                     .font(.system(size: 10)).foregroundStyle(.tertiary)

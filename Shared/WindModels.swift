@@ -115,9 +115,23 @@ struct WindSnapshot: Codable, Hashable, Sendable {
         return minutes <= 1 ? "toutes les minutes" : "toutes les \(minutes) min"
     }
 
-    /// En retard au-delà de trois publications manquées (au moins 12 min).
-    var isStale: Bool {
-        Date().timeIntervalSince(current.date) > max(periodSeconds * 3, 12 * 60)
+    /// Âge du dernier relevé.
+    var age: TimeInterval { Date().timeIntervalSince(current.date) }
+
+    /// Balise hors ligne : son dernier relevé a plus de **deux fois sa cadence**.
+    ///
+    /// Une station qui publie toutes les 4 min et n'a rien envoyé depuis 8 min
+    /// est débranchée ou en panne — mieux vaut griser sa valeur que la laisser
+    /// passer pour le vent actuel. La minute de marge absorbe le délai de notre
+    /// propre relève, qui n'est pas synchrone avec celle de la station.
+    var isOffline: Bool { age > periodSeconds * 2 + 60 }
+
+    /// « hors ligne depuis 23 min », « hors ligne depuis 3 h ».
+    var offlineText: String {
+        let minutes = Int(age / 60)
+        if minutes < 60 { return "hors ligne depuis \(max(1, minutes)) min" }
+        let hours = minutes / 60
+        return hours < 48 ? "hors ligne depuis \(hours) h" : "hors ligne"
     }
 
     /// Relevés de la fenêtre demandée. Sur une station lente, une fenêtre

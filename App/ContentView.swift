@@ -21,7 +21,10 @@ struct ContentView: View {
             ScrollView {
                 VStack(spacing: 22) {
                     header
-                    CompassDial(reading: store.snapshot.current, unit: store.unit)
+                    // Grisé et estompé hors ligne : la valeur reste lisible mais
+                    // ne peut plus être prise pour le vent du moment.
+                    CompassDial(reading: store.snapshot.current, unit: store.unit,
+                                isOffline: store.snapshot.isOffline)
                         .padding(.top, 4)
                     unitPicker
                     metrics
@@ -97,15 +100,20 @@ struct ContentView: View {
         VStack(spacing: 4) {
             HStack(spacing: 6) {
                 Circle()
-                    .fill(store.snapshot.isStale ? Color.orange : Color.green)
+                    .fill(store.snapshot.isOffline ? Color.gray : Color.green)
                     .frame(width: 8, height: 8)
-                Text(store.snapshot.isStale ? "Relevé en retard" : "Relevé de \(time(store.snapshot.current.date))")
+                Text(store.snapshot.isOffline
+                     ? "Balise \(store.snapshot.offlineText)"
+                     : "Relevé de \(time(store.snapshot.current.date))")
                     .font(.subheadline.weight(.medium))
+                    .foregroundStyle(store.snapshot.isOffline ? .secondary : .primary)
                 if store.isLoading {
                     ProgressView().controlSize(.mini).padding(.leading, 2)
                 }
             }
-            Text("Mise à jour \(store.nextUpdateText) · \(store.snapshot.cadenceText)")
+            Text(store.snapshot.isOffline
+                 ? "Dernier relevé à \(time(store.snapshot.current.date)) · cadence \(store.snapshot.cadenceText)"
+                 : "Mise à jour \(store.nextUpdateText) · \(store.snapshot.cadenceText)")
                 .font(.caption).foregroundStyle(.secondary)
             if let error = store.lastError {
                 Text(error).font(.caption2).foregroundStyle(.orange)
@@ -126,8 +134,11 @@ struct ContentView: View {
     private var metrics: some View {
         HStack(spacing: 10) {
             metric("Mini", store.snapshot.current.minKmh, .secondary)
-            metric("Moyen", store.snapshot.current.averageKmh, WindPalette.color(kmh: store.snapshot.current.averageKmh))
-            metric("Rafales", store.snapshot.current.gustKmh, .orange)
+            metric("Moyen", store.snapshot.current.averageKmh,
+                   store.snapshot.isOffline ? .secondary
+                                            : WindPalette.color(kmh: store.snapshot.current.averageKmh))
+            metric("Rafales", store.snapshot.current.gustKmh,
+                   store.snapshot.isOffline ? .secondary : .orange)
             if let temp = store.snapshot.current.temperature {
                 VStack(spacing: 2) {
                     Text("Temp.").font(.caption2).foregroundStyle(.secondary)

@@ -758,7 +758,11 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict) -> dict:
     reading = feed["current"]
     trend = [s["avg"] for s in feed.get("history", [])[-18:] if s.get("avg") is not None]
     body_state = content_state(reading, trend, unit)
-    stale = iso_to_epoch(reading.get("t")) + 25 * 60
+    # Péremption alignée sur la cadence de la station : iOS grise alors l'activité
+    # de lui-même quand la balise se tait. Vingt-cinq minutes fixes laissaient
+    # une valeur morte à l'écran pour une station qui publie à la minute.
+    period = feed.get("period") or 600
+    stale = iso_to_epoch(reading.get("t")) + max(period * 2 + 60, 300)
     name = feed["balise"].get("name") or balise.get("name") or "Balise"
 
     # 1. mise à jour de l'activité en direct

@@ -79,7 +79,10 @@ private struct SpotRow: View {
     let hasAlerts: Bool
 
     private var reading: WindReading? { snapshot?.current }
-    private var color: Color { WindPalette.color(kmh: reading?.averageKmh) }
+    private var isOffline: Bool { snapshot?.isOffline == true }
+    private var color: Color {
+        isOffline ? .secondary : WindPalette.color(kmh: reading?.averageKmh)
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -100,13 +103,15 @@ private struct SpotRow: View {
                     if hasAlerts {
                         Image(systemName: "bell.fill").foregroundStyle(.orange)
                     }
-                    Text(balise.provider.label)
-                    if let date = reading?.date {
-                        Text("·")
-                        Text(date, style: .time)
-                    }
-                    if snapshot?.isStale == true {
-                        Image(systemName: "clock.badge.exclamationmark").foregroundStyle(.orange)
+                    if isOffline, let snapshot {
+                        Image(systemName: "bolt.horizontal.circle")
+                        Text(snapshot.offlineText)
+                    } else {
+                        Text(balise.provider.label)
+                        if let date = reading?.date {
+                            Text("·")
+                            Text(date, style: .time)
+                        }
                     }
                 }
                 .font(.system(size: 10))
@@ -132,12 +137,14 @@ private struct SpotRow: View {
                 }
                 Text("raf. \(unit.format(kmh: reading?.gustKmh))")
                     .font(.system(size: 10))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(isOffline ? .secondary : .orange)
             }
             .frame(width: 78, alignment: .trailing)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
+        // Hors ligne : toute la ligne s'estompe, y compris la mini-courbe.
+        .opacity(isOffline ? 0.55 : 1)
         .background(.quaternary.opacity(isSelected ? 0.45 : 0.22),
                     in: RoundedRectangle(cornerRadius: 14))
         .overlay(

@@ -91,14 +91,16 @@ struct StationsMapView: View {
     private func pin(for station: MapStation) -> some View {
         let tracked = store.catalog.balises.contains { $0.key == station.balise.key }
         let wind = station.reading?.averageKmh
-        let tint = wind != nil ? WindPalette.color(kmh: wind) : color(of: station.balise.provider)
+        let offline = station.isOffline
+        let tint: Color = offline ? .gray
+            : (wind != nil ? WindPalette.color(kmh: wind) : color(of: station.balise.provider))
 
         return HStack(spacing: 2) {
-                if let direction = station.reading?.directionDegrees {
+                if let direction = station.reading?.directionDegrees, !offline {
                     WindArrow(degrees: direction, color: .white)
                         .frame(width: 8, height: 8)
                 }
-                Text(wind != nil ? store.unit.format(kmh: wind) : "—")
+                Text(wind != nil && !offline ? store.unit.format(kmh: wind) : "—")
                     .font(.system(size: 12, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(.white)
@@ -108,6 +110,7 @@ struct StationsMapView: View {
         .background(tint, in: Capsule())
         .overlay(Capsule().stroke(.white.opacity(tracked ? 1 : 0.35),
                                   lineWidth: tracked ? 2 : 1))
+        .opacity(offline ? 0.6 : 1)
     }
 
     /// Balise la plus proche du point touché, dans une tolérance qui suit le
@@ -240,6 +243,15 @@ struct MapStation: Identifiable, Hashable {
     var reading: WindReading?
 
     var id: String { balise.key }
+
+    /// Hors ligne : plus de deux fois la cadence habituelle de la source sans
+    /// relevé. On n'a pas mesuré la cadence d'une balise qu'on ne suit pas, d'où
+    /// l'estimation par source.
+    var isOffline: Bool {
+        guard let date = reading?.date else { return false }
+        return Date().timeIntervalSince(date) > balise.provider.typicalPeriod * 2 + 60
+    }
+
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: balise.latitude ?? 0, longitude: balise.longitude ?? 0)
     }

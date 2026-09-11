@@ -38,9 +38,12 @@ struct WindArrow: View {
 struct CompassDial: View {
     var reading: WindReading
     var unit: WindUnit
+    /// Balise muette : on garde la dernière valeur affichée mais en gris, pour
+    /// qu'on ne la confonde pas avec le vent actuel.
+    var isOffline: Bool = false
 
     var body: some View {
-        let color = WindPalette.color(kmh: reading.averageKmh)
+        let color = isOffline ? Color.secondary : WindPalette.color(kmh: reading.averageKmh)
         ZStack {
             Circle().stroke(color.opacity(0.18), lineWidth: 10)
             Circle()
@@ -73,7 +76,7 @@ struct CompassDial: View {
                     .contentTransition(.numericText())
                 Text(unit.symbol)
                     .font(.caption).foregroundStyle(.secondary)
-                Text(reading.directionText)
+                Text(isOffline ? "hors ligne" : reading.directionText)
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(color)
                     .padding(.top, 4)

@@ -175,3 +175,45 @@ class CadenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class DoublonsTests(unittest.TestCase):
+    """Plusieurs fiches pour un même anémomètre : cas observé à Tarifa."""
+
+    def setUp(self):
+        from duplicates import group
+        self.group = group
+        # Relevés réels du 2026-09-11 : trois fiches KWind et une Windguru pour
+        # le même capteur, plus une station voisine réellement distincte.
+        self.stations = [
+            {"name": "Balneario A", "lat": 36.00690, "lon": -5.60824, "t": "2026-09-11T12:52:22Z",
+             "temp": 26.2, "pressure": 1020.4, "raw_avg": 18.3, "raw_gust": 28.8, "offset": 1.5},
+            {"name": "Balneario B", "lat": 36.00801, "lon": -5.60739, "t": "2026-09-11T12:52:22Z",
+             "temp": 26.2, "pressure": 1020.4, "raw_avg": 18.3, "raw_gust": 28.8, "offset": 2.3},
+            {"name": "Tarifa", "lat": 36.00674, "lon": -5.60835, "t": "2026-09-11T12:52:22Z",
+             "temp": 26.2, "pressure": 1020.4, "raw_avg": 18.3, "raw_gust": 28.8, "offset": 1.33},
+            {"name": "Campo de Futbol", "lat": 36.02441, "lon": -5.61349, "t": "2026-09-11T12:53:23Z",
+             "temp": 26.2, "pressure": 1020.3, "raw_avg": None, "raw_gust": None, "offset": None},
+            {"name": "Los Lances", "lat": 36.04839, "lon": -5.64327, "t": "2026-09-11T12:52:24Z",
+             "temp": 26.9, "pressure": None, "raw_avg": 6.87, "raw_gust": 11.26, "offset": None},
+        ]
+
+    def test_les_quatre_fiches_forment_un_groupe(self):
+        result = self.group(self.stations)
+        groupes = {s["name"]: s["sensor_group"] for s in result}
+        self.assertEqual(groupes["Balneario A"], groupes["Balneario B"])
+        self.assertEqual(groupes["Balneario A"], groupes["Tarifa"])
+        self.assertEqual(groupes["Balneario A"], groupes["Campo de Futbol"],
+                         "le même capteur alimente KWind et Windguru")
+
+    def test_une_station_distincte_reste_seule(self):
+        result = self.group(self.stations)
+        seule = next(s for s in result if s["name"] == "Los Lances")
+        self.assertIsNone(seule["sensor_group"])
+        self.assertTrue(seule["is_primary"])
+
+    def test_la_representante_est_la_moins_corrigee(self):
+        result = self.group(self.stations)
+        primaires = [s["name"] for s in result if s["sensor_group"] and s["is_primary"]]
+        self.assertEqual(primaires, ["Campo de Futbol"],
+                         "la fiche sans correction est la plus proche du capteur")

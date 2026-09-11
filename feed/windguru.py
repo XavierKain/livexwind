@@ -81,7 +81,7 @@ def station(station_id: int) -> dict | None:
     }
 
 
-def _reading(avg, mx, mn, direction, temp, stamp: float) -> dict:
+def _reading(avg, mx, mn, direction, temp, stamp: float, pressure=None) -> dict:
     return {
         "t": datetime.fromtimestamp(stamp, timezone.utc).replace(second=0, microsecond=0)
                      .isoformat().replace("+00:00", "Z"),
@@ -92,6 +92,7 @@ def _reading(avg, mx, mn, direction, temp, stamp: float) -> dict:
         "gustDir": None,
         "min": round(mn * KNOT_TO_KMH, 1) if mn is not None else None,
         "temp": temp,
+        "pressure": pressure,
         "lum": None,
         "stale": False,
     }
@@ -106,7 +107,7 @@ def latest(station_id: int) -> dict | None:
         return None
     return _reading(d.get("wind_avg"), d.get("wind_max"), d.get("wind_min"),
                     d.get("wind_direction"), d.get("temperature"),
-                    d.get("unixtime") or time.time())
+                    d.get("unixtime") or time.time(), pressure=d.get("mslp"))
 
 
 def history(station_id: int, hours: int = 48) -> list[dict]:

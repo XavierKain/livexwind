@@ -19,9 +19,23 @@ struct StationsMapView: View {
     @State private var isLoading = false
     @State private var message: String?
     @State private var visibleSpan: Double = 0.5
+    /// Masque par défaut les fiches qui republient un capteur déjà affiché :
+    /// autour de Tarifa, quatre balises décrivent le même anémomètre.
+    @State private var hideDuplicates = true
     /// Dernière zone effectivement chargée, pour ne pas tout redemander à chaque
     /// petit déplacement.
     @State private var lastFetch: (center: CLLocationCoordinate2D, radius: Double)?
+
+    private var shownStations: [MapStation] {
+        guard hideDuplicates else { return stations }
+        // On garde les balises suivies même si elles ne sont pas la
+        // représentante de leur groupe : c'est ce spot-là que tu surveilles.
+        return stations.filter {
+            $0.isPrimary || store.catalog.balises.contains { b in b.key == $0.balise.key }
+        }
+    }
+
+    private var duplicateCount: Int { stations.count - shownStations.count }
 
     /// Au-delà d'environ 220 km de large, afficher des balises n'a pas de sens :
     /// elles se chevaucheraient, et il faudrait charger le monde entier.
@@ -35,7 +49,7 @@ struct StationsMapView: View {
             // cherche ensuite la balise la plus proche du point touché.
             MapReader { proxy in
                 Map(position: $camera) {
-                    ForEach(stations) { station in
+                    ForEach(shownStations) { station in
                         Annotation(station.balise.name, coordinate: station.coordinate) {
                             pin(for: station)
                                 .allowsHitTesting(false)
@@ -154,9 +168,21 @@ struct StationsMapView: View {
 
     private var legend: some View {
         HStack(spacing: 10) {
-            Text("Vent en \(store.unit.symbol) · couleur = force")
-                .font(.system(size: 10))
-                .foregroundStyle(.secondary)
+            Button {
+                hideDuplicates.toggle()
+            } label: {
+                Label(hideDuplicates ? "1 par capteur" : "toutes les fiches",
+                      systemImage: hideDuplicates ? "square.on.square.dashed" : "square.on.square")
+                    .font(.system(size: 10, weight: .medium))
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.tint)
+
+            if hideDuplicates && duplicateCount > 0 {
+                Text("\(duplicateCount) masquée(s)")
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+            }
             Spacer()
             Button {
                 lastFetch = nil
@@ -252,6 +278,13 @@ struct MapStation: Identifiable, Hashable {
     var reading: WindReading?
     /// Cadence mesurée par le serveur, quand il suit déjà cette balise.
     var periodSeconds: Double?
+    /// Fiches partageant un capteur physique — plusieurs balises publient
+    /// parfois la mesure d'un même anémomètre, à une correction près.
+    var sensorGroup: String?
+    var isPrimary: Bool = true
+    var sensorCount: Int = 1
+    /// Correction d'étalonnage, en nœuds, telle que la source la déclare.
+    var offsetKnots: Double?
 
     var id: String { balise.key }
 
@@ -287,7 +320,11 @@ struct MapStation: Identifiable, Hashable {
                                                  provider: provider),
                                   distanceKm: hit.km,
                                   reading: hit.current?.reading,
-                                  periodSeconds: hit.period)
+                                  periodSeconds: hit.period,
+                                  sensorGroup: hit.sensorGroup,
+                                  isPrimary: hit.isPrimary ?? true,
+                                  sensorCount: hit.sensorCount ?? 1,
+                                  offsetKnots: hit.offset)
             }
         }
 
@@ -320,6 +357,19 @@ struct MapStationSheet: View {
     }
 
     private var offline: Bool { station.isOffline }
+
+    /// « Même capteur que 3 autres fiches · corrigé de +1,5 nd ».
+    private var partageText: String {
+        let others = station.sensorCount - 1
+        var text = others == 1 ? "Même capteur qu'une autre fiche"
+                               : "Même capteur que \(others) autres fiches"
+        if let offset = station.offsetKnots, abs(offset) > 0.01 {
+            text += String(format: " · corrigé de %+.1f nd", offset)
+        } else if station.isPrimary {
+            text += " · mesure brute"
+        }
+        return text
+    }
     private var tint: Color {
         offline ? .secondary : WindPalette.color(kmh: reading?.averageKmh)
     }
@@ -367,6 +417,17 @@ struct MapStationSheet: View {
                 }
             }
             .font(.caption).foregroundStyle(.secondary)
+
+            if station.sensorCount > 1 {
+                // Plusieurs fiches pour un seul anémomètre : le dire, pour qu'on
+                // ne prenne pas deux affichages voisins pour deux mesures.
+                HStack(spacing: 4) {
+                    Image(systemName: "square.on.square.dashed")
+                    Text(partageText)
+                }
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+            }
         }
     }
 

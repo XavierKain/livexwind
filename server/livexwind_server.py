@@ -53,6 +53,7 @@ import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
 import kwind  # noqa: E402  (source kwind.app, WebSocket)
 import ffvl_index  # noqa: E402  (catalogue géolocalisé des balises FFVL)
 from cadence import observed_period, thin_history  # noqa: E402
+import duplicates  # noqa: E402  (fiches partageant un capteur physique)
 
 PORT = 7110
 HOME = Path.home()
@@ -421,6 +422,10 @@ def sensors():
 
 
 _map_live: dict = {"data": {}, "ts": 0.0}
+# Empreintes des capteurs (brut, température, pression), remplies au passage des
+# relevés groupés : c'est ce qui permet de reconnaître deux fiches d'un même
+# anémomètre.
+_map_prints: dict = {}
 MAP_LIVE_TTL = 90
 MAP_FETCH_LIMIT = 20        # requêtes unitaires acceptées par appel
 
@@ -436,12 +441,18 @@ def live_snapshot() -> dict:
         return _map_live["data"]
 
     readings = {}
-    for provider, loader in (("kw", kwind.live_all), ("wm", windmorbihan.live_all)):
-        try:
-            for code, reading in loader().items():
-                readings[f"{provider}-{code}"] = reading
-        except Exception as exc:
-            log.warning("relevés groupés %s indisponibles : %s", provider, exc)
+    try:
+        for code, entry in kwind.live_all_detailed().items():
+            readings[f"kw-{code}"] = entry["reading"]
+            _map_prints[f"kw-{code}"] = entry["fingerprint"]
+    except Exception as exc:
+        log.warning("relevés groupés kw indisponibles : %s", exc)
+
+    try:
+        for code, reading in windmorbihan.live_all().items():
+            readings[f"wm-{code}"] = reading
+    except Exception as exc:
+        log.warning("relevés groupés wm indisponibles : %s", exc)
 
     _map_live.update(data=readings, ts=time.time())
     return readings
@@ -501,12 +512,48 @@ def map_stations():
                 reading = None
         if reading:
             station["current"] = {"avg": reading.get("avg"), "gust": reading.get("gust"),
-                                  "dir": reading.get("dir"), "t": reading.get("t")}
+                                  "dir": reading.get("dir"), "t": reading.get("t"),
+                                  "temp": reading.get("temp"), "pressure": reading.get("pressure")}
             # La cadence mesurée, quand on suit déjà la balise : sans elle, l'app
             # doit deviner, et une station Windguru qui publie aux 10 min était
             # grisée à tort au bout de 3.
             if feed.get("period"):
                 station["period"] = feed["period"]
+
+    # Plusieurs fiches décrivent parfois le même anémomètre — vu à Tarifa, où
+    # quatre balises de deux réseaux publient la mesure d'un unique capteur avec
+    # des corrections différentes. On les regroupe et on désigne la plus proche
+    # de la mesure brute.
+    for station in stations:
+        key = f"{station['provider']}-{station['code']}"
+        print_ = dict(_map_prints.get(key) or {})
+        current = station.get("current") or {}
+        print_.setdefault("t", current.get("t"))
+        # Les sources non groupées apportent leur empreinte par le relevé lui-même.
+        if print_.get("temp") is None:
+            print_["temp"] = current.get("temp")
+        if print_.get("pressure") is None:
+            print_["pressure"] = current.get("pressure")
+        station["_print"] = {
+            "lat": station.get("lat"), "lon": station.get("lon"),
+            "t": print_.get("t"),
+            "temp": print_.get("temp"),
+            "pressure": print_.get("pressure"),
+            "raw_avg": print_.get("raw_avg"),
+            "raw_gust": print_.get("raw_gust"),
+            "offset": print_.get("offset"),
+            "name": station.get("name"),
+        }
+
+    grouped = duplicates.group([s["_print"] for s in stations])
+    for station, print_ in zip(stations, grouped):
+        station.pop("_print", None)
+        if print_.get("sensor_group"):
+            station["sensorGroup"] = print_["sensor_group"]
+            station["isPrimary"] = bool(print_.get("is_primary"))
+            station["sensorCount"] = print_.get("sensor_count")
+        if print_.get("offset") is not None:
+            station["offset"] = print_["offset"]
 
     return jsonify({"stations": stations, "radius": radius})
 

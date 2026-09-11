@@ -161,6 +161,13 @@ struct ServerClient: Sendable {
         let current: Current?
         /// Cadence mesurée, présente seulement pour les balises déjà suivies.
         let period: Double?
+        /// Fiches partageant un même capteur physique : identifiant du groupe,
+        /// représentante désignée, nombre de fiches, et correction d'étalonnage
+        /// en nœuds quand la source la publie.
+        let sensorGroup: String?
+        let isPrimary: Bool?
+        let sensorCount: Int?
+        let offset: Double?
     }
 
     /// Balises de toutes les sources autour d'un point — ce que consomme la carte.

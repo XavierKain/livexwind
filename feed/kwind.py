@@ -197,11 +197,23 @@ def stations(force: bool = False) -> list[dict]:
     return result
 
 
-def live_all() -> dict:
-    """Dernier relevé de toutes les stations, en un seul appel.
+def _offset(wind: dict) -> float | None:
+    """Correction d'étalonnage choisie par le propriétaire, en nœuds (« +1.5 »)."""
+    formula = wind.get("formula")
+    if not formula:
+        return None
+    try:
+        return float(str(formula).replace("+", "").strip())
+    except ValueError:
+        return None
 
-    Le canal `stations` renvoie déjà `lastWindData` : autant s'en servir plutôt
-    que d'interroger chaque station une par une pour la carte.
+
+def live_all_detailed() -> dict:
+    """Relevé et empreinte de chaque station, en un seul appel.
+
+    L'empreinte — mesure brute, température, pression — sert à repérer les
+    fiches qui republient un même capteur physique. Autour de Tarifa, plusieurs
+    balises partagent le même anémomètre et ne diffèrent que par leur correction.
     """
     data = _query("stations", {"limit": 2000, "where": {"source": {"$ne": "airports"}}}, timeout=30)
     rows = data if isinstance(data, list) else (data or {}).get("data") or []
@@ -211,9 +223,25 @@ def live_all() -> dict:
         if not wind:
             continue
         reading = _reading(wind, wind.get("timestamp"))
-        if reading:
-            out[str(row.get("_id"))] = reading
+        if not reading:
+            continue
+        out[str(row.get("_id"))] = {
+            "reading": reading,
+            "fingerprint": {
+                "t": wind.get("timestamp"),
+                "temp": wind.get("temperature"),
+                "pressure": wind.get("pressure"),
+                "raw_avg": wind.get("windspeed"),
+                "raw_gust": wind.get("windspeedHigh"),
+                "offset": _offset(wind),
+            },
+        }
     return out
+
+
+def live_all() -> dict:
+    """Dernier relevé de toutes les stations, en un seul appel."""
+    return {code: entry["reading"] for code, entry in live_all_detailed().items()}
 
 
 def search(query: str, limit: int = 40) -> list[dict]:

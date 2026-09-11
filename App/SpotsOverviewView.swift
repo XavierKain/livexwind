@@ -137,7 +137,7 @@ private struct SpotRow: View {
                 }
                 Text("raf. \(unit.format(kmh: reading?.gustKmh))")
                     .font(.system(size: 10))
-                    .foregroundStyle(isOffline ? .secondary : .orange)
+                    .foregroundStyle(isOffline ? Color.secondary : Color.orange)
             }
             .frame(width: 78, alignment: .trailing)
         }

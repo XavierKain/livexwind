@@ -106,7 +106,7 @@ struct ContentView: View {
                      ? "Balise \(store.snapshot.offlineText)"
                      : "Relevé de \(time(store.snapshot.current.date))")
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(store.snapshot.isOffline ? .secondary : .primary)
+                    .foregroundStyle(store.snapshot.isOffline ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                 if store.isLoading {
                     ProgressView().controlSize(.mini).padding(.leading, 2)
                 }
@@ -135,10 +135,10 @@ struct ContentView: View {
         HStack(spacing: 10) {
             metric("Mini", store.snapshot.current.minKmh, .secondary)
             metric("Moyen", store.snapshot.current.averageKmh,
-                   store.snapshot.isOffline ? .secondary
+                   store.snapshot.isOffline ? Color.secondary
                                             : WindPalette.color(kmh: store.snapshot.current.averageKmh))
             metric("Rafales", store.snapshot.current.gustKmh,
-                   store.snapshot.isOffline ? .secondary : .orange)
+                   store.snapshot.isOffline ? Color.secondary : Color.orange)
             if let temp = store.snapshot.current.temperature {
                 VStack(spacing: 2) {
                     Text("Temp.").font(.caption2).foregroundStyle(.secondary)

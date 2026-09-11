@@ -120,7 +120,7 @@ struct WindWidgetView: View {
                     Text(entry.unit.shortSymbol).font(.caption2).foregroundStyle(.secondary)
                 }
                 Text("raf. \(entry.unit.format(kmh: reading.gustKmh))")
-                    .font(.caption2).foregroundStyle(isOffline ? .secondary : .orange)
+                    .font(.caption2).foregroundStyle(isOffline ? Color.secondary : Color.orange)
                 Spacer(minLength: 0)
                 Text(reading.date, style: .time)
                     .font(.system(size: 10)).foregroundStyle(.tertiary)

@@ -104,7 +104,7 @@ struct WatchMainView: View {
 
             Text("raf. \(store.unit.format(kmh: reading.gustKmh)) \(store.unit.shortSymbol)")
                 .font(.system(size: 12))
-                .foregroundStyle(isOffline ? .secondary : .orange)
+                .foregroundStyle(isOffline ? Color.secondary : Color.orange)
 
             Spacer(minLength: 0)
 

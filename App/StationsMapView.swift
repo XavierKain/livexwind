@@ -30,9 +30,8 @@ struct StationsMapView: View {
         guard hideDuplicates else { return stations }
         // On garde les balises suivies même si elles ne sont pas la
         // représentante de leur groupe : c'est ce spot-là que tu surveilles.
-        return stations.filter {
-            $0.isPrimary || store.catalog.balises.contains { b in b.key == $0.balise.key }
-        }
+        let tracked = Set(store.catalog.balises.map(\.key))
+        return stations.filter { $0.isPrimary || tracked.contains($0.balise.key) }
     }
 
     private var duplicateCount: Int { stations.count - shownStations.count }

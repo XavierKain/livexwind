@@ -185,7 +185,27 @@ def iso_to_epoch(iso: str | None) -> float:
         return time.time()
 
 
-def content_state(reading: dict, trend: list, unit: str) -> dict:
+def secondary_wind(key: str) -> dict | None:
+    """Ligne d'appoint pour l'écran verrouillé, lue dans le flux déjà suivi."""
+    provider, _, code = key.partition("-")
+    feed = load_json(feed_path(code, provider), None)
+    if not feed:
+        return None
+    reading = feed.get("current") or {}
+    if reading.get("avg") is None and reading.get("gust") is None:
+        return None
+    period = feed.get("period") or 600
+    age = time.time() - iso_to_epoch(reading.get("t"))
+    return {
+        "name": (feed.get("balise") or {}).get("name") or code,
+        "averageKmh": reading.get("avg") or 0.0,
+        "gustKmh": reading.get("gust") or 0.0,
+        "directionDegrees": reading.get("dir") or 0,
+        "isOffline": age > period * 2 + 60,
+    }
+
+
+def content_state(reading: dict, trend: list, unit: str, secondaries: list | None = None) -> dict:
     """Doit correspondre exactement à WindActivityAttributes.ContentState côté Swift."""
     return {
         "averageKmh": reading.get("avg") or 0.0,
@@ -197,6 +217,7 @@ def content_state(reading: dict, trend: list, unit: str) -> dict:
         "readingEpoch": iso_to_epoch(reading.get("t")),
         "trendKmh": trend or [reading.get("avg") or 0.0],
         "unitRaw": unit,
+        "secondaries": secondaries or None,
     }
 
 
@@ -243,18 +264,20 @@ def activity_tokens() -> list:
     out = []
     for entry in tokens().get("update", []):
         if isinstance(entry, str):
-            out.append({"token": entry, "balise": None})
+            out.append({"token": entry, "balise": None, "secondaries": []})
         elif isinstance(entry, dict) and entry.get("token"):
-            out.append({"token": entry["token"], "balise": entry.get("balise")})
+            out.append({"token": entry["token"], "balise": entry.get("balise"),
+                        "secondaries": entry.get("secondaries") or []})
     return out
 
 
-def put_activity_token(token: str, balise: str | None):
+def put_activity_token(token: str, balise: str | None, secondaries: list | None = None):
     with _lock:
         data = tokens()
         kept = [e for e in data.get("update", [])
                 if not (e == token or (isinstance(e, dict) and e.get("token") == token))]
-        kept.append({"token": token, "balise": balise})
+        kept.append({"token": token, "balise": balise,
+                     "secondaries": list(secondaries or [])[:2]})
         data["update"] = kept[-5:]
         save_json(TOKENS_PATH, data)
 
@@ -567,8 +590,10 @@ def la_register():
         return jsonify({"error": "token ou kind invalide"}), 400
 
     if kind == "update":
-        put_activity_token(token, body.get("balise"))
-        log.info("token activité enregistré (%s… → %s)", token[:8], body.get("balise") or "balise affichée")
+        put_activity_token(token, body.get("balise"), body.get("secondaries"))
+        log.info("token activité enregistré (%s… → %s, secondaires %s)",
+                 token[:8], body.get("balise") or "balise affichée",
+                 body.get("secondaries") or "aucune")
     else:
         put_token(kind, token)
         log.info("token %s enregistré (%s…)", kind, token[:8])
@@ -844,7 +869,6 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict, is_selected: bool
     unit = prefs.get("unit", "kmh")
     reading = feed["current"]
     trend = [s["avg"] for s in feed.get("history", [])[-18:] if s.get("avg") is not None]
-    body_state = content_state(reading, trend, unit)
     # Péremption alignée sur la cadence de la station : iOS grise alors l'activité
     # de lui-même quand la balise se tait. Vingt-cinq minutes fixes laissaient
     # une valeur morte à l'écran pour une station qui publie à la minute.
@@ -854,14 +878,20 @@ def push_all(cfg: dict, feed: dict, balise: dict, state: dict, is_selected: bool
 
     # 1. mise à jour des activités lancées pour *cette* balise
     key = balise_key(balise)
+    body_state = content_state(reading, trend, unit)
     delivered = 0
     for entry in activity_tokens():
         if entry["balise"] not in (None, key):
             continue
         if entry["balise"] is None and not is_selected:
             continue          # token d'avant le lien : réservé à la balise affichée
+
+        # Chaque activité porte ses propres balises d'appoint.
+        extras = [w for w in (secondary_wind(k) for k in entry["secondaries"]) if w]
+        state_for_token = content_state(reading, trend, unit, secondaries=extras or None)
+
         token = entry["token"]
-        code, text = apns_post(cfg, token, update_payload(body_state, stale),
+        code, text = apns_post(cfg, token, update_payload(state_for_token, stale),
                                "liveactivity", ".push-type.liveactivity")
         if code == 200:
             delivered += 1
@@ -1108,8 +1138,10 @@ def pusher_loop():
             period = cached_feed.get("period") or 600
             # La balise affichée est guettée à sa propre cadence ; celles qui ont
             # une alerte armée un peu moins souvent ; les autres au ralenti.
-            has_activity = any(e["balise"] == key for e in activity_tokens())
-            interval = period if has_activity else max(
+            entries = activity_tokens()
+            has_activity = any(e["balise"] == key for e in entries)
+            is_secondary = any(key in e["secondaries"] for e in entries)
+            interval = period if (has_activity or is_secondary) else max(
                 period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
             if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
                 if cached_feed:

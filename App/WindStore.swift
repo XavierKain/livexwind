@@ -16,7 +16,7 @@ final class WindStore: ObservableObject {
                 // Le serveur construit ses push dans cette unité : il doit la connaître
                 // tout de suite, sinon la Live Activity et les alertes restent en km/h.
                 await syncAlertsWithServer()
-                await liveActivity.push(snapshot: snapshot, unit: unit)
+                await liveActivity.push(snapshot: snapshot, unit: unit, secondaries: secondarySnapshots)
             }
         }
     }
@@ -40,6 +40,14 @@ final class WindStore: ObservableObject {
     @Published var serverReachable: Bool?
     @Published var serverDetail: String?
     @Published private(set) var catalog: BaliseCatalog
+    /// Balises affichées sous la principale dans l'activité en direct.
+    @Published var activitySecondaries: [String] {
+        didSet {
+            guard activitySecondaries != oldValue else { return }
+            SharedStore.shared.activitySecondaries = activitySecondaries
+            Task { await restartActivityIfRunning() }
+        }
+    }
     /// Instantané par balise suivie, pour la vue d'ensemble.
     @Published private(set) var overview: [String: WindSnapshot] = [:]
     @Published var notificationsAuthorized = false
@@ -57,6 +65,7 @@ final class WindStore: ObservableObject {
         unit = SharedStore.shared.unit
         alerts = SharedStore.shared.alertSettings(for: stored.selectedKey)
         serverURL = SharedStore.shared.serverURL
+        activitySecondaries = SharedStore.shared.activitySecondaries
 
         // LiveActivityManager est un ObservableObject imbriqué : sans ce relais,
         // la vue ne se redessine pas quand son état change (bouton figé).
@@ -88,6 +97,39 @@ final class WindStore: ObservableObject {
         } catch {
             SharedStore.shared.serverHandlesAlerts = false
             serverReachable = false
+        }
+    }
+
+    // MARK: Activité en direct
+
+    /// Instantanés des balises d'appoint, dans l'ordre choisi.
+    private var secondarySnapshots: [WindSnapshot] {
+        activitySecondaries.compactMap { key in
+            overview[key] ?? SharedStore.shared.loadSnapshot(key: key)
+        }
+    }
+
+    func startActivity() async {
+        await liveActivity.start(snapshot: snapshot, unit: unit, secondaries: secondarySnapshots)
+    }
+
+    /// Le contenu d'une activité est figé côté serveur par son token : changer
+    /// de balises d'appoint demande donc de la relancer.
+    private func restartActivityIfRunning() async {
+        guard liveActivity.isActive else { return }
+        await liveActivity.start(snapshot: snapshot, unit: unit, secondaries: secondarySnapshots)
+    }
+
+    /// Balises proposables en appoint : toutes sauf celle affichée.
+    var secondaryCandidates: [Balise] {
+        catalog.balises.filter { $0.key != catalog.selectedKey }
+    }
+
+    func toggleSecondary(_ balise: Balise) {
+        if let index = activitySecondaries.firstIndex(of: balise.key) {
+            activitySecondaries.remove(at: index)
+        } else if activitySecondaries.count < 2 {
+            activitySecondaries.append(balise.key)
         }
     }
 
@@ -148,7 +190,9 @@ final class WindStore: ObservableObject {
         // suivre le nouveau spot, il faut la relancer, sinon on lirait le vent
         // d'ici sous le nom de là-bas.
         if wasRunning {
-            await liveActivity.start(snapshot: snapshot, unit: unit)
+            // La nouvelle principale ne peut pas rester dans les appoints.
+            activitySecondaries.removeAll { $0 == catalog.selectedKey }
+            await liveActivity.start(snapshot: snapshot, unit: unit, secondaries: secondarySnapshots)
         }
     }
 
@@ -252,7 +296,7 @@ final class WindStore: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
 
         if fresh.current.date != previous.current.date || force {
-            await liveActivity.push(snapshot: fresh, unit: unit)
+            await liveActivity.push(snapshot: fresh, unit: unit, secondaries: secondarySnapshots)
         }
         // Le serveur pousse les alertes par APNs dès qu'il est joignable :
         // on ne notifie localement que dans le cas contraire.

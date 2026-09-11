@@ -17,6 +17,7 @@ struct SharedStore {
     private let serverURLKey = "wind.server.url"
     private let serverAlertsKey = "wind.server.handlesAlerts"
     private let catalogKey = "wind.balises"
+    private let secondariesKey = "wind.activity.secondaries"
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -99,6 +100,13 @@ struct SharedStore {
     func save(snapshot: WindSnapshot) {
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
         defaults.set(data, forKey: "\(snapshotKey).\(snapshot.baliseKey)")
+    }
+
+    /// Balises affichées sous la principale dans l'activité en direct — deux au
+    /// plus, pour que l'écran verrouillé reste lisible.
+    var activitySecondaries: [String] {
+        get { defaults.stringArray(forKey: secondariesKey) ?? [] }
+        nonmutating set { defaults.set(Array(newValue.prefix(2)), forKey: secondariesKey) }
     }
 
     // MARK: Serveur de push

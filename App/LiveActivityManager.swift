@@ -16,9 +16,19 @@ final class LiveActivityManager: ObservableObject {
     private var startTokenTask: Task<Void, Never>?
 
     #if canImport(ActivityKit)
-    static func state(from snapshot: WindSnapshot, unit: WindUnit) -> WindActivityAttributes.ContentState {
+    static func state(from snapshot: WindSnapshot, unit: WindUnit,
+                      secondaries: [WindSnapshot] = []) -> WindActivityAttributes.ContentState {
         let trend = snapshot.history.suffix(18).compactMap(\.averageKmh)
         let r = snapshot.current
+        let extras = secondaries.prefix(2).map { other in
+            WindActivityAttributes.SecondaryWind(
+                name: other.baliseName,
+                averageKmh: other.current.averageKmh ?? 0,
+                gustKmh: other.current.gustKmh ?? 0,
+                directionDegrees: other.current.directionDegrees ?? 0,
+                isOffline: other.isOffline
+            )
+        }
         return .init(
             averageKmh: r.averageKmh ?? 0,
             gustKmh: r.gustKmh ?? 0,
@@ -28,7 +38,8 @@ final class LiveActivityManager: ObservableObject {
             temperature: r.temperature,
             readingEpoch: r.date.timeIntervalSince1970,
             trendKmh: trend.isEmpty ? [r.averageKmh ?? 0] : trend,
-            unitRaw: unit.rawValue
+            unitRaw: unit.rawValue,
+            secondaries: extras.isEmpty ? nil : Array(extras)
         )
     }
 
@@ -49,7 +60,8 @@ final class LiveActivityManager: ObservableObject {
         }
     }
 
-    func start(snapshot: WindSnapshot, unit: WindUnit) async {
+    func start(snapshot: WindSnapshot, unit: WindUnit,
+               secondaries: [WindSnapshot] = []) async {
         lastError = nil
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             lastError = "Activités en direct désactivées — Réglages > LiveXWind"
@@ -61,28 +73,31 @@ final class LiveActivityManager: ObservableObject {
         do {
             let attributes = WindActivityAttributes(baliseName: snapshot.baliseName, baliseID: snapshot.baliseID)
             let content = ActivityContent(
-                state: Self.state(from: snapshot, unit: unit),
+                state: Self.state(from: snapshot, unit: unit, secondaries: secondaries),
                 staleDate: staleDate(for: snapshot)
             )
             // pushType .token : le serveur prend le relais dès que l'app est fermée.
             let activity = try Activity.request(attributes: attributes, content: content, pushType: .token)
             isActive = true
             activityBaliseKey = snapshot.baliseKey
-            observeUpdateToken(of: activity, unit: unit, baliseKey: snapshot.baliseKey)
+            observeUpdateToken(of: activity, unit: unit, baliseKey: snapshot.baliseKey,
+                               secondaries: secondaries.prefix(2).map(\.baliseKey))
         } catch {
             lastError = error.localizedDescription
         }
     }
 
     private func observeUpdateToken(of activity: Activity<WindActivityAttributes>,
-                                    unit: WindUnit, baliseKey: String) {
+                                    unit: WindUnit, baliseKey: String,
+                                    secondaries: [String]) {
         tokenTask?.cancel()
         tokenTask = Task { [weak self] in
             for await tokenData in activity.pushTokenUpdates {
                 let hex = tokenData.hexString
                 do {
                     try await ServerClient.shared.registerActivityToken(
-                        hex, kind: "update", unit: unit, balise: baliseKey)
+                        hex, kind: "update", unit: unit, balise: baliseKey,
+                        secondaries: secondaries)
                     self?.pushTokenRegistered = true
                 } catch {
                     self?.pushTokenRegistered = false
@@ -98,7 +113,8 @@ final class LiveActivityManager: ObservableObject {
     /// On n'écrit que si l'instantané concerne bien la balise de l'activité :
     /// sinon on afficherait le vent du spot consulté sous le nom de celui pour
     /// lequel l'activité a été lancée.
-    func push(snapshot: WindSnapshot, unit: WindUnit) async {
+    func push(snapshot: WindSnapshot, unit: WindUnit,
+              secondaries: [WindSnapshot] = []) async {
         guard !Activity<WindActivityAttributes>.activities.isEmpty else {
             isActive = false
             activityBaliseKey = nil
@@ -108,7 +124,7 @@ final class LiveActivityManager: ObservableObject {
         guard activityBaliseKey == nil || activityBaliseKey == snapshot.baliseKey else { return }
 
         let content = ActivityContent(
-            state: Self.state(from: snapshot, unit: unit),
+            state: Self.state(from: snapshot, unit: unit, secondaries: secondaries),
             staleDate: staleDate(for: snapshot)
         )
         for activity in Activity<WindActivityAttributes>.activities {
@@ -137,8 +153,10 @@ final class LiveActivityManager: ObservableObject {
     #else
     func refreshActiveState() {}
     func observePushToStartToken(unit: WindUnit) {}
-    func start(snapshot: WindSnapshot, unit: WindUnit) async {}
-    func push(snapshot: WindSnapshot, unit: WindUnit) async {}
+    func start(snapshot: WindSnapshot, unit: WindUnit,
+               secondaries: [WindSnapshot] = []) async {}
+    func push(snapshot: WindSnapshot, unit: WindUnit,
+              secondaries: [WindSnapshot] = []) async {}
     func stop() async {}
     #endif
 }

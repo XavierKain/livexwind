@@ -215,7 +215,7 @@ struct ContentView: View {
                         if store.liveActivity.isActive {
                             await store.liveActivity.stop()
                         } else {
-                            await store.liveActivity.start(snapshot: store.snapshot, unit: store.unit)
+                            await store.startActivity()
                         }
                     }
                 } label: {
@@ -229,9 +229,49 @@ struct ContentView: View {
             if let error = store.liveActivity.lastError {
                 Text(error).font(.caption2).foregroundStyle(.orange)
             }
+            appointsPicker
         }
         .padding(14)
         .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 18))
+    }
+
+    /// Deux balises d'appoint au plus, affichées sous la principale sur l'écran
+    /// verrouillé — de quoi comparer le vent d'ici à celui d'à côté.
+    @ViewBuilder
+    private var appointsPicker: some View {
+        if !store.secondaryCandidates.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                Divider().opacity(0.4)
+                Text("Aussi sur l'écran verrouillé — 2 maximum")
+                    .font(.caption2).foregroundStyle(.secondary)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(store.secondaryCandidates) { balise in
+                            let rank = store.activitySecondaries.firstIndex(of: balise.key)
+                            Button {
+                                store.toggleSecondary(balise)
+                            } label: {
+                                HStack(spacing: 3) {
+                                    if let rank {
+                                        Text("\(rank + 2)")
+                                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                                    }
+                                    Text(balise.name).lineLimit(1)
+                                }
+                                .font(.caption2.weight(.medium))
+                                .padding(.horizontal, 8).padding(.vertical, 5)
+                                .background(rank != nil
+                                            ? Color.accentColor.opacity(0.28)
+                                            : Color.gray.opacity(0.14),
+                                            in: Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(rank == nil && store.activitySecondaries.count >= 2)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private var footer: some View {

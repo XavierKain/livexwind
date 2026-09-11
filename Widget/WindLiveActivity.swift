@@ -102,6 +102,12 @@ struct LiveActivityContent: View {
 
     private var entete: some View {
         HStack {
+            if state.secondaries?.isEmpty == false {
+                Text("1")
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 12)
+            }
             Label(context.attributes.baliseName, systemImage: "wind")
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
@@ -143,8 +149,54 @@ struct LiveActivityContent: View {
                 WindSparkline(values: state.trendKmh, color: color)
                     .frame(width: 74, height: 34)
             }
+            secondaires
         }
         .padding(14)
+    }
+
+    /// Les balises d'appoint, sous la principale : voir qu'il y a 15 nœuds ici
+    /// et 25 dix kilomètres plus loin se lit d'un coup d'œil.
+    @ViewBuilder
+    private var secondaires: some View {
+        if let others = state.secondaries, !others.isEmpty {
+            VStack(spacing: 3) {
+                Divider().opacity(0.35)
+                ForEach(Array(others.enumerated()), id: \.offset) { index, other in
+                    ligneSecondaire(index: index + 2, other: other)
+                }
+            }
+        }
+    }
+
+    private func ligneSecondaire(index: Int, other: WindActivityAttributes.SecondaryWind) -> some View {
+        let teinte: Color = other.isOffline ? .secondary : WindPalette.color(kmh: other.averageKmh)
+        return HStack(spacing: 6) {
+            Text("\(index)")
+                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .foregroundStyle(.secondary)
+                .frame(width: 12)
+            WindArrow(degrees: other.isOffline ? nil : other.directionDegrees, color: teinte)
+                .frame(width: 11, height: 11)
+            Text(other.name)
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(1)
+            Spacer(minLength: 4)
+            if other.isOffline {
+                Text("hors ligne")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 3) {
+                    Text(unit.format(kmh: other.averageKmh))
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(teinte)
+                    Text("/ \(unit.format(kmh: other.gustKmh))")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.orange)
+                }
+            }
+        }
     }
 
     /// Pile intelligente de la montre.
@@ -159,6 +211,15 @@ struct LiveActivityContent: View {
                 boussole
                 chiffres
                 Spacer(minLength: 0)
+            }
+            if let others = state.secondaries, !others.isEmpty {
+                // Une seule ligne, très condensée : la carte de la pile
+                // intelligente est basse.
+                Text(others.map { "\($0.name.prefix(9)) \(unit.format(kmh: $0.averageKmh))" }
+                        .joined(separator: " · "))
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
         }
         .padding(.horizontal, 10)

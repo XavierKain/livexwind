@@ -37,9 +37,11 @@ struct ServerClient: Sendable {
     /// est figé au lancement, le serveur doit donc y pousser cette balise et pas
     /// celle qui se trouve affichée au moment du relevé.
     func registerActivityToken(_ token: String, kind: String, unit: WindUnit,
-                               balise: String? = nil) async throws {
+                               balise: String? = nil,
+                               secondaries: [String] = []) async throws {
         var body: [String: Any] = ["token": token, "kind": kind, "unit": unit.rawValue]
         if let balise { body["balise"] = balise }
+        if !secondaries.isEmpty { body["secondaries"] = secondaries }
         try await post("api/live-activity/register", body: body)
     }
 

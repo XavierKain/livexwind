@@ -1,5 +1,9 @@
 import SwiftUI
 
+// Réservé à iOS : le zoom au pincement n'existe pas sur watchOS, et la montre
+// compile l'ensemble de Shared.
+#if os(iOS)
+
 /// Carte « Évolution » : paliers de fenêtre, zoom au pincement, curseur au doigt.
 ///
 /// Partagée entre l'écran de la balise suivie et l'aperçu d'une balise touchée
@@ -134,3 +138,5 @@ struct WindMetricsRow: View {
         .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 14))
     }
 }
+
+#endif

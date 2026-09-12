@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-12T06:20:29Z",
+ "generatedAt": "2026-09-12T06:41:02Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-09-12T06:17:00Z",
-  "dir": 27,
-  "dirLabel": "NNE",
-  "avg": 9.3,
-  "gust": 11.1,
+  "t": "2026-09-12T06:37:00Z",
+  "dir": 36,
+  "dirLabel": "NE",
+  "avg": 7.4,
+  "gust": 9.3,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -22,14 +22,6 @@
  },
  "period": 240,
  "history": [
-  {
-   "t": "2026-09-10T06:30:00Z",
-   "dir": 41,
-   "avg": 9.3,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-10T06:50:00Z",
    "dir": 47,
@@ -1167,41 +1159,9 @@
    "temp": null
   },
   {
-   "t": "2026-09-11T18:21:00Z",
-   "dir": 304,
-   "avg": 25.9,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-11T18:29:00Z",
-   "dir": 304,
-   "avg": 24.1,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-11T18:33:00Z",
    "dir": 300,
    "avg": 24.1,
-   "gust": 29.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-11T18:37:00Z",
-   "dir": 297,
-   "avg": 25.9,
-   "gust": 29.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-11T18:41:00Z",
-   "dir": 298,
-   "avg": 25.9,
    "gust": 29.6,
    "min": null,
    "temp": null
@@ -2195,6 +2155,38 @@
    "dir": 27,
    "avg": 9.3,
    "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-12T06:21:00Z",
+   "dir": 39,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-12T06:29:00Z",
+   "dir": 39,
+   "avg": 9.3,
+   "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-12T06:33:00Z",
+   "dir": 42,
+   "avg": 7.4,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-12T06:37:00Z",
+   "dir": 36,
+   "avg": 7.4,
+   "gust": 9.3,
    "min": null,
    "temp": null
   }

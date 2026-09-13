@@ -129,7 +129,8 @@ struct WindWidgetView: View {
 
             VStack(alignment: .trailing, spacing: 2) {
                 WindChart(readings: entry.snapshot.window(hours: entry.windowHours),
-                          unit: entry.unit, compact: true)
+                          unit: entry.unit, periodSeconds: entry.snapshot.periodSeconds,
+                          compact: true)
                 Text(entry.snapshot.baliseName)
                     .font(.system(size: 9)).foregroundStyle(.tertiary)
             }
@@ -158,7 +159,8 @@ struct WindWidgetView: View {
                         .font(.caption2).foregroundStyle(.secondary)
                 }
             }
-            WindChart(readings: entry.snapshot.window(hours: entry.windowHours), unit: entry.unit)
+            WindChart(readings: entry.snapshot.window(hours: entry.windowHours), unit: entry.unit,
+                      periodSeconds: entry.snapshot.periodSeconds)
             HStack {
                 Text(reading.date, style: .time)
                 Text("· relevé \(entry.snapshot.cadenceText)")

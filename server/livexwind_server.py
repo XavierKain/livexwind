@@ -52,7 +52,7 @@ import windguru  # noqa: E402  (source windguru.cz, mondiale)
 import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
 import kwind  # noqa: E402  (source kwind.app, WebSocket)
 import ffvl_index  # noqa: E402  (catalogue géolocalisé des balises FFVL)
-from cadence import observed_period, thin_history  # noqa: E402
+from cadence import observed_period, thin_history, worst_gap  # noqa: E402
 import duplicates  # noqa: E402  (fiches partageant un capteur physique)
 
 PORT = 7110
@@ -94,6 +94,9 @@ log = logging.getLogger("livexwind")
 app = Flask(__name__)
 _lock = threading.Lock()
 _jwt_cache = {"token": None, "ts": 0.0}
+# Battement de la boucle de relève : c'est le seul moyen de distinguer
+# « serveur debout » de « serveur qui relève encore ».
+_pusher_beat = {"at": 0.0}
 
 
 # --------------------------------------------------------------------------- io
@@ -336,6 +339,8 @@ def health():
                     "selected": selected,
                     "last_reading": state.get("last_reading"),
                     "last_push": state.get("last_push"),
+                    "pusher_age": round(time.time() - _pusher_beat["at"], 1)
+                                  if _pusher_beat["at"] else None,
                     "windguru_index": windguru.index_progress(),
                     "ffvl_index": ffvl_index.progress()})
 
@@ -581,6 +586,43 @@ def map_stations():
     return jsonify({"stations": stations, "radius": radius})
 
 
+@app.route("/api/balises", methods=["GET", "POST"])
+def balises():
+    """Liste des balises suivies, et celle qui déclenche les push.
+
+    C'est par là que l'app fait connaître son catalogue au serveur : sans elle,
+    une balise ajoutée sur le téléphone n'est jamais relevée, et le serveur
+    continue de pousser le spot sélectionné la fois d'avant.
+    """
+    if request.method == "GET":
+        tracked, selected = tracked_balises()
+        return jsonify({"balises": tracked, "selected": selected})
+
+    body = request.get_json(silent=True) or {}
+    cleaned = []
+    for b in body.get("balises") or []:
+        try:
+            balise_id = int(b["id"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        provider = b.get("provider")
+        cleaned.append({"id": balise_id,
+                        "code": str(b.get("code") or balise_id),
+                        "name": b.get("name") or f"Balise {balise_id}",
+                        "altitude": b.get("altitude"),
+                        "provider": provider if provider in PROVIDERS else "ffvl"})
+    if not cleaned:
+        return jsonify({"error": "liste vide ou invalide"}), 400
+
+    set_prefs({"balises": cleaned, "selected": body.get("selected") or cleaned[0]["id"]})
+    # Republié tout de suite : l'Apple Watch lit ce pointeur pour savoir quel
+    # spot afficher, et la boucle de relevés peut dormir plusieurs minutes.
+    publish_pointer()
+    log.info("balises suivies : %s (sélectionnée %s)",
+             [b["id"] for b in cleaned], body.get("selected"))
+    return jsonify({"ok": True})
+
+
 @app.route("/api/live-activity/register", methods=["POST"])
 def la_register():
     body = request.get_json(silent=True) or {}
@@ -693,7 +735,8 @@ def _refresh_ffvl(balise: dict) -> dict | None:
 
 
 def _refresh_wm(balise: dict) -> dict | None:
-    """windmorbihan.com : API JSON, plus d'historique au premier suivi."""
+    """windmorbihan.com : API JSON, plus d'historique au premier suivi
+    et après une coupure de relève."""
     balise_id = int(balise_code(balise))
     path = feed_path(balise_id, "wm")
     try:
@@ -706,18 +749,15 @@ def _refresh_wm(balise: dict) -> dict | None:
     if not reading or not info:
         return load_json(path, None)
 
-    old = load_json(path, {})
-    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
-        backfill = windmorbihan.history(balise_id)
-        if backfill:
-            log.info("balise wm %s : historique initial (%d points)", balise_id, len(backfill))
-            old = {"history": backfill}
+    old = with_backfill(path, load_json(path, {}),
+                        lambda: windmorbihan.history(balise_id), f"wm {balise_id}")
 
     return _store_feed(path, info, reading, previous=old)
 
 
 def _refresh_wg(balise: dict) -> dict | None:
-    """windguru.cz : API JSON ouverte, plus l'historique au premier suivi."""
+    """windguru.cz : API JSON ouverte, plus l'historique au premier suivi
+    et après une coupure de relève."""
     balise_id = int(balise_code(balise))
     path = feed_path(balise_id, "wg")
     reading = windguru.latest(balise_id)
@@ -725,12 +765,8 @@ def _refresh_wg(balise: dict) -> dict | None:
     if not reading or not info:
         return load_json(path, None)
 
-    old = load_json(path, {})
-    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
-        backfill = windguru.history(balise_id)
-        if backfill:
-            log.info("balise wg %s : historique initial (%d points)", balise_id, len(backfill))
-            old = {"history": backfill}
+    old = with_backfill(path, load_json(path, {}),
+                        lambda: windguru.history(balise_id), f"wg {balise_id}")
 
     return _store_feed(path, info, reading, previous=old)
 
@@ -744,12 +780,8 @@ def _refresh_mc(balise: dict) -> dict | None:
     if not reading or not info:
         return load_json(path, None)
 
-    old = load_json(path, {})
-    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
-        backfill = meteocat.history(code)
-        if backfill:
-            log.info("balise mc %s : historique du jour (%d points)", code, len(backfill))
-            old = {"history": backfill}
+    old = with_backfill(path, load_json(path, {}),
+                        lambda: meteocat.history(code), f"mc {code}")
 
     info = {**info, "id": balise["id"], "code": code}
     return _store_feed(path, info, reading, previous=old)
@@ -764,15 +796,50 @@ def _refresh_kw(balise: dict) -> dict | None:
     if not reading or not info:
         return load_json(path, None)
 
-    old = load_json(path, {})
-    if len(old.get("history", [])) < BACKFILL_MIN_POINTS:
-        backfill = kwind.history(code)
-        if backfill:
-            log.info("balise kw %s : historique initial (%d points)", code, len(backfill))
-            old = {"history": backfill}
+    old = with_backfill(path, load_json(path, {}),
+                        lambda: kwind.history(code), f"kw {code}")
 
     info = {**info, "id": balise["id"], "code": code}
     return _store_feed(path, info, reading, previous=old)
+
+
+# Dernier trou pour lequel on a redemandé l'historique, par flux : on ne
+# rappelle pas la source en boucle pour un creux qu'elle ne sait pas combler
+# (station débranchée la nuit, par exemple).
+_backfilled: dict = {}
+
+
+def with_backfill(path: Path, old: dict, fetch, label: str) -> dict:
+    """Complète l'historique quand il manque un morceau de courbe.
+
+    Deux cas : le premier suivi d'une balise, où l'on part de rien, et la reprise
+    après une interruption de relève, où la courbe garde un trou en plein milieu.
+    Dans les deux cas on **fusionne** — remplacer effacerait tout ce qui avait été
+    accumulé avant la coupure.
+
+    Un trou donné ne vaut qu'une tentative : si la source ne sait pas le combler,
+    le redemander à chaque tour ne ferait que la solliciter pour rien.
+    """
+    history = old.get("history") or []
+    gap = worst_gap(history)
+    if len(history) >= BACKFILL_MIN_POINTS and gap is None:
+        return old
+
+    seen = _backfilled.get(str(path))
+    marker = int(gap) if gap else 0
+    if seen == marker:
+        return old
+    _backfilled[str(path)] = marker
+
+    backfill = fetch() or []
+    if not backfill:
+        return old
+    merged = {s["t"]: s for s in history if s.get("t")}
+    merged.update({s["t"]: s for s in backfill if s.get("t")})
+    added = len(merged) - len(history)
+    log.info("balise %s : historique complété (%d points repris, %d nouveaux)",
+             label, len(backfill), added)
+    return {**old, "history": sorted(merged.values(), key=lambda s: s["t"])}
 
 
 def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:
@@ -1106,96 +1173,115 @@ def migrate_legacy_feed():
             return
 
 
-def pusher_loop():
-    log.info("boucle pusher démarrée")
-    while True:
-        cfg = config()
-        if not cfg:
-            log.warning("config APNs absente (%s) — nouvel essai dans 5 min", CONFIG_PATH)
-            time.sleep(300)
+def pusher_tick() -> float:
+    """Un tour de relève : chaque balise suivie, les alertes, les push, la
+    publication. Renvoie l'attente avant le tour suivant."""
+    cfg = config()
+    if not cfg:
+        log.warning("config APNs absente (%s) — nouvel essai dans 5 min", CONFIG_PATH)
+        return 300
+
+    state = load_json(STATE_PATH, {})
+    balises, selected = tracked_balises()
+    refreshed_at = state.setdefault("refreshed_at", {})
+    feeds = {}
+    sleep_for = POLL_INTERVAL
+
+    prefs = tokens().get("prefs", {})
+    watched = any(alerts_for(balise_key(b), prefs).get("enabled")
+                  for b in balises if b["id"] != selected)
+
+    for balise in balises:
+        balise_id = balise["id"]
+        key = balise_key(balise)
+        is_selected = balise_id == selected
+        has_alerts = bool(alerts_for(key, prefs).get("enabled"))
+
+        # Cadence : la balise affichée est guettée de près, celles qui ont une
+        # alerte armée le sont raisonnablement, les autres ne servent qu'à
+        # garnir la courbe quand on change de spot.
+        cached_feed = load_json(feed_path(balise_code(balise), balise.get("provider", "ffvl")), None) or {}
+        period = cached_feed.get("period") or 600
+        # La balise affichée est guettée à sa propre cadence ; celles qui ont
+        # une alerte armée un peu moins souvent ; les autres au ralenti.
+        entries = activity_tokens()
+        has_activity = any(e["balise"] == key for e in entries)
+        is_secondary = any(key in e["secondaries"] for e in entries)
+        interval = period if (has_activity or is_secondary) else max(
+            period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
+        if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
+            if cached_feed:
+                feeds[key] = cached_feed
             continue
 
-        state = load_json(STATE_PATH, {})
-        balises, selected = tracked_balises()
-        refreshed_at = state.setdefault("refreshed_at", {})
-        feeds = {}
-        sleep_for = POLL_INTERVAL
+        feed = refresh_feed(balise)
+        refreshed_at[key] = time.time()
+        if not feed:
+            continue
+        feeds[key] = feed
 
-        prefs = tokens().get("prefs", {})
-        watched = any(alerts_for(balise_key(b), prefs).get("enabled")
-                      for b in balises if b["id"] != selected)
+        # Les alertes valent pour toutes les balises suivies…
+        try:
+            state = push_alerts(cfg, feed, balise, state)
+        except Exception as exc:
+            log.exception("échec des alertes sur %s : %s", key, exc)
 
-        for balise in balises:
-            balise_id = balise["id"]
-            key = balise_key(balise)
-            is_selected = balise_id == selected
-            has_alerts = bool(alerts_for(key, prefs).get("enabled"))
+        # …et l'activité en direct suit la balise pour laquelle elle a été
+        # lancée, pas forcément celle affichée dans l'app.
+        if not is_selected and not has_activity:
+            continue
 
-            # Cadence : la balise affichée est guettée de près, celles qui ont une
-            # alerte armée le sont raisonnablement, les autres ne servent qu'à
-            # garnir la courbe quand on change de spot.
-            cached_feed = load_json(feed_path(balise_code(balise), balise.get("provider", "ffvl")), None) or {}
-            period = cached_feed.get("period") or 600
-            # La balise affichée est guettée à sa propre cadence ; celles qui ont
-            # une alerte armée un peu moins souvent ; les autres au ralenti.
-            entries = activity_tokens()
-            has_activity = any(e["balise"] == key for e in entries)
-            is_secondary = any(key in e["secondaries"] for e in entries)
-            interval = period if (has_activity or is_secondary) else max(
-                period, ALERT_INTERVAL if has_alerts else SECONDARY_INTERVAL)
-            if not is_selected and time.time() - refreshed_at.get(key, 0) < interval:
-                if cached_feed:
-                    feeds[key] = cached_feed
-                continue
-
-            feed = refresh_feed(balise)
-            refreshed_at[key] = time.time()
-            if not feed:
-                continue
-            feeds[key] = feed
-
-            # Les alertes valent pour toutes les balises suivies…
+        current_t = feed["current"].get("t")
+        if current_t and current_t != state.get("pushed", {}).get(key):
+            log.info("balise %s : nouveau relevé %s — %s km/h",
+                     balise_id, current_t, feed["current"].get("avg"))
             try:
-                state = push_alerts(cfg, feed, balise, state)
+                state = push_all(cfg, feed, balise, state, is_selected=is_selected)
             except Exception as exc:
-                log.exception("échec des alertes sur %s : %s", key, exc)
-
-            # …et l'activité en direct suit la balise pour laquelle elle a été
-            # lancée, pas forcément celle affichée dans l'app.
-            if not is_selected and not has_activity:
+                log.exception("échec du push : %s", exc)
+            if not is_selected:
                 continue
+            state["last_reading"] = current_t
+            fast = FAST_WATCH.get(balise.get("provider"))
+            if fast:
+                # Guet régulier : c'est ce qui permet aussi de *mesurer* une
+                # cadence plus rapide que celle qu'on croyait.
+                sleep_for = fast
+            else:
+                # Réveil programmé juste après le relevé attendu.
+                period = feed.get("period") or 600
+                sleep_for = max(15, min(iso_to_epoch(current_t) + period + CATCH_UP - time.time(),
+                                        MAX_PERIOD))
 
-            current_t = feed["current"].get("t")
-            if current_t and current_t != state.get("pushed", {}).get(key):
-                log.info("balise %s : nouveau relevé %s — %s km/h",
-                         balise_id, current_t, feed["current"].get("avg"))
-                try:
-                    state = push_all(cfg, feed, balise, state, is_selected=is_selected)
-                except Exception as exc:
-                    log.exception("échec du push : %s", exc)
-                if not is_selected:
-                    continue
-                state["last_reading"] = current_t
-                fast = FAST_WATCH.get(balise.get("provider"))
-                if fast:
-                    # Guet régulier : c'est ce qui permet aussi de *mesurer* une
-                    # cadence plus rapide que celle qu'on croyait.
-                    sleep_for = fast
-                else:
-                    # Réveil programmé juste après le relevé attendu.
-                    period = feed.get("period") or 600
-                    sleep_for = max(15, min(iso_to_epoch(current_t) + period + CATCH_UP - time.time(),
-                                            MAX_PERIOD))
+    # Une alerte armée sur un spot non affiché ne doit pas attendre 10 min.
+    if watched:
+        sleep_for = min(sleep_for, ALERT_INTERVAL)
 
-        # Une alerte armée sur un spot non affiché ne doit pas attendre 10 min.
-        if watched:
-            sleep_for = min(sleep_for, ALERT_INTERVAL)
+    if feeds:
+        publish_public(feeds)
+        state = publish_to_pages(feeds, state)
+    state["refreshed_at"] = refreshed_at
+    save_json(STATE_PATH, state)
+    return sleep_for
 
-        if feeds:
-            publish_public(feeds)
-            state = publish_to_pages(feeds, state)
-        state["refreshed_at"] = refreshed_at
-        save_json(STATE_PATH, state)
+
+def pusher_loop():
+    """Relève sans fin — et surtout : sans mourir.
+
+    Un incident passager (écriture qui échoue sous la pression mémoire, source
+    qui renvoie n'importe quoi) ne doit pas emporter le fil. Sans ce garde-fou
+    la relève s'est arrêtée net le 12/09/2026 à 12h30 UTC, API toujours debout :
+    l'app a continué de lire un flux figé, et la courbe de chaque balise s'est
+    réduite à ses deux derniers points.
+    """
+    log.info("boucle pusher démarrée")
+    while True:
+        try:
+            sleep_for = pusher_tick()
+        except Exception as exc:
+            log.exception("boucle pusher : tour abandonné (%s)", exc)
+            sleep_for = 60
+        _pusher_beat["at"] = time.time()
         time.sleep(sleep_for)
 
 

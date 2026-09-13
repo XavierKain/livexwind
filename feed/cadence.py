@@ -39,6 +39,38 @@ def observed_period(history: list) -> int:
     return int(min(gaps)) if gaps else DEFAULT_PERIOD
 
 
+# Au-delà d'une heure sans relevé, ce n'est plus un intervalle de publication :
+# c'est un trou. Aucune source suivie ne publie aussi lentement.
+GAP_SECONDS = 3600
+
+
+def worst_gap(history: list, now: datetime | None = None) -> float | None:
+    """Début du plus long trou de la courbe (epoch), ou None s'il n'y en a pas.
+
+    L'instant présent compte comme dernier point : c'est ce qui fait voir le
+    trou quand c'est la relève elle-même qui s'est arrêtée, et non la station.
+
+    Sert à décider s'il faut redemander l'historique à la source. La valeur
+    renvoyée identifie le trou autant qu'elle le signale : tant qu'elle ne
+    change pas, c'est le même creux, et inutile de le redemander deux fois.
+    """
+    reference = (now or datetime.now(timezone.utc)).timestamp()
+    stamps = []
+    for sample in history:
+        try:
+            stamps.append(datetime.fromisoformat(
+                sample["t"].replace("Z", "+00:00")).timestamp())
+        except (KeyError, ValueError, AttributeError, TypeError):
+            continue
+    stamps.append(reference)
+
+    start, widest = None, GAP_SECONDS
+    for a, b in zip(stamps, stamps[1:]):
+        if b - a > widest:
+            start, widest = a, b - a
+    return start
+
+
 # Le graphe de l'app va jusqu'à 24 h, mais une station qui publie à la minute
 # produit 2 880 points sur 48 h — un flux de 300 Ko rechargé par le téléphone, la
 # montre et le widget à chaque relevé. On garde donc le détail là où on le

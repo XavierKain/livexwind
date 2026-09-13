@@ -53,7 +53,8 @@ struct WindChartCard: View {
             }
 
             WindChart(readings: snapshot.window(hours: windowHours),
-                      unit: unit, interactive: true)
+                      unit: unit, periodSeconds: snapshot.periodSeconds,
+                      interactive: true)
                 .frame(height: 190)
                 // Le pincement se fait à deux doigts : il ne gêne ni le curseur
                 // (un doigt, horizontal) ni le défilement de la page.

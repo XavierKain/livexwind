@@ -135,12 +135,23 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     }
 
     /// Relevés de la fenêtre demandée. Sur une station lente, une fenêtre
-    /// courte peut n'en contenir aucun : on montre alors les deux derniers
+    /// courte peut n'en contenir aucun : on repêche alors les deux derniers
     /// plutôt qu'un graphe vide — mais pas douze, ce qui contredirait
     /// l'étiquette de la fenêtre.
+    ///
+    /// Et seulement s'ils bordent vraiment la fenêtre. Sans cette borne, un
+    /// historique arrêté la veille remontait quand même ses deux derniers
+    /// points, et le graphe tirait un trait droit par-dessus une journée de
+    /// silence : une courbe parfaitement lisible, entièrement fausse. Mieux
+    /// vaut un graphe vide, qui se voit.
     func window(hours: Double) -> [WindReading] {
         let cutoff = Date().addingTimeInterval(-hours * 3600)
         let inWindow = history.filter { $0.date >= cutoff }
-        return inWindow.count >= 2 ? inWindow : history.suffix(2).map { $0 }
+        guard inWindow.count < 2 else { return inWindow }
+
+        let reach = cutoff.addingTimeInterval(-3 * periodSeconds)
+        let lastTwo = history.suffix(2)
+        return lastTwo.count == 2 && lastTwo.allSatisfy({ $0.date >= reach })
+            ? Array(lastTwo) : inWindow
     }
 }

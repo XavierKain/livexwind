@@ -91,6 +91,9 @@ struct CompassDial: View {
 struct WindChart: View {
     var readings: [WindReading]
     var unit: WindUnit
+    /// Cadence de la balise : c'est elle qui dit à partir de quand un écart
+    /// entre deux relevés n'est plus un intervalle mais un trou.
+    var periodSeconds: Double = 600
     var showDirection: Bool = true
     var compact: Bool = false
     /// Active le curseur au doigt (app seulement — un widget ne reçoit pas de gestes).
@@ -103,30 +106,58 @@ struct WindChart: View {
         kmh.map { unit.convert(fromKmh: $0) }
     }
 
+    /// Tronçons continus de la courbe.
+    ///
+    /// Une station qui se tait, un serveur de relève qui décroche, et les deux
+    /// bords du trou se retrouvent reliés par un segment bien droit qui donne à
+    /// lire un vent que personne n'a mesuré. On coupe plutôt la courbe : le
+    /// blanc se voit, et il est exact.
+    private var segments: [[WindReading]] {
+        let hole = max(periodSeconds * 4, 900)
+        var out: [[WindReading]] = []
+        for reading in readings {
+            if let previous = out.last?.last,
+               reading.date.timeIntervalSince(previous.date) <= hole {
+                out[out.count - 1].append(reading)
+            } else {
+                out.append([reading])
+            }
+        }
+        return out
+    }
+
     var body: some View {
         Chart {
-            ForEach(readings) { r in
-                if let gust = value(r.gustKmh) {
-                    AreaMark(x: .value("Heure", r.date), yStart: .value("min", value(r.minKmh) ?? 0),
-                             yEnd: .value("raf", gust))
-                        .foregroundStyle(.blue.opacity(0.12))
-                        .interpolationMethod(.monotone)
+            ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+                ForEach(segment) { r in
+                    if let gust = value(r.gustKmh) {
+                        AreaMark(x: .value("Heure", r.date), yStart: .value("min", value(r.minKmh) ?? 0),
+                                 yEnd: .value("raf", gust), series: .value("s", "aire\(index)"))
+                            .foregroundStyle(.blue.opacity(0.12))
+                            .interpolationMethod(.monotone)
+                    }
                 }
             }
-            ForEach(readings) { r in
-                if let gust = value(r.gustKmh) {
-                    LineMark(x: .value("Heure", r.date), y: .value("Rafales", gust), series: .value("s", "raf"))
-                        .foregroundStyle(Color.orange.opacity(0.75))
-                        .lineStyle(StrokeStyle(lineWidth: 1.4, dash: [3, 3]))
-                        .interpolationMethod(.monotone)
+            ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+                ForEach(segment) { r in
+                    if let gust = value(r.gustKmh) {
+                        LineMark(x: .value("Heure", r.date), y: .value("Rafales", gust),
+                                 series: .value("s", "raf\(index)"))
+                            .foregroundStyle(Color.orange.opacity(0.75))
+                            .lineStyle(StrokeStyle(lineWidth: 1.4, dash: [3, 3]))
+                            .interpolationMethod(.monotone)
+                    }
                 }
             }
-            ForEach(readings) { r in
-                if let avg = value(r.averageKmh) {
-                    LineMark(x: .value("Heure", r.date), y: .value("Moyen", avg), series: .value("s", "moy"))
-                        .foregroundStyle(Color.accentColor)
-                        .lineStyle(StrokeStyle(lineWidth: 2.4, lineCap: .round))
-                        .interpolationMethod(.monotone)
+            ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+                ForEach(segment) { r in
+                    if let avg = value(r.averageKmh) {
+                        LineMark(x: .value("Heure", r.date), y: .value("Moyen", avg),
+                                 series: .value("s", "moy\(index)"))
+                            .foregroundStyle(Color.accentColor)
+                            .lineStyle(StrokeStyle(lineWidth: 2.4, lineCap: .round))
+                            .interpolationMethod(.monotone)
+                    }
                 }
             }
             if showDirection {

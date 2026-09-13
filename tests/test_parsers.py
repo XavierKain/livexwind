@@ -14,7 +14,7 @@ import json
 import pathlib
 import sys
 import unittest
-from datetime import timezone
+from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "feed"))
@@ -171,6 +171,56 @@ class CadenceTests(unittest.TestCase):
     def test_repli_quand_l_historique_est_trop_court(self):
         from cadence import observed_period
         self.assertEqual(observed_period([]), 600)
+
+
+class TrouDeCourbeTests(unittest.TestCase):
+    """Repérer le creux qui justifie de redemander l'historique à la source.
+
+    Le 12/09/2026 la boucle de relève s'est arrêtée sans que l'API tombe : les
+    flux ont gardé leur dernier point pendant 28 h, et le graphe de l'app s'est
+    réduit à deux points reliés par une droite. Détecter le trou, c'est ce qui
+    permet de le combler à la reprise.
+    """
+
+    MIDI = datetime(2026, 9, 1, 12, 0, tzinfo=timezone.utc)
+
+    def historique(self, *heures):
+        return [{"t": f"2026-09-01T{h}Z"} for h in heures]
+
+    def test_cadence_normale_sans_trou(self):
+        from cadence import worst_gap
+        h = self.historique("11:40:00", "11:50:00", "12:00:00")
+        self.assertIsNone(worst_gap(h, now=self.MIDI))
+
+    def test_trou_au_milieu(self):
+        from cadence import worst_gap
+        h = self.historique("06:00:00", "06:10:00", "11:50:00", "12:00:00")
+        attendu = datetime(2026, 9, 1, 6, 10, tzinfo=timezone.utc).timestamp()
+        self.assertEqual(worst_gap(h, now=self.MIDI), attendu)
+
+    def test_releve_arrete_le_trou_est_a_la_fin(self):
+        """Le cas du 12/09 : rien depuis des heures, mais l'historique est intact."""
+        from cadence import worst_gap
+        h = self.historique("07:40:00", "07:50:00", "08:00:00")
+        attendu = datetime(2026, 9, 1, 8, 0, tzinfo=timezone.utc).timestamp()
+        self.assertEqual(worst_gap(h, now=self.MIDI), attendu)
+
+    def test_le_plus_long_trou_l_emporte(self):
+        from cadence import worst_gap
+        h = self.historique("00:00:00", "02:00:00", "08:00:00", "11:55:00", "12:00:00")
+        attendu = datetime(2026, 9, 1, 2, 0, tzinfo=timezone.utc).timestamp()
+        self.assertEqual(worst_gap(h, now=self.MIDI), attendu)
+
+    def test_le_marqueur_ne_bouge_pas_tant_que_le_trou_est_le_meme(self):
+        """C'est ce qui évite de redemander en boucle un creux incomblable."""
+        from cadence import worst_gap
+        h = self.historique("07:50:00", "08:00:00")
+        plus_tard = datetime(2026, 9, 1, 13, 0, tzinfo=timezone.utc)
+        self.assertEqual(worst_gap(h, now=self.MIDI), worst_gap(h, now=plus_tard))
+
+    def test_historique_vide(self):
+        from cadence import worst_gap
+        self.assertIsNone(worst_gap([], now=self.MIDI))
 
 
 if __name__ == "__main__":

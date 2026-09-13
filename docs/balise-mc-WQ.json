@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-13T22:06:27Z",
+ "generatedAt": "2026-09-13T22:36:51Z",
  "balise": {
   "id": 1178,
   "code": "WQ",
@@ -10,11 +10,11 @@
   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
  },
  "current": {
-  "t": "2026-09-13T21:30:00Z",
-  "dir": 224,
-  "dirLabel": "SO",
-  "avg": 2.5,
-  "gust": 5.8,
+  "t": "2026-09-13T22:00:00Z",
+  "dir": 273,
+  "dirLabel": "O",
+  "avg": 3.6,
+  "gust": 13.7,
   "gustDir": null,
   "min": null,
   "temp": 16.8,
@@ -23,14 +23,6 @@
  },
  "period": 1800,
  "history": [
-  {
-   "t": "2026-09-11T22:30:00Z",
-   "dir": 143,
-   "avg": 5.8,
-   "gust": 13.0,
-   "min": null,
-   "temp": 13.3
-  },
   {
    "t": "2026-09-11T23:00:00Z",
    "dir": 138,
@@ -580,6 +572,14 @@
    "dir": 224,
    "avg": 2.5,
    "gust": 5.8,
+   "min": null,
+   "temp": 16.8
+  },
+  {
+   "t": "2026-09-13T22:00:00Z",
+   "dir": 273,
+   "avg": 3.6,
+   "gust": 13.7,
    "min": null,
    "temp": 16.8
   }

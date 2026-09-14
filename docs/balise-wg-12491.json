@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-14T12:54:47Z",
+ "generatedAt": "2026-09-14T13:15:27Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -23,15 +23,6 @@
  },
  "period": 600,
  "history": [
-  {
-   "t": "2026-09-12T13:00:00Z",
-   "dir": 81,
-   "avg": 56.5,
-   "gust": 73.2,
-   "min": null,
-   "temp": 26.7,
-   "pressure": null
-  },
   {
    "t": "2026-09-12T14:00:00Z",
    "dir": 80,

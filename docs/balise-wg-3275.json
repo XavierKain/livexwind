@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-14T12:52:25Z",
+ "generatedAt": "2026-09-14T13:13:33Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,29 +9,20 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-09-14T12:51:00Z",
-  "dir": 67,
-  "dirLabel": "ENE",
-  "avg": 9.6,
-  "gust": 20.9,
+  "t": "2026-09-14T13:12:00Z",
+  "dir": 342,
+  "dirLabel": "NNO",
+  "avg": 11.1,
+  "gust": 17.6,
   "gustDir": null,
-  "min": 4.6,
-  "temp": 31.2,
-  "pressure": 1018.1,
+  "min": 1.5,
+  "temp": 30.7,
+  "pressure": 1017.7,
   "lum": null,
   "stale": false
  },
- "period": 60,
+ "period": 300,
  "history": [
-  {
-   "t": "2026-09-12T13:00:00Z",
-   "dir": 45,
-   "avg": 13.0,
-   "gust": 28.2,
-   "min": 3.1,
-   "temp": 29.2,
-   "pressure": null
-  },
   {
    "t": "2026-09-12T13:20:00Z",
    "dir": 70,
@@ -1304,35 +1295,10 @@
    "temp": 25.1
   },
   {
-   "t": "2026-09-14T00:55:00Z",
-   "dir": 53,
-   "avg": 11.1,
-   "gust": 20.9,
-   "min": 6.5,
-   "temp": 25.3
-  },
-  {
    "t": "2026-09-14T01:00:00Z",
    "dir": 43,
    "avg": 10.2,
    "gust": 17.0,
-   "min": 3.7,
-   "temp": 25.3,
-   "pressure": null
-  },
-  {
-   "t": "2026-09-14T01:05:00Z",
-   "dir": 68,
-   "avg": 9.6,
-   "gust": 11.1,
-   "min": 1.5,
-   "temp": 25.2
-  },
-  {
-   "t": "2026-09-14T01:10:00Z",
-   "dir": 70,
-   "avg": 8.3,
-   "gust": 14.8,
    "min": 3.7,
    "temp": 25.3,
    "pressure": null
@@ -2491,6 +2457,38 @@
    "gust": 20.9,
    "min": 4.6,
    "temp": 31.2
+  },
+  {
+   "t": "2026-09-14T12:56:00Z",
+   "dir": 41,
+   "avg": 11.1,
+   "gust": 22.6,
+   "min": 8.0,
+   "temp": 30.9
+  },
+  {
+   "t": "2026-09-14T13:01:00Z",
+   "dir": 33,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": 0.0,
+   "temp": 30.8
+  },
+  {
+   "t": "2026-09-14T13:07:00Z",
+   "dir": 211,
+   "avg": 9.6,
+   "gust": 19.4,
+   "min": 3.1,
+   "temp": 30.6
+  },
+  {
+   "t": "2026-09-14T13:12:00Z",
+   "dir": 342,
+   "avg": 11.1,
+   "gust": 17.6,
+   "min": 1.5,
+   "temp": 30.7
   }
  ]
 }

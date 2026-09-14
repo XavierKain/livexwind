@@ -33,15 +33,6 @@
    "url": "https://www.windguru.cz/station/2667"
   },
   {
-   "id": 1178,
-   "code": "WQ",
-   "name": "Montsec d'Ares",
-   "lat": 42.0513,
-   "lon": 0.72952,
-   "altitude": 1571,
-   "url": "https://www.meteo.cat/observacions/xema/dades?codi=WQ"
-  },
-  {
    "id": 1310907781,
    "code": "6a84ad4f865d8d8278583ca6",
    "name": "Balneario Tarifa",

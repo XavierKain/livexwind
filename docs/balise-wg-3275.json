@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-15T08:02:48Z",
+ "generatedAt": "2026-09-15T08:23:22Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,29 +9,20 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-09-15T08:01:00Z",
-  "dir": 138,
-  "dirLabel": "SE",
-  "avg": 0.0,
-  "gust": 3.1,
+  "t": "2026-09-15T08:23:00Z",
+  "dir": 213,
+  "dirLabel": "SSO",
+  "avg": 3.1,
+  "gust": 6.5,
   "gustDir": null,
-  "min": 1.5,
-  "temp": 25.3,
-  "pressure": 1018.7,
+  "min": 3.1,
+  "temp": 25.4,
+  "pressure": 1018.8,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "history": [
-  {
-   "t": "2026-09-13T08:20:00Z",
-   "dir": 50,
-   "avg": 15.6,
-   "gust": 32.4,
-   "min": 5.9,
-   "temp": 26.4,
-   "pressure": null
-  },
   {
    "t": "2026-09-13T08:30:00Z",
    "dir": 83,
@@ -1225,38 +1216,12 @@
    "pressure": null
   },
   {
-   "t": "2026-09-14T20:07:00Z",
-   "dir": 56,
-   "avg": 6.5,
-   "gust": 13.0,
-   "min": 3.1,
-   "temp": 26.9
-  },
-  {
-   "t": "2026-09-14T20:10:00Z",
-   "dir": 61,
-   "avg": 7.0,
-   "gust": 12.0,
-   "min": 2.6,
-   "temp": 26.8,
-   "pressure": null
-  },
-  {
    "t": "2026-09-14T20:17:00Z",
    "dir": 63,
    "avg": 4.6,
    "gust": 4.6,
    "min": 0.0,
    "temp": 26.8
-  },
-  {
-   "t": "2026-09-14T20:20:00Z",
-   "dir": 96,
-   "avg": 4.1,
-   "gust": 4.4,
-   "min": 0.2,
-   "temp": 26.7,
-   "pressure": null
   },
   {
    "t": "2026-09-14T20:28:00Z",
@@ -2350,6 +2315,38 @@
    "gust": 3.1,
    "min": 1.5,
    "temp": 25.3
+  },
+  {
+   "t": "2026-09-15T08:07:00Z",
+   "dir": 134,
+   "avg": 1.5,
+   "gust": 4.6,
+   "min": 1.5,
+   "temp": 25.1
+  },
+  {
+   "t": "2026-09-15T08:13:00Z",
+   "dir": 167,
+   "avg": 3.1,
+   "gust": 1.5,
+   "min": 0.0,
+   "temp": 25.2
+  },
+  {
+   "t": "2026-09-15T08:18:00Z",
+   "dir": 192,
+   "avg": 1.5,
+   "gust": 3.1,
+   "min": 1.5,
+   "temp": 25.4
+  },
+  {
+   "t": "2026-09-15T08:23:00Z",
+   "dir": 213,
+   "avg": 3.1,
+   "gust": 6.5,
+   "min": 3.1,
+   "temp": 25.4
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-15T02:59:30Z",
+ "generatedAt": "2026-09-15T03:20:25Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,38 +9,20 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-09-15T02:58:00Z",
-  "dir": 154,
+  "t": "2026-09-15T03:20:00Z",
+  "dir": 167,
   "dirLabel": "SSE",
-  "avg": 1.5,
+  "avg": 0.0,
   "gust": 0.0,
   "gustDir": null,
   "min": 0.0,
-  "temp": 22.2,
-  "pressure": 1017.6,
+  "temp": 22.3,
+  "pressure": 1017.5,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "history": [
-  {
-   "t": "2026-09-13T03:00:00Z",
-   "dir": 69,
-   "avg": 15.2,
-   "gust": 30.6,
-   "min": 5.6,
-   "temp": 25.2,
-   "pressure": null
-  },
-  {
-   "t": "2026-09-13T03:20:00Z",
-   "dir": 72,
-   "avg": 14.3,
-   "gust": 26.7,
-   "min": 5.7,
-   "temp": 25.1,
-   "pressure": null
-  },
   {
    "t": "2026-09-13T03:30:00Z",
    "dir": 60,
@@ -1244,30 +1226,12 @@
    "pressure": null
   },
   {
-   "t": "2026-09-14T15:10:00Z",
-   "dir": 66,
-   "avg": 9.6,
-   "gust": 18.5,
-   "min": 3.7,
-   "temp": 31.2,
-   "pressure": null
-  },
-  {
    "t": "2026-09-14T15:15:00Z",
    "dir": 69,
    "avg": 9.6,
    "gust": 19.4,
    "min": 4.6,
    "temp": 31.3
-  },
-  {
-   "t": "2026-09-14T15:20:00Z",
-   "dir": 62,
-   "avg": 10.4,
-   "gust": 18.9,
-   "min": 3.9,
-   "temp": 31.2,
-   "pressure": null
   },
   {
    "t": "2026-09-14T15:25:00Z",
@@ -2383,6 +2347,38 @@
    "gust": 0.0,
    "min": 0.0,
    "temp": 22.2
+  },
+  {
+   "t": "2026-09-15T03:04:00Z",
+   "dir": 224,
+   "avg": 0.0,
+   "gust": 4.8,
+   "min": 3.1,
+   "temp": 22.4
+  },
+  {
+   "t": "2026-09-15T03:09:00Z",
+   "dir": 148,
+   "avg": 1.5,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 22.3
+  },
+  {
+   "t": "2026-09-15T03:14:00Z",
+   "dir": 191,
+   "avg": 1.5,
+   "gust": 3.1,
+   "min": 0.0,
+   "temp": 22.3
+  },
+  {
+   "t": "2026-09-15T03:20:00Z",
+   "dir": 167,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 22.3
   }
  ]
 }

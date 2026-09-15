@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-15T01:01:31Z",
+ "generatedAt": "2026-09-15T01:21:59Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,29 +9,20 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-09-15T01:00:00Z",
-  "dir": 347,
-  "dirLabel": "NNO",
-  "avg": 1.5,
-  "gust": 1.5,
+  "t": "2026-09-15T01:21:00Z",
+  "dir": 158,
+  "dirLabel": "SSE",
+  "avg": 0.0,
+  "gust": 0.0,
   "gustDir": null,
   "min": 0.0,
-  "temp": 23.3,
-  "pressure": 1017.7,
+  "temp": 23,
+  "pressure": 1017.6,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "history": [
-  {
-   "t": "2026-09-13T01:20:00Z",
-   "dir": 58,
-   "avg": 15.4,
-   "gust": 26.3,
-   "min": 6.3,
-   "temp": 25.2,
-   "pressure": null
-  },
   {
    "t": "2026-09-13T01:30:00Z",
    "dir": 59,
@@ -1238,38 +1229,12 @@
    "pressure": null
   },
   {
-   "t": "2026-09-14T13:07:00Z",
-   "dir": 211,
-   "avg": 9.6,
-   "gust": 19.4,
-   "min": 3.1,
-   "temp": 30.6
-  },
-  {
-   "t": "2026-09-14T13:10:00Z",
-   "dir": 57,
-   "avg": 9.8,
-   "gust": 21.9,
-   "min": 3.3,
-   "temp": 30.7,
-   "pressure": null
-  },
-  {
    "t": "2026-09-14T13:18:00Z",
    "dir": 27,
    "avg": 9.6,
    "gust": 13.0,
    "min": 3.1,
    "temp": 30.7
-  },
-  {
-   "t": "2026-09-14T13:20:00Z",
-   "dir": 56,
-   "avg": 9.6,
-   "gust": 18.9,
-   "min": 3.7,
-   "temp": 30.7,
-   "pressure": null
   },
   {
    "t": "2026-09-14T13:29:00Z",
@@ -2389,6 +2354,38 @@
    "gust": 1.5,
    "min": 0.0,
    "temp": 23.3
+  },
+  {
+   "t": "2026-09-15T01:05:00Z",
+   "dir": 1,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 23.3
+  },
+  {
+   "t": "2026-09-15T01:10:00Z",
+   "dir": 230,
+   "avg": 0.0,
+   "gust": 3.1,
+   "min": 0.0,
+   "temp": 23.4
+  },
+  {
+   "t": "2026-09-15T01:15:00Z",
+   "dir": 159,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 23.2
+  },
+  {
+   "t": "2026-09-15T01:21:00Z",
+   "dir": 158,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 23
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-15T16:25:18Z",
+ "generatedAt": "2026-09-15T21:32:45Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -9,29 +9,20 @@
   "url": "https://www.windguru.cz/station/12491"
  },
  "current": {
-  "t": "2026-09-15T14:00:00Z",
-  "dir": 91,
-  "dirLabel": "E",
-  "avg": 29.8,
-  "gust": 39.3,
+  "t": "2026-09-15T20:00:00Z",
+  "dir": 334,
+  "dirLabel": "NNO",
+  "avg": 9.6,
+  "gust": 12.6,
   "gustDir": null,
   "min": null,
-  "temp": 27.4,
+  "temp": 21.7,
   "pressure": null,
   "lum": null,
   "stale": false
  },
  "period": 600,
  "history": [
-  {
-   "t": "2026-09-13T20:00:00Z",
-   "dir": 77,
-   "avg": 46.5,
-   "gust": 67.0,
-   "min": null,
-   "temp": 23.5,
-   "pressure": null
-  },
   {
    "t": "2026-09-13T22:00:00Z",
    "dir": 77,
@@ -146,7 +137,8 @@
    "avg": 20.2,
    "gust": 33.5,
    "min": null,
-   "temp": 22.7
+   "temp": 22.7,
+   "pressure": null
   },
   {
    "t": "2026-09-15T08:00:00Z",
@@ -154,7 +146,8 @@
    "avg": 29.4,
    "gust": 41.7,
    "min": null,
-   "temp": 23.9
+   "temp": 23.9,
+   "pressure": null
   },
   {
    "t": "2026-09-15T10:00:00Z",
@@ -162,7 +155,8 @@
    "avg": 28.2,
    "gust": 37.8,
    "min": null,
-   "temp": 25.9
+   "temp": 25.9,
+   "pressure": null
   },
   {
    "t": "2026-09-15T11:00:00Z",
@@ -170,7 +164,8 @@
    "avg": 31.7,
    "gust": 41.7,
    "min": null,
-   "temp": 26.4
+   "temp": 26.4,
+   "pressure": null
   },
   {
    "t": "2026-09-15T12:00:00Z",
@@ -178,7 +173,8 @@
    "avg": 26.7,
    "gust": 40.7,
    "min": null,
-   "temp": 27.7
+   "temp": 27.7,
+   "pressure": null
   },
   {
    "t": "2026-09-15T13:00:00Z",
@@ -186,7 +182,8 @@
    "avg": 30.2,
    "gust": 39.3,
    "min": null,
-   "temp": 27.9
+   "temp": 27.9,
+   "pressure": null
   },
   {
    "t": "2026-09-15T14:00:00Z",
@@ -194,7 +191,16 @@
    "avg": 29.8,
    "gust": 39.3,
    "min": null,
-   "temp": 27.4
+   "temp": 27.4,
+   "pressure": null
+  },
+  {
+   "t": "2026-09-15T20:00:00Z",
+   "dir": 334,
+   "avg": 9.6,
+   "gust": 12.6,
+   "min": null,
+   "temp": 21.7
   }
  ]
 }

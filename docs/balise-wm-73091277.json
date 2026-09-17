@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-17T18:12:53Z",
+ "generatedAt": "2026-09-17T18:34:00Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,35 +9,19 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-09-17T18:06:00Z",
-  "dir": 356,
+  "t": "2026-09-17T18:31:00Z",
+  "dir": 352,
   "dirLabel": "N",
-  "avg": 9.3,
-  "gust": 11.1,
+  "avg": 11.1,
+  "gust": 13.0,
   "gustDir": null,
   "min": null,
   "temp": null,
   "lum": null,
   "stale": false
  },
- "period": 240,
+ "period": 120,
  "history": [
-  {
-   "t": "2026-09-15T18:17:00Z",
-   "dir": 344,
-   "avg": 22.2,
-   "gust": 24.1,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-15T18:33:00Z",
-   "dir": 349,
-   "avg": 20.4,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-15T18:45:00Z",
    "dir": 345,
@@ -1175,34 +1159,10 @@
    "temp": null
   },
   {
-   "t": "2026-09-17T06:14:00Z",
-   "dir": 280,
-   "avg": 14.8,
-   "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-17T06:18:00Z",
    "dir": 272,
    "avg": 20.4,
    "gust": 22.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-17T06:22:00Z",
-   "dir": 270,
-   "avg": 20.4,
-   "gust": 22.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-17T06:28:00Z",
-   "dir": 270,
-   "avg": 22.2,
-   "gust": 24.1,
    "min": null,
    "temp": null
   },
@@ -2099,6 +2059,38 @@
    "dir": 356,
    "avg": 9.3,
    "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-17T18:16:00Z",
+   "dir": 356,
+   "avg": 9.3,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-17T18:20:00Z",
+   "dir": 353,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-17T18:22:00Z",
+   "dir": 351,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-17T18:31:00Z",
+   "dir": 352,
+   "avg": 11.1,
+   "gust": 13.0,
    "min": null,
    "temp": null
   }

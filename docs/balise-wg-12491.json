@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-19T10:25:21Z",
+ "generatedAt": "2026-09-19T14:32:43Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -9,38 +9,20 @@
   "url": "https://www.windguru.cz/station/12491"
  },
  "current": {
-  "t": "2026-09-19T08:00:00Z",
-  "dir": 80,
+  "t": "2026-09-19T14:00:00Z",
+  "dir": 81,
   "dirLabel": "E",
-  "avg": 40.7,
-  "gust": 62.2,
+  "avg": 48.0,
+  "gust": 66.3,
   "gustDir": null,
   "min": null,
-  "temp": 24.4,
+  "temp": 26.5,
   "pressure": null,
   "lum": null,
   "stale": false
  },
  "period": 600,
  "history": [
-  {
-   "t": "2026-09-17T13:00:00Z",
-   "dir": 286,
-   "avg": 14.1,
-   "gust": 23.0,
-   "min": null,
-   "temp": 24.5,
-   "pressure": null
-  },
-  {
-   "t": "2026-09-17T14:00:00Z",
-   "dir": 279,
-   "avg": 14.4,
-   "gust": 23.0,
-   "min": null,
-   "temp": 24.8,
-   "pressure": null
-  },
   {
    "t": "2026-09-17T18:00:00Z",
    "dir": 282,
@@ -218,7 +200,8 @@
    "avg": 43.5,
    "gust": 64.1,
    "min": null,
-   "temp": 23.4
+   "temp": 23.4,
+   "pressure": null
   },
   {
    "t": "2026-09-19T08:00:00Z",
@@ -226,7 +209,16 @@
    "avg": 40.7,
    "gust": 62.2,
    "min": null,
-   "temp": 24.4
+   "temp": 24.4,
+   "pressure": null
+  },
+  {
+   "t": "2026-09-19T14:00:00Z",
+   "dir": 81,
+   "avg": 48.0,
+   "gust": 66.3,
+   "min": null,
+   "temp": 26.5
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T07:57:15Z",
+ "generatedAt": "2026-09-20T08:18:47Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-20T07:55:00Z",
-  "dir": 243,
-  "dirLabel": "OSO",
-  "avg": 1.9,
-  "gust": 3.7,
+  "t": "2026-09-20T08:17:00Z",
+  "dir": 292,
+  "dirLabel": "ONO",
+  "avg": 5.6,
+  "gust": 7.4,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -22,22 +22,6 @@
  },
  "period": 240,
  "history": [
-  {
-   "t": "2026-09-18T08:00:00Z",
-   "dir": 316,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-18T08:16:00Z",
-   "dir": 312,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-18T08:32:00Z",
    "dir": 294,
@@ -1183,22 +1167,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-19T20:08:00Z",
-   "dir": 305,
-   "avg": 9.3,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-19T20:14:00Z",
-   "dir": 283,
-   "avg": 7.4,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-19T20:20:00Z",
    "dir": 300,
    "avg": 5.6,
@@ -1871,14 +1839,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-20T04:59:00Z",
-   "dir": 337,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-20T05:05:00Z",
    "dir": 330,
    "avg": 5.6,
@@ -2131,6 +2091,38 @@
    "dir": 243,
    "avg": 1.9,
    "gust": 3.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-20T08:01:00Z",
+   "dir": 258,
+   "avg": 3.7,
+   "gust": 3.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-20T08:05:00Z",
+   "dir": 297,
+   "avg": 5.6,
+   "gust": 5.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-20T08:11:00Z",
+   "dir": 284,
+   "avg": 5.6,
+   "gust": 7.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-20T08:17:00Z",
+   "dir": 292,
+   "avg": 5.6,
+   "gust": 7.4,
    "min": null,
    "temp": null
   }

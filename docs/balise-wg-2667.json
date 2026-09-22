@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T05:29:18Z",
+ "generatedAt": "2026-09-22T05:50:07Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,7 +9,7 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-09-22T05:28:00Z",
+  "t": "2026-09-22T05:33:00Z",
   "dir": 68,
   "dirLabel": "ENE",
   "avg": 28.9,
@@ -17,21 +17,12 @@
   "gustDir": null,
   "min": null,
   "temp": null,
-  "pressure": 1021,
+  "pressure": 1021.2,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "history": [
-  {
-   "t": "2026-09-20T05:30:00Z",
-   "dir": 72,
-   "avg": 38.5,
-   "gust": 37.0,
-   "min": 37.0,
-   "temp": null,
-   "pressure": null
-  },
   {
    "t": "2026-09-20T07:00:00Z",
    "dir": 80,
@@ -1155,38 +1146,12 @@
    "pressure": null
   },
   {
-   "t": "2026-09-21T17:35:00Z",
-   "dir": 80,
-   "avg": 35.4,
-   "gust": 54.6,
-   "min": 17.6,
-   "temp": 24.2
-  },
-  {
-   "t": "2026-09-21T17:40:00Z",
-   "dir": 84,
-   "avg": 33.0,
-   "gust": 48.5,
-   "min": 14.6,
-   "temp": 24.1,
-   "pressure": null
-  },
-  {
    "t": "2026-09-21T17:46:00Z",
    "dir": 68,
    "avg": 32.0,
    "gust": 53.3,
    "min": 17.6,
    "temp": 24
-  },
-  {
-   "t": "2026-09-21T17:50:00Z",
-   "dir": 84,
-   "avg": 33.2,
-   "gust": 48.9,
-   "min": 17.0,
-   "temp": 23.9,
-   "pressure": null
   },
   {
    "t": "2026-09-21T17:58:00Z",
@@ -2033,14 +1998,6 @@
    "pressure": null
   },
   {
-   "t": "2026-09-22T02:32:00Z",
-   "dir": 66,
-   "avg": 11.1,
-   "gust": 32.0,
-   "min": 13.0,
-   "temp": 22.6
-  },
-  {
    "t": "2026-09-22T02:38:00Z",
    "dir": 86,
    "avg": 16.1,
@@ -2056,14 +2013,6 @@
    "min": 3.7,
    "temp": 22.6,
    "pressure": null
-  },
-  {
-   "t": "2026-09-22T02:43:00Z",
-   "dir": 59,
-   "avg": 13.0,
-   "gust": 27.4,
-   "min": 6.5,
-   "temp": 22.6
   },
   {
    "t": "2026-09-22T02:49:00Z",
@@ -2372,6 +2321,14 @@
   },
   {
    "t": "2026-09-22T05:28:00Z",
+   "dir": 68,
+   "avg": 28.9,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-22T05:33:00Z",
    "dir": 68,
    "avg": 28.9,
    "gust": null,

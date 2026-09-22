@@ -6,7 +6,7 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-22T05:12:00Z",
+    "t": "2026-09-22T05:32:00Z",
     "dir": 44,
     "dirLabel": "NE",
     "avg": 19.0,
@@ -14,8 +14,8 @@
     "gustDir": 44,
     "gustDirLabel": "NE",
     "min": 14.0,
-    "temp": 17.0,
-    "lum": null,
+    "temp": 16.0,
+    "lum": 10.0,
     "stale": false
    },
    "period": 600
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-22T05:27:00Z",
-    "dir": 74,
+    "t": "2026-09-22T05:49:00Z",
+    "dir": 71,
     "dirLabel": "ENE",
     "avg": 9.3,
-    "gust": 14.8,
+    "gust": 13.0,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,8 +45,8 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-22T05:25:00Z",
-    "dir": 49,
+    "t": "2026-09-22T05:48:00Z",
+    "dir": 50,
     "dirLabel": "NE",
     "avg": 18.5,
     "gust": 20.4,
@@ -56,7 +56,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 120
   },
   {
    "key": "wg-2667",
@@ -64,7 +64,7 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-09-22T05:28:00Z",
+    "t": "2026-09-22T05:33:00Z",
     "dir": 68,
     "dirLabel": "ENE",
     "avg": 28.9,
@@ -72,7 +72,7 @@
     "gustDir": null,
     "min": null,
     "temp": null,
-    "pressure": 1021,
+    "pressure": 1021.2,
     "lum": null,
     "stale": false
    },
@@ -103,7 +103,7 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-22T05:30:00Z",
+    "t": "2026-09-22T05:33:00Z",
     "dir": 68,
     "dirLabel": "ENE",
     "avg": 33.2,
@@ -122,14 +122,14 @@
    "name": "Tarifa — WMO",
    "provider": "wg",
    "current": {
-    "t": "2026-09-22T04:00:00Z",
-    "dir": 86,
+    "t": "2026-09-22T05:00:00Z",
+    "dir": 79,
     "dirLabel": "E",
-    "avg": 40.4,
-    "gust": 55.0,
+    "avg": 35.0,
+    "gust": 50.7,
     "gustDir": null,
     "min": null,
-    "temp": 21.4,
+    "temp": 21.2,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-09-22T05:25:00Z",
+    "t": "2026-09-22T05:50:00Z",
     "dir": 93,
     "dirLabel": "E",
-    "avg": 14.0,
-    "gust": 21.9,
+    "avg": 9.7,
+    "gust": 20.9,
     "gustDir": null,
-    "min": 8.3,
-    "temp": 22.3,
+    "min": 3.2,
+    "temp": 22.1,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -162,15 +162,15 @@
    "name": "Zahara de los Atunes — Zahara",
    "provider": "wg",
    "current": {
-    "t": "2026-09-22T05:27:00Z",
-    "dir": 301,
-    "dirLabel": "ONO",
+    "t": "2026-09-22T05:45:00Z",
+    "dir": 256,
+    "dirLabel": "OSO",
     "avg": 3.1,
-    "gust": 6.5,
+    "gust": 3.1,
     "gustDir": null,
     "min": 0.0,
-    "temp": 22.9,
-    "pressure": 1015.6,
+    "temp": 22.2,
+    "pressure": 1016,
     "lum": null,
     "stale": false
    },

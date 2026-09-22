@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T06:28:20Z",
+ "generatedAt": "2026-09-22T06:51:45Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,15 +9,15 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-09-22T05:33:00Z",
-  "dir": 68,
-  "dirLabel": "ENE",
-  "avg": 28.9,
-  "gust": null,
+  "t": "2026-09-22T06:51:00Z",
+  "dir": 79,
+  "dirLabel": "E",
+  "avg": 27.4,
+  "gust": 40.4,
   "gustDir": null,
-  "min": null,
-  "temp": null,
-  "pressure": 1021.2,
+  "min": 14.4,
+  "temp": 22.1,
+  "pressure": 1021.6,
   "lum": null,
   "stale": false
  },
@@ -1171,36 +1171,11 @@
    "temp": 23.4
   },
   {
-   "t": "2026-09-21T18:29:00Z",
-   "dir": 81,
-   "avg": 35.4,
-   "gust": 46.9,
-   "min": 17.6,
-   "temp": 23.4
-  },
-  {
    "t": "2026-09-21T18:30:00Z",
    "dir": 87,
    "avg": 34.6,
    "gust": 48.5,
    "min": 18.3,
-   "temp": 23.3,
-   "pressure": null
-  },
-  {
-   "t": "2026-09-21T18:35:00Z",
-   "dir": 80,
-   "avg": 33.9,
-   "gust": 51.5,
-   "min": 19.4,
-   "temp": 23.4
-  },
-  {
-   "t": "2026-09-21T18:40:00Z",
-   "dir": 90,
-   "avg": 32.6,
-   "gust": 45.7,
-   "min": 17.8,
    "temp": 23.3,
    "pressure": null
   },
@@ -1211,15 +1186,6 @@
    "gust": 48.2,
    "min": 9.6,
    "temp": 23.3
-  },
-  {
-   "t": "2026-09-21T18:50:00Z",
-   "dir": 89,
-   "avg": 30.4,
-   "gust": 47.2,
-   "min": 16.1,
-   "temp": 23.3,
-   "pressure": null
   },
   {
    "t": "2026-09-21T18:56:00Z",
@@ -2075,14 +2041,6 @@
    "pressure": null
   },
   {
-   "t": "2026-09-22T03:41:00Z",
-   "dir": 91,
-   "avg": 37.0,
-   "gust": 51.5,
-   "min": 14.4,
-   "temp": 22.4
-  },
-  {
    "t": "2026-09-22T03:46:00Z",
    "dir": 76,
    "avg": 37.0,
@@ -2276,6 +2234,22 @@
    "gust": null,
    "min": null,
    "temp": null
+  },
+  {
+   "t": "2026-09-22T06:45:00Z",
+   "dir": 73,
+   "avg": 28.9,
+   "gust": 40.4,
+   "min": 11.1,
+   "temp": 22.1
+  },
+  {
+   "t": "2026-09-22T06:51:00Z",
+   "dir": 79,
+   "avg": 27.4,
+   "gust": 40.4,
+   "min": 14.4,
+   "temp": 22.1
   }
  ]
 }

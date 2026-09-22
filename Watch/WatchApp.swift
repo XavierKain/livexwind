@@ -67,8 +67,10 @@ struct WatchMainView: View {
 
     private var reading: WindReading { store.snapshot.current }
     private var isOffline: Bool { store.snapshot.isOffline }
+    /// Ce qui grise : « plus le vent du moment », muette ou pas encore relue.
+    private var isStale: Bool { store.snapshot.isStale() }
     private var color: Color {
-        isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
+        isStale ? .secondary : WindPalette.color(kmh: reading.averageKmh)
     }
 
     var body: some View {
@@ -95,7 +97,7 @@ struct WatchMainView: View {
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
-                WindArrow(degrees: isOffline ? nil : reading.directionDegrees, color: color)
+                WindArrow(degrees: isStale ? nil : reading.directionDegrees, color: color)
                     .frame(width: 34, height: 34)
             }
             Text(isOffline ? store.snapshot.offlineText : reading.directionText)
@@ -104,7 +106,7 @@ struct WatchMainView: View {
 
             Text("raf. \(store.unit.format(kmh: reading.gustKmh)) \(store.unit.shortSymbol)")
                 .font(.system(size: 12))
-                .foregroundStyle(isOffline ? Color.secondary : Color.orange)
+                .foregroundStyle(isStale ? Color.secondary : Color.orange)
 
             Spacer(minLength: 0)
 

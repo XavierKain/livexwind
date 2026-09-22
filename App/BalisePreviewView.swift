@@ -26,9 +26,9 @@ struct BalisePreviewView: View {
                     if let snapshot {
                         entete(snapshot)
                         CompassDial(reading: snapshot.current, unit: store.unit,
-                                    isOffline: snapshot.isOffline)
+                                    isOffline: snapshot.isStale())
                         WindMetricsRow(reading: snapshot.current, unit: store.unit,
-                                       isOffline: snapshot.isOffline)
+                                       isOffline: snapshot.isStale())
                         if snapshot.history.count > 1 {
                             WindChartCard(snapshot: snapshot, unit: store.unit)
                         }

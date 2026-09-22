@@ -12,6 +12,13 @@ struct WatchEntry: TimelineEntry {
     let date: Date
     let snapshot: WindSnapshot
     let unit: WindUnit
+    /// À l'heure de cette entrée, le relevé n'est plus le vent du moment.
+    ///
+    /// Une complication ne se redessine pas toute seule entre deux
+    /// rafraîchissements, et watchOS les rationne : sans cette information
+    /// portée par la timeline, un chiffre d'il y a une heure continuait de
+    /// s'afficher comme s'il était frais jusqu'à ce qu'on la touche.
+    var isStale: Bool = false
 }
 
 struct WatchProvider: TimelineProvider {
@@ -21,8 +28,10 @@ struct WatchProvider: TimelineProvider {
 
     func getSnapshot(in context: Context, completion: @escaping (WatchEntry) -> Void) {
         let cached = SharedStore.shared.loadSnapshot(key: SharedStore.shared.catalog.selectedKey)
-        completion(WatchEntry(date: .now, snapshot: cached ?? .placeholder(),
-                              unit: SharedStore.shared.unit))
+        let snapshot = cached ?? .placeholder()
+        completion(WatchEntry(date: .now, snapshot: snapshot,
+                              unit: SharedStore.shared.unit,
+                              isStale: snapshot.isStale()))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WatchEntry>) -> Void) {
@@ -31,7 +40,19 @@ struct WatchProvider: TimelineProvider {
             // cette extension de connaître le choix fait sur l'iPhone.
             let reading = await WatchFeed.load()
             let snapshot = reading.snapshot
-            let entry = WatchEntry(date: .now, snapshot: snapshot, unit: reading.unit)
+            let now = Date()
+
+            // Deux entrées plutôt qu'une : le relevé tant qu'il vaut, puis le
+            // même en tiret à la seconde où il cesse d'être le vent du moment.
+            // C'est ce qui fait qu'une complication qu'on n'a pas touchée se
+            // démode d'elle-même au lieu d'afficher un chiffre périmé.
+            var entries = [WatchEntry(date: now, snapshot: snapshot, unit: reading.unit,
+                                      isStale: snapshot.isStale(at: now))]
+            let staleAt = snapshot.current.date.addingTimeInterval(snapshot.silenceLimit)
+            if staleAt > now {
+                entries.append(WatchEntry(date: staleAt, snapshot: snapshot,
+                                          unit: reading.unit, isStale: true))
+            }
 
             // watchOS rationne les rafraîchissements de complication comme iOS ceux
             // des widgets : viser la minute ne ferait que griller le budget plus
@@ -39,9 +60,9 @@ struct WatchProvider: TimelineProvider {
             // à 10 min, et l'ouverture de l'app rafraîchit immédiatement.
             var next = snapshot.nextExpectedUpdate
             if next.timeIntervalSinceNow < 600 {
-                next = Date().addingTimeInterval(600)
+                next = now.addingTimeInterval(600)
             }
-            completion(Timeline(entries: [entry], policy: .after(next)))
+            completion(Timeline(entries: entries, policy: .after(next)))
         }
     }
 }
@@ -64,7 +85,9 @@ struct ComplicationView: View {
     let entry: WatchEntry
 
     private var reading: WindReading { entry.snapshot.current }
-    private var isOffline: Bool { entry.snapshot.isOffline }
+    /// Le verdict est porté par l'entrée, pas recalculé ici : une complication
+    /// est dessinée à l'heure de son entrée, pas à l'heure qu'il est.
+    private var isOffline: Bool { entry.isStale }
     private var color: Color {
         isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
     }

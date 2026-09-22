@@ -52,7 +52,7 @@ import windguru  # noqa: E402  (source windguru.cz, mondiale)
 import meteocat  # noqa: E402  (source meteo.cat, réseau XEMA de Catalogne)
 import kwind  # noqa: E402  (source kwind.app, WebSocket)
 import ffvl_index  # noqa: E402  (catalogue géolocalisé des balises FFVL)
-from cadence import observed_period, thin_history, worst_gap  # noqa: E402
+from cadence import observed_period, silence_after, thin_history, worst_gap  # noqa: E402
 import duplicates  # noqa: E402  (fiches partageant un capteur physique)
 
 PORT = 7110
@@ -178,6 +178,13 @@ def apns_post(cfg: dict, token: str, payload: dict, push_type: str,
 
 
 # --------------------------------------------------------------------- payloads
+
+def iso_stamp(epoch: float | None = None) -> str:
+    """Horodatage ISO à la seconde, en UTC — le format de tous nos flux."""
+    moment = (datetime.fromtimestamp(epoch, timezone.utc) if epoch
+              else datetime.now(timezone.utc))
+    return moment.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
 
 def iso_to_epoch(iso: str | None) -> float:
     if not iso:
@@ -527,14 +534,18 @@ def map_stations():
     # unitaires — plafonnées, pour ne pas transformer un déplacement de carte en
     # rafale de requêtes chez les sources.
     bulk = live_snapshot()
+    bulk_polled = iso_stamp(_map_live["ts"])
     budget = MAP_FETCH_LIMIT
     for station in stations:
         key = f"{station['provider']}-{station['code']}"
         feed = cached_feed(station["provider"], station["code"])
-        reading = bulk.get(key) or feed.get("current")
+        reading, polled = bulk.get(key), bulk_polled
+        if reading is None:
+            reading = feed.get("current")
+            polled = feed.get("checkedAt") or feed.get("generatedAt")
         if reading is None and budget > 0 and station["provider"] == "wg":
             try:
-                reading = windguru.latest(int(station["code"]))
+                reading, polled = windguru.latest(int(station["code"])), iso_stamp()
                 budget -= 1
             except Exception:
                 reading = None
@@ -542,11 +553,18 @@ def map_stations():
             station["current"] = {"avg": reading.get("avg"), "gust": reading.get("gust"),
                                   "dir": reading.get("dir"), "t": reading.get("t"),
                                   "temp": reading.get("temp"), "pressure": reading.get("pressure")}
+            # Quand on a obtenu ce relevé. Une balise que le serveur ne relit
+            # que toutes les 5 min paraissait muette au bout de 3 : l'app
+            # comparait l'âge du relevé à la cadence de la *station*, alors
+            # qu'il est d'abord borné par la nôtre.
+            station["polled"] = polled or iso_stamp()
             # La cadence mesurée, quand on suit déjà la balise : sans elle, l'app
             # doit deviner, et une station Windguru qui publie aux 10 min était
             # grisée à tort au bout de 3.
             if feed.get("period"):
                 station["period"] = feed["period"]
+            if feed.get("silence"):
+                station["silence"] = feed["silence"]
 
     # Plusieurs fiches décrivent parfois le même anémomètre — vu à Tarifa, où
     # quatre balises de deux réseaux publient la mesure d'un unique capteur avec
@@ -699,17 +717,35 @@ def index():
 # ----------------------------------------------------------------------- pusher
 
 def refresh_feed(balise: dict) -> dict | None:
-    """Relève une balise et met son flux à jour, quelle que soit sa source."""
+    """Relève une balise et met son flux à jour, quelle que soit sa source.
+
+    On note aussi l'heure de la tentative. Une source qui cesse complètement de
+    répondre laisse sinon un flux que plus rien ne date : le relevé y garde son
+    heure d'origine, `generatedAt` celle du dernier succès, et l'app ne peut pas
+    distinguer « balise muette » de « on n'a pas encore regardé ». `checkedAt`
+    répond à la seule question qui compte : quand a-t-on regardé pour la
+    dernière fois, et qu'a-t-on vu ?
+    """
     provider = balise.get("provider", "ffvl")
+    path = feed_path(balise_code(balise), provider)
+    before = load_json(path, {}).get("generatedAt")
+
     if provider == "wm":
-        return _refresh_wm(balise)
-    if provider == "wg":
-        return _refresh_wg(balise)
-    if provider == "mc":
-        return _refresh_mc(balise)
-    if provider == "kw":
-        return _refresh_kw(balise)
-    return _refresh_ffvl(balise)
+        feed = _refresh_wm(balise)
+    elif provider == "wg":
+        feed = _refresh_wg(balise)
+    elif provider == "mc":
+        feed = _refresh_mc(balise)
+    elif provider == "kw":
+        feed = _refresh_kw(balise)
+    else:
+        feed = _refresh_ffvl(balise)
+
+    # `generatedAt` inchangé : la source n'a rien donné de neuf à stocker.
+    if feed and feed.get("generatedAt") == before:
+        feed = {**feed, "checkedAt": iso_stamp()}
+        save_json(path, feed)
+    return feed
 
 
 def _refresh_ffvl(balise: dict) -> dict | None:
@@ -845,11 +881,13 @@ def with_backfill(path: Path, old: dict, fetch, label: str) -> dict:
 def _store_feed(path: Path, info: dict, reading: dict, previous: dict | None = None) -> dict:
     old = previous if previous is not None else load_json(path, {})
     history = thin_history(scrape.merge_history(old.get("history", []), reading))
-    payload = {"generatedAt": datetime.now(timezone.utc).replace(microsecond=0)
-                              .isoformat().replace("+00:00", "Z"),
+    payload = {"generatedAt": iso_stamp(),
                "balise": info,
                "current": reading,
                "period": observed_period(history),
+               # Cadence et silence ne se déduisent pas du même écart : l'une
+               # dit quand relire la balise, l'autre quand la déclarer muette.
+               "silence": silence_after(history),
                "history": history}
     save_json(path, payload)
     return payload

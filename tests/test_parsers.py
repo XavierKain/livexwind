@@ -223,6 +223,51 @@ class TrouDeCourbeTests(unittest.TestCase):
         self.assertIsNone(worst_gap([], now=self.MIDI))
 
 
+class SilenceTests(unittest.TestCase):
+    """Déclarer une balise muette, sans la confondre avec une balise irrégulière.
+
+    Mesuré sur Tarifa / Campo de Futbol : écarts de 60 s à 540 s, cadence
+    déduite 60 s. Juger le silence avec la cadence la donnait hors ligne 38 fois
+    sur 59, pour une station qui n'a jamais cessé d'émettre.
+    """
+
+    def historique(self, *ecarts_minutes):
+        from datetime import timedelta
+        moment = datetime(2026, 9, 1, 8, 0, tzinfo=timezone.utc)
+        out = [{"t": moment.isoformat().replace("+00:00", "Z")}]
+        for ecart in ecarts_minutes:
+            moment += timedelta(minutes=ecart)
+            out.append({"t": moment.isoformat().replace("+00:00", "Z")})
+        return out
+
+    def test_station_irreguliere(self):
+        """Le cas Tarifa : la cadence dit 1 min, le silence doit tolérer 9 min."""
+        from cadence import observed_period, silence_after
+        h = self.historique(1, 5, 9, 1, 5, 5, 9, 1)
+        self.assertEqual(observed_period(h), 60)
+        self.assertGreater(silence_after(h), 9 * 60)
+
+    def test_station_reguliere_reste_stricte(self):
+        """Une station qui publie à la minute doit être jugée à la minute."""
+        from cadence import silence_after
+        h = self.historique(*([1] * 10))
+        self.assertLessEqual(silence_after(h), 180)
+
+    def test_le_plancher_protege_les_stations_rapides(self):
+        from cadence import silence_after, SILENCE_FLOOR
+        self.assertGreaterEqual(silence_after(self.historique(*([1] * 10))), SILENCE_FLOOR)
+
+    def test_repli_sans_historique(self):
+        from cadence import silence_after
+        self.assertEqual(silence_after([]), 600 * 2 + 60)
+
+    def test_un_trou_de_panne_ne_dilate_pas_le_seuil(self):
+        """Une coupure de six heures n'est pas le rythme de la balise."""
+        from cadence import silence_after
+        h = self.historique(5, 5, 360, 5, 5)
+        self.assertLess(silence_after(h), 20 * 60)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 

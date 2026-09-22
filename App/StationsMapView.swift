@@ -277,6 +277,10 @@ struct MapStation: Identifiable, Hashable {
     var reading: WindReading?
     /// Cadence mesurée par le serveur, quand il suit déjà cette balise.
     var periodSeconds: Double?
+    /// Quand le serveur a obtenu ce relevé — ce n'est pas maintenant.
+    var polledAt: Date?
+    /// Silence mesuré au-delà duquel la balise est muette — pas sa cadence.
+    var silenceSeconds: Double?
     /// Fiches partageant un capteur physique — plusieurs balises publient
     /// parfois la mesure d'un même anémomètre, à une correction près.
     var sensorGroup: String?
@@ -287,7 +291,13 @@ struct MapStation: Identifiable, Hashable {
 
     var id: String { balise.key }
 
-    /// Hors ligne : deux fois la cadence sans relevé.
+    /// Hors ligne : deux fois la cadence sans relevé **au moment où le serveur
+    /// a regardé**.
+    ///
+    /// Comparer à maintenant était doublement faux. Le serveur ne relit une
+    /// balise non affichée que toutes les 5 min : une station qui publie à la
+    /// minute se retrouvait grisée au bout de 3, alors qu'elle n'a jamais cessé
+    /// d'émettre — il suffisait d'ouvrir sa page pour la voir bien vivante.
     ///
     /// Quand la cadence est inconnue — balise qu'on ne suit pas encore — on
     /// retient un seuil large de 20 min plutôt qu'une estimation par source :
@@ -296,8 +306,14 @@ struct MapStation: Identifiable, Hashable {
     /// balise, lui, dispose de la cadence exacte.
     var isOffline: Bool {
         guard let date = reading?.date else { return false }
-        let limit = periodSeconds.map { $0 * 2 + 60 } ?? 20 * 60
-        return Date().timeIntervalSince(date) > limit
+        let limit = silenceSeconds ?? periodSeconds.map { $0 * 2 + 60 } ?? 20 * 60
+        return (polledAt ?? Date()).timeIntervalSince(date) > limit
+    }
+
+    /// Âge de ce qu'on affiche, indépendamment de la santé de la balise :
+    /// la carte n'est pas un direct, elle date de la dernière relève.
+    var readingAge: TimeInterval? {
+        reading.map { Date().timeIntervalSince($0.date) }
     }
 
     var coordinate: CLLocationCoordinate2D {
@@ -320,6 +336,8 @@ struct MapStation: Identifiable, Hashable {
                                   distanceKm: hit.km,
                                   reading: hit.current?.reading,
                                   periodSeconds: hit.period,
+                                  polledAt: hit.polled.flatMap { ISO8601DateFormatter().date(from: $0) },
+                                  silenceSeconds: hit.silence,
                                   sensorGroup: hit.sensorGroup,
                                   isPrimary: hit.isPrimary ?? true,
                                   sensorCount: hit.sensorCount ?? 1,
@@ -413,6 +431,12 @@ struct MapStationSheet: View {
                 if let date = reading?.date, !offline {
                     Text("·")
                     Text(date, style: .time)
+                    // La carte n'est pas un direct : le serveur ne relit les
+                    // balises qu'on n'affiche pas que toutes les quelques
+                    // minutes. Autant l'écrire plutôt que de laisser croire.
+                    if let age = station.readingAge, age > 600 {
+                        Text("· il y a \(Int(age / 60)) min")
+                    }
                 }
             }
             .font(.caption).foregroundStyle(.secondary)

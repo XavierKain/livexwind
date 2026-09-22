@@ -86,18 +86,31 @@ final class WindStore: ObservableObject {
     /// Le serveur garde les seuils de son côté pour pouvoir notifier app fermée.
     /// On lui pousse ceux de toutes les balises : il surveille chaque spot,
     /// même celui qui n'est pas affiché.
+    ///
+    /// Les envois partent ensemble : en série, quinze spots retardaient d'autant
+    /// la poignée de main du serveur — et avec elle l'ouverture de l'app.
     func syncAlertsWithServer() async {
-        do {
-            for balise in catalog.balises {
-                try await ServerClient.shared.pushAlertSettings(
-                    SharedStore.shared.alertSettings(for: balise.key), for: balise, unit: unit)
+        let unit = unit
+        let settings = catalog.balises.map { ($0, SharedStore.shared.alertSettings(for: $0.key)) }
+
+        let delivered = await withTaskGroup(of: Bool.self, returning: Bool.self) { group in
+            for (balise, alerts) in settings {
+                group.addTask {
+                    do {
+                        try await ServerClient.shared.pushAlertSettings(alerts, for: balise, unit: unit)
+                        return true
+                    } catch {
+                        return false
+                    }
+                }
             }
-            SharedStore.shared.serverHandlesAlerts = true
-            serverReachable = true
-        } catch {
-            SharedStore.shared.serverHandlesAlerts = false
-            serverReachable = false
+            var all = true
+            for await pushed in group where !pushed { all = false }
+            return all
         }
+
+        SharedStore.shared.serverHandlesAlerts = delivered
+        serverReachable = delivered
     }
 
     // MARK: Activité en direct

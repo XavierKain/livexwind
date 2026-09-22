@@ -26,7 +26,7 @@ final class LiveActivityManager: ObservableObject {
                 averageKmh: other.current.averageKmh ?? 0,
                 gustKmh: other.current.gustKmh ?? 0,
                 directionDegrees: other.current.directionDegrees ?? 0,
-                isOffline: other.isOffline
+                isOffline: other.isStale()
             )
         }
         return .init(
@@ -132,11 +132,11 @@ final class LiveActivityManager: ObservableObject {
         }
     }
 
-    /// Péremption alignée sur la cadence de la balise, comme côté serveur :
-    /// 25 minutes fixes laissaient une valeur morte affichée pour une station
-    /// qui publie à la minute.
+    /// Péremption alignée sur le silence mesuré de la balise, comme côté
+    /// serveur : 25 minutes fixes laissaient une valeur morte affichée pour une
+    /// station qui publie à la minute.
     private func staleDate(for snapshot: WindSnapshot) -> Date {
-        snapshot.current.date.addingTimeInterval(max(snapshot.periodSeconds * 2 + 60, 300))
+        snapshot.current.date.addingTimeInterval(max(snapshot.silenceLimit, 300))
     }
 
     func stop() async {

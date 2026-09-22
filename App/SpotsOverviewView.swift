@@ -79,9 +79,12 @@ private struct SpotRow: View {
     let hasAlerts: Bool
 
     private var reading: WindReading? { snapshot?.current }
+    /// La balise s'est tue — verdict rendu au moment de la lecture.
     private var isOffline: Bool { snapshot?.isOffline == true }
+    /// La valeur n'est plus le vent du moment, muette ou simplement pas relue.
+    private var isStale: Bool { snapshot?.isStale() == true }
     private var color: Color {
-        isOffline ? .secondary : WindPalette.color(kmh: reading?.averageKmh)
+        isStale ? .secondary : WindPalette.color(kmh: reading?.averageKmh)
     }
 
     var body: some View {
@@ -137,14 +140,15 @@ private struct SpotRow: View {
                 }
                 Text("raf. \(unit.format(kmh: reading?.gustKmh))")
                     .font(.system(size: 10))
-                    .foregroundStyle(isOffline ? Color.secondary : Color.orange)
+                    .foregroundStyle(isStale ? Color.secondary : Color.orange)
             }
             .frame(width: 78, alignment: .trailing)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        // Hors ligne : toute la ligne s'estompe, y compris la mini-courbe.
-        .opacity(isOffline ? 0.55 : 1)
+        // Valeur qui n'est plus d'actualité : toute la ligne s'estompe, y
+        // compris la mini-courbe.
+        .opacity(isStale ? 0.55 : 1)
         .background(.quaternary.opacity(isSelected ? 0.45 : 0.22),
                     in: RoundedRectangle(cornerRadius: 14))
         .overlay(

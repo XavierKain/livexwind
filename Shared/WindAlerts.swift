@@ -1,7 +1,7 @@
 import Foundation
 
 /// Réglages des alertes de seuil (vent qui monte / vent qui retombe).
-struct AlertSettings: Codable, Equatable {
+struct AlertSettings: Codable, Equatable, Sendable {
     var enabled = false
     /// Alerte quand le vent atteint ou dépasse ce seuil.
     var upperEnabled = true

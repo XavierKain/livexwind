@@ -13,14 +13,16 @@ struct ContentView: View {
             ScrollView {
                 VStack(spacing: 22) {
                     header
-                    // Grisé et estompé hors ligne : la valeur reste lisible mais
-                    // ne peut plus être prise pour le vent du moment.
+                    // Grisé et estompé dès que le relevé n'est plus le vent du
+                    // moment — balise muette ou copie pas encore rafraîchie.
+                    // La valeur reste lisible, elle ne se fait juste pas passer
+                    // pour actuelle.
                     CompassDial(reading: store.snapshot.current, unit: store.unit,
-                                isOffline: store.snapshot.isOffline)
+                                isOffline: store.snapshot.isStale())
                         .padding(.top, 4)
                     unitPicker
                     WindMetricsRow(reading: store.snapshot.current, unit: store.unit,
-                                   isOffline: store.snapshot.isOffline)
+                                   isOffline: store.snapshot.isStale())
                     WindChartCard(snapshot: store.snapshot, unit: store.unit)
                     alertsCard
                     if let coordinate = baliseCoordinate {
@@ -46,12 +48,16 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showAlerts) { AlertSettingsView(store: store) }
         .task {
-            await store.adoptCloudState()
+            // Le relevé d'abord : c'est ce qu'on regarde en ouvrant l'app.
+            // Tout le reste — état iCloud, poignée de main serveur, seuils —
+            // passait avant et retardait de plusieurs secondes le moment où le
+            // vent affiché redevenait celui du moment.
+            store.startAutoRefresh()
             store.liveActivity.refreshActiveState()
             store.liveActivity.observePushToStartToken(unit: store.unit)
             await store.refreshNotificationStatus()
+            await store.adoptCloudState()
             await store.checkServer()
-            store.startAutoRefresh()
         }
         .onChange(of: scenePhase) { _, phase in
             switch phase {
@@ -89,23 +95,32 @@ struct ContentView: View {
 
     // MARK: Sections
 
+    /// Trois états, et un seul se dit « hors ligne ».
+    ///
+    /// Rouvrir l'app au bout de deux heures affichait « balise hors ligne depuis
+    /// 2 h » le temps du premier relevé — une accusation portée contre la balise
+    /// alors qu'on ne lui avait simplement pas encore demandé l'heure.
     private var header: some View {
-        VStack(spacing: 4) {
+        let outdated = store.snapshot.isOutdated
+        let offline = store.snapshot.isOffline
+        return VStack(spacing: 4) {
             HStack(spacing: 6) {
                 Circle()
-                    .fill(store.snapshot.isOffline ? Color.gray : Color.green)
+                    .fill(offline ? Color.gray : (outdated ? Color.orange : Color.green))
                     .frame(width: 8, height: 8)
-                Text(store.snapshot.isOffline
-                     ? "Balise \(store.snapshot.offlineText)"
+                Text(offline ? "Balise \(store.snapshot.offlineText)"
+                     : outdated ? "Relevé de \(time(store.snapshot.current.date)) · actualisation…"
                      : "Relevé de \(time(store.snapshot.current.date))")
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(store.snapshot.isOffline ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+                    .foregroundStyle(offline || outdated ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                 if store.isLoading {
                     ProgressView().controlSize(.mini).padding(.leading, 2)
                 }
             }
-            Text(store.snapshot.isOffline
+            Text(offline
                  ? "Dernier relevé à \(time(store.snapshot.current.date)) · cadence \(store.snapshot.cadenceText)"
+                 : outdated
+                 ? "Relecture de la balise · cadence \(store.snapshot.cadenceText)"
                  : "Mise à jour \(store.nextUpdateText) · \(store.snapshot.cadenceText)")
                 .font(.caption).foregroundStyle(.secondary)
             if let error = store.lastError {

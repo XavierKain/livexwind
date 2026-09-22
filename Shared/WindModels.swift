@@ -76,6 +76,12 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// Cadence de publication mesurée par le serveur : 60 s pour une station
     /// windguru, 10 min pour une balise FFVL. Elle varie d'une station à l'autre.
     var periodSeconds: Double = 600
+    /// Silence au-delà duquel la balise ne publie plus, mesuré lui aussi par le
+    /// serveur — mais sur son plus **grand** écart, là où la cadence retient le
+    /// plus petit. Une balise qui alterne entre la minute et les cinq minutes
+    /// était déclarée muette les deux tiers du temps quand un seul chiffre
+    /// servait aux deux questions.
+    var silenceSeconds: Double?
 
     static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
         WindSnapshot(
@@ -118,13 +124,33 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// Âge du dernier relevé.
     var age: TimeInterval { Date().timeIntervalSince(current.date) }
 
-    /// Balise hors ligne : son dernier relevé a plus de **deux fois sa cadence**.
+    /// Silence toléré avant de considérer que la balise ne publie plus.
     ///
-    /// Une station qui publie toutes les 4 min et n'a rien envoyé depuis 8 min
-    /// est débranchée ou en panne — mieux vaut griser sa valeur que la laisser
-    /// passer pour le vent actuel. La minute de marge absorbe le délai de notre
-    /// propre relève, qui n'est pas synchrone avec celle de la station.
-    var isOffline: Bool { age > periodSeconds * 2 + 60 }
+    /// Le serveur le mesure sur son plus grand écart récent. À défaut — flux
+    /// d'avant cette mesure — on retombe sur deux fois la cadence, ce qui reste
+    /// juste pour une station régulière.
+    var silenceLimit: TimeInterval { silenceSeconds ?? periodSeconds * 2 + 60 }
+
+    /// À cette date, le relevé n'est plus le vent du moment.
+    ///
+    /// Une station qui publie toutes les 4 min et n'a rien envoyé depuis un
+    /// quart d'heure est débranchée ou en panne — mieux vaut griser sa valeur
+    /// que la laisser passer pour le vent actuel.
+    func isStale(at date: Date = Date()) -> Bool {
+        date.timeIntervalSince(current.date) > silenceLimit
+    }
+
+    /// Balise muette — verdict rendu à l'instant où on l'a lue, pas maintenant.
+    ///
+    /// La nuance compte : une app rouverte au bout de deux heures affiche un
+    /// relevé de deux heures, ce qui ne dit rien de la balise. Comparer à
+    /// `fetchedAt` répond à la bonne question — quand on a regardé, publiait-elle ?
+    /// — et la réponse ne se dégrade plus toute seule pendant que l'app dort.
+    var isOffline: Bool { isStale(at: fetchedAt) }
+
+    /// Notre copie a vieilli, et on n'a pas encore relu la balise. Ce n'est pas
+    /// un verdict sur elle : ça s'annonce « actualisation… », pas « hors ligne ».
+    var isOutdated: Bool { isStale() && !isOffline }
 
     /// « hors ligne depuis 23 min », « hors ligne depuis 3 h ».
     var offlineText: String {

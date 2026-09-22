@@ -161,8 +161,12 @@ struct ServerClient: Sendable {
         let altitude: Int?
         let km: Double?
         let current: Current?
+        /// Heure à laquelle le serveur a obtenu ce relevé.
+        let polled: String?
         /// Cadence mesurée, présente seulement pour les balises déjà suivies.
         let period: Double?
+        /// Silence mesuré au-delà duquel la balise est muette.
+        let silence: Double?
         /// Fiches partageant un même capteur physique : identifiant du groupe,
         /// représentante désignée, nombre de fiches, et correction d'étalonnage
         /// en nœuds quand la source la publie.

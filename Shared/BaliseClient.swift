@@ -112,7 +112,7 @@ struct BaliseClient: Sendable {
 
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        request.timeoutInterval = 8
+        request.timeoutInterval = 5
         let (data, _) = try await URLSession.shared.data(for: request)
         return try FeedPayload.decode(data).snapshot
     }
@@ -136,7 +136,18 @@ struct BaliseClient: Sendable {
     }
 
     private func fetchHistorySource() async -> WindSnapshot? {
-        if let server = try? await fetchServerFeed(), !server.history.isEmpty { return server }
+        if await ServerReach.shared.isWorthTrying() {
+            do {
+                let server = try await fetchServerFeed()
+                await ServerReach.shared.note(reachable: true)
+                if !server.history.isEmpty { return server }
+            } catch {
+                // Un flux illisible — balise que le serveur ne suit pas encore —
+                // n'est pas une absence de serveur. Seule une panne de réseau
+                // vaut la peine de le faire taire.
+                await ServerReach.shared.note(reachable: !(error is URLError))
+            }
+        }
         if let mirror = try? await fetchPublicFeed(), !mirror.history.isEmpty { return mirror }
         return try? await fetchFeed()
     }
@@ -165,6 +176,13 @@ struct BaliseClient: Sendable {
         guard let current else {
             return cached ?? WindSnapshot.placeholder(balise: balise)
         }
+        // Quand a-t-on regardé cette balise pour la dernière fois ?
+        // Lecture directe réussie : maintenant. Sinon l'heure de relève du
+        // serveur, qui vient de nous répondre — dater de maintenant un relevé
+        // repris de son flux ferait passer pour muette une balise qu'il relit
+        // très bien, seulement moins souvent que nous ne rafraîchissons l'écran.
+        let observedAt = live != nil ? Date.now
+            : (feed?.fetchedAt ?? cached?.fetchedAt ?? .now)
 
         let snapshot = WindSnapshot(
             baliseID: baliseID,
@@ -175,11 +193,39 @@ struct BaliseClient: Sendable {
             longitude: balise.longitude ?? feed?.longitude ?? cached?.longitude,
             current: current,
             history: history,
-            fetchedAt: .now,
-            periodSeconds: feed?.periodSeconds ?? cached?.periodSeconds ?? 600
+            fetchedAt: observedAt,
+            periodSeconds: feed?.periodSeconds ?? cached?.periodSeconds ?? 600,
+            silenceSeconds: feed?.silenceSeconds ?? cached?.silenceSeconds
         )
         SharedStore.shared.save(snapshot: snapshot)
         return snapshot
+    }
+}
+
+/// Portée du serveur Tailscale, mémorisée d'un relevé à l'autre.
+///
+/// Il n'est joignable qu'à la maison. Ailleurs, son délai d'attente se payait à
+/// chaque relevé : plusieurs secondes d'attente avant de retomber sur le miroir
+/// public, qui porte pourtant exactement les mêmes données. On note donc son
+/// absence et on l'ignore quelques minutes, plutôt que de la redécouvrir à
+/// chaque fois.
+private actor ServerReach {
+    static let shared = ServerReach()
+    /// Assez court pour qu'un retour à la maison soit vu sans rien faire.
+    private static let pause: TimeInterval = 180
+    private var mutedUntil: Date?
+
+    func isWorthTrying() -> Bool {
+        guard let mutedUntil else { return true }
+        guard Date() >= mutedUntil else { return false }
+        self.mutedUntil = nil
+        return true
+    }
+
+    /// Joignable mais sans historique reste « joignable » : on ne le fait taire
+    /// que lorsqu'il ne répond pas du tout.
+    func note(reachable: Bool) {
+        mutedUntil = reachable ? nil : Date().addingTimeInterval(Self.pause)
     }
 }
 
@@ -328,6 +374,18 @@ struct FeedPayload: Decodable {
     let current: Sample
     let history: [Sample]
     let period: Double?
+    /// Silence mesuré au-delà duquel la balise est muette — ce n'est pas sa
+    /// cadence, voir `WindSnapshot.silenceSeconds`.
+    let silence: Double?
+    /// Heure à laquelle le serveur a obtenu ce relevé. C'est elle qui dit si la
+    /// balise publiait, là où l'heure de lecture du flux ne dit que l'âge de
+    /// notre copie — la montre et le widget lisent un miroir, pas la station.
+    let generatedAt: String?
+    /// Heure de la dernière tentative, quand elle n'a rien rapporté de neuf.
+    /// Plus récente que `generatedAt`, elle dit « on a regardé, la balise n'a
+    /// rien publié » — c'est ce qui la déclare muette plutôt que simplement
+    /// pas relue.
+    let checkedAt: String?
 
     static func decode(_ data: Data) throws -> FeedPayload {
         try JSONDecoder().decode(FeedPayload.self, from: data)
@@ -347,9 +405,14 @@ struct FeedPayload: Decodable {
             longitude: balise.lon,
             current: latest ?? WindSnapshot.placeholder(balise: identity).current,
             history: readings,
-            fetchedAt: .now,
-            periodSeconds: period ?? 600
+            fetchedAt: Self.stamp(checkedAt) ?? Self.stamp(generatedAt) ?? .now,
+            periodSeconds: period ?? 600,
+            silenceSeconds: silence
         )
+    }
+
+    private static func stamp(_ iso: String?) -> Date? {
+        iso.flatMap { ISO8601DateFormatter().date(from: $0) }
     }
 
     private static func reading(from sample: Sample) -> WindReading? {

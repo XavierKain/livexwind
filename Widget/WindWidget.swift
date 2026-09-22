@@ -7,6 +7,10 @@ struct WindEntry: TimelineEntry {
     let snapshot: WindSnapshot
     let unit: WindUnit
     let windowHours: Double
+    /// À l'heure de cette entrée, le relevé n'est plus le vent du moment.
+    /// iOS ne redessine pas un widget entre deux rafraîchissements : c'est la
+    /// timeline qui doit prévoir le vieillissement de la valeur.
+    var isStale: Bool = false
 }
 
 struct WindProvider: AppIntentTimelineProvider {
@@ -18,23 +22,36 @@ struct WindProvider: AppIntentTimelineProvider {
         let balise = configuration.balise?.balise ?? .pyla
         let cached = SharedStore.shared.loadSnapshot(key: balise.key) ?? .placeholder(balise: balise)
         return WindEntry(date: .now, snapshot: cached,
-                         unit: configuration.unit.unit, windowHours: configuration.window.hours)
+                         unit: configuration.unit.unit, windowHours: configuration.window.hours,
+                         isStale: cached.isStale())
     }
 
     func timeline(for configuration: WindConfigurationIntent, in context: Context) async -> Timeline<WindEntry> {
         let balise = configuration.balise?.balise ?? .pyla
         let snapshot = await BaliseClient(balise: balise).loadSnapshot()
-        let entry = WindEntry(date: .now, snapshot: snapshot,
-                              unit: configuration.unit.unit, windowHours: configuration.window.hours)
+        let now = Date()
+
+        // Le relevé, puis le même en grisé dès qu'il cesse d'être le vent du
+        // moment : entre deux rafraîchissements, un widget affiche ce que la
+        // timeline a prévu, et rien d'autre.
+        var entries = [WindEntry(date: now, snapshot: snapshot, unit: configuration.unit.unit,
+                                 windowHours: configuration.window.hours,
+                                 isStale: snapshot.isStale(at: now))]
+        let staleAt = snapshot.current.date.addingTimeInterval(snapshot.silenceLimit)
+        if staleAt > now {
+            entries.append(WindEntry(date: staleAt, snapshot: snapshot,
+                                     unit: configuration.unit.unit,
+                                     windowHours: configuration.window.hours, isStale: true))
+        }
 
         // On vise le prochain relevé de cette balise, mais iOS ne rafraîchit un
         // widget que quelques dizaines de fois par jour : viser la minute serait
         // du gaspillage de budget, d'où le plancher de 5 min.
         var next = snapshot.nextExpectedUpdate
         if next.timeIntervalSinceNow < 300 {
-            next = Date().addingTimeInterval(300)
+            next = now.addingTimeInterval(300)
         }
-        return Timeline(entries: [entry], policy: .after(next))
+        return Timeline(entries: entries, policy: .after(next))
     }
 }
 
@@ -60,7 +77,8 @@ struct WindWidgetView: View {
     let entry: WindEntry
 
     private var reading: WindReading { entry.snapshot.current }
-    private var isOffline: Bool { entry.snapshot.isOffline }
+    /// Porté par l'entrée : un widget est dessiné à l'heure de son entrée.
+    private var isOffline: Bool { entry.isStale }
     private var color: Color {
         isOffline ? .secondary : WindPalette.color(kmh: reading.averageKmh)
     }

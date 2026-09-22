@@ -39,6 +39,40 @@ def observed_period(history: list) -> int:
     return int(min(gaps)) if gaps else DEFAULT_PERIOD
 
 
+# Silence : au bout de combien de temps sans relevé une balise n'émet plus.
+SILENCE_FLOOR = 180        # jamais plus sévère que trois minutes
+SILENCE_CEILING = 3 * 3600  # au-delà, muette quel que soit son rythme
+SILENCE_MARGIN = 1.5
+
+
+def silence_after(history: list) -> int:
+    """Durée de silence au-delà de laquelle la balise ne publie plus.
+
+    Ce n'est **pas** sa cadence. `observed_period` retient le plus petit écart,
+    ce qu'il faut pour savoir quand la relire ; s'en servir pour juger son
+    silence revient à exiger d'elle son meilleur rythme en permanence. Mesuré
+    sur Tarifa / Campo de Futbol : écarts de 60 s à 540 s, cadence déduite 60 s,
+    donc « hors ligne » 38 fois sur 59 — pour une station qui n'a jamais cessé
+    d'émettre.
+
+    On part donc du plus **grand** écart récent, celui qu'elle s'autorise
+    vraiment, et on lui laisse une marge par-dessus.
+    """
+    stamps = []
+    for sample in history[-30:]:
+        try:
+            stamps.append(datetime.fromisoformat(
+                sample["t"].replace("Z", "+00:00")).timestamp())
+        except (KeyError, ValueError, AttributeError, TypeError):
+            continue
+
+    gaps = [b - a for a, b in zip(stamps, stamps[1:])
+            if MIN_PERIOD <= (b - a) <= MAX_PERIOD]
+    if not gaps:
+        return DEFAULT_PERIOD * 2 + 60
+    return int(min(SILENCE_CEILING, max(SILENCE_FLOOR, max(gaps) * SILENCE_MARGIN + 60)))
+
+
 # Au-delà d'une heure sans relevé, ce n'est plus un intervalle de publication :
 # c'est un trou. Aucune source suivie ne publie aussi lentement.
 GAP_SECONDS = 3600

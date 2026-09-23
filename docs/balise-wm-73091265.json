@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-23T14:28:01Z",
+ "generatedAt": "2026-09-23T14:50:21Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-23T14:27:00Z",
-  "dir": 263,
+  "t": "2026-09-23T14:47:00Z",
+  "dir": 264,
   "dirLabel": "O",
-  "avg": 9.3,
-  "gust": 11.1,
+  "avg": 7.4,
+  "gust": 7.4,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-09-21T14:31:00Z",
-   "dir": 257,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-21T14:50:00Z",
-   "dir": 264,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-21T15:00:00Z",
    "dir": 259,
@@ -1184,22 +1168,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-23T02:36:00Z",
-   "dir": 52,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-23T02:40:00Z",
-   "dir": 48,
-   "avg": 5.6,
-   "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-23T02:46:00Z",
    "dir": 46,
    "avg": 5.6,
@@ -1896,14 +1864,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-23T11:29:00Z",
-   "dir": 261,
-   "avg": 7.4,
-   "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-23T11:35:00Z",
    "dir": 263,
    "avg": 7.4,
@@ -2148,6 +2108,38 @@
    "dir": 263,
    "avg": 9.3,
    "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-23T14:31:00Z",
+   "dir": 276,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-23T14:37:00Z",
+   "dir": 237,
+   "avg": 7.4,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-23T14:43:00Z",
+   "dir": 260,
+   "avg": 7.4,
+   "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-23T14:47:00Z",
+   "dir": 264,
+   "avg": 7.4,
+   "gust": 7.4,
    "min": null,
    "temp": null
   }

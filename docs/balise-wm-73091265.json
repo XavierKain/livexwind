@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T12:15:56Z",
+ "generatedAt": "2026-09-24T12:37:13Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,9 +9,9 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-24T12:14:00Z",
-  "dir": 130,
-  "dirLabel": "SE",
+  "t": "2026-09-24T12:34:00Z",
+  "dir": 109,
+  "dirLabel": "ESE",
   "avg": 7.4,
   "gust": 11.1,
   "gustDir": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-09-22T12:19:00Z",
-   "dir": 146,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-22T12:35:00Z",
-   "dir": 144,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-22T12:45:00Z",
    "dir": 148,
@@ -1184,26 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-09-24T00:24:00Z",
-   "dir": 77,
-   "avg": 7.4,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-24T00:30:00Z",
    "dir": 82,
    "avg": 7.4,
    "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-24T00:36:00Z",
-   "dir": 82,
-   "avg": 7.4,
-   "gust": 11.1,
    "min": null,
    "temp": null
   },
@@ -1920,14 +1888,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-24T09:34:00Z",
-   "dir": 97,
-   "avg": 9.3,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-24T09:40:00Z",
    "dir": 99,
    "avg": 9.3,
@@ -2162,6 +2122,38 @@
   {
    "t": "2026-09-24T12:14:00Z",
    "dir": 130,
+   "avg": 7.4,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T12:18:00Z",
+   "dir": 123,
+   "avg": 7.4,
+   "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T12:24:00Z",
+   "dir": 128,
+   "avg": 7.4,
+   "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T12:30:00Z",
+   "dir": 113,
+   "avg": 5.6,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T12:34:00Z",
+   "dir": 109,
    "avg": 7.4,
    "gust": 11.1,
    "min": null,

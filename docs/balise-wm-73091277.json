@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T13:15:06Z",
+ "generatedAt": "2026-09-24T13:36:28Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,10 +9,10 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-09-24T13:07:00Z",
-  "dir": 168,
-  "dirLabel": "SSE",
-  "avg": 22.2,
+  "t": "2026-09-24T13:32:00Z",
+  "dir": 174,
+  "dirLabel": "S",
+  "avg": 20.4,
   "gust": 22.2,
   "gustDir": null,
   "min": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 1050,
  "history": [
-  {
-   "t": "2026-09-22T13:19:00Z",
-   "dir": 240,
-   "avg": 14.8,
-   "gust": 14.8,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-22T13:35:00Z",
-   "dir": 248,
-   "avg": 14.8,
-   "gust": 14.8,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-22T13:48:00Z",
    "dir": 252,
@@ -1184,22 +1168,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-24T01:22:00Z",
-   "dir": 53,
-   "avg": 22.2,
-   "gust": 25.9,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-24T01:26:00Z",
-   "dir": 54,
-   "avg": 22.2,
-   "gust": 25.9,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-24T01:32:00Z",
    "dir": 57,
    "avg": 18.5,
@@ -1920,14 +1888,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-24T10:19:00Z",
-   "dir": 105,
-   "avg": 9.3,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-24T10:23:00Z",
    "dir": 110,
    "avg": 9.3,
@@ -2139,6 +2099,38 @@
    "t": "2026-09-24T13:07:00Z",
    "dir": 168,
    "avg": 22.2,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T13:15:00Z",
+   "dir": 170,
+   "avg": 24.1,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T13:22:00Z",
+   "dir": 172,
+   "avg": 22.2,
+   "gust": 24.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T13:28:00Z",
+   "dir": 174,
+   "avg": 20.4,
+   "gust": 22.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-24T13:32:00Z",
+   "dir": 174,
+   "avg": 20.4,
    "gust": 22.2,
    "min": null,
    "temp": null

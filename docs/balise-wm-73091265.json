@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-25T08:40:27Z",
+ "generatedAt": "2026-09-25T09:01:23Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-25T08:38:00Z",
-  "dir": 305,
-  "dirLabel": "NO",
-  "avg": 14.8,
-  "gust": 14.8,
+  "t": "2026-09-25T08:58:00Z",
+  "dir": 302,
+  "dirLabel": "ONO",
+  "avg": 9.3,
+  "gust": 9.3,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-09-23T08:49:00Z",
-   "dir": 108,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-23T09:01:00Z",
-   "dir": 105,
-   "avg": 3.7,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-23T09:19:00Z",
    "dir": 302,
@@ -1176,34 +1160,10 @@
    "temp": null
   },
   {
-   "t": "2026-09-24T20:43:00Z",
-   "dir": 54,
-   "avg": 5.6,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-24T20:47:00Z",
    "dir": 58,
    "avg": 5.6,
    "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-24T20:53:00Z",
-   "dir": 62,
-   "avg": 5.6,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-24T20:59:00Z",
-   "dir": 64,
-   "avg": 5.6,
-   "gust": 7.4,
    "min": null,
    "temp": null
   },
@@ -2196,6 +2156,38 @@
    "dir": 305,
    "avg": 14.8,
    "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-25T08:44:00Z",
+   "dir": 301,
+   "avg": 13.0,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-25T08:50:00Z",
+   "dir": 302,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-25T08:54:00Z",
+   "dir": 301,
+   "avg": 9.3,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-25T08:58:00Z",
+   "dir": 302,
+   "avg": 9.3,
+   "gust": 9.3,
    "min": null,
    "temp": null
   }

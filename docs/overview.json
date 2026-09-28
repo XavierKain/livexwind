@@ -6,15 +6,15 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-09-28T08:52:00Z",
+    "t": "2026-09-28T09:22:00Z",
     "dir": 112,
     "dirLabel": "ESE",
-    "avg": 20.0,
-    "gust": 37.0,
-    "gustDir": 134,
-    "gustDirLabel": "SE",
-    "min": 5.0,
-    "temp": 23.0,
+    "avg": 29.0,
+    "gust": 42.0,
+    "gustDir": 112,
+    "gustDirLabel": "ESE",
+    "min": 17.0,
+    "temp": 24.0,
     "lum": 100.0,
     "stale": false
    },
@@ -26,8 +26,8 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-09-28T09:01:00Z",
-    "dir": 63,
+    "t": "2026-09-28T09:21:00Z",
+    "dir": 73,
     "dirLabel": "ENE",
     "avg": 13.0,
     "gust": 18.5,
@@ -45,9 +45,9 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-09-28T09:02:00Z",
-    "dir": 63,
-    "dirLabel": "ENE",
+    "t": "2026-09-28T09:22:00Z",
+    "dir": 54,
+    "dirLabel": "NE",
     "avg": 20.4,
     "gust": 22.2,
     "gustDir": null,
@@ -56,7 +56,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 120
   },
   {
    "key": "wg-2667",
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-09-28T09:05:00Z",
-    "dir": 85,
-    "dirLabel": "E",
-    "avg": 26.9,
-    "gust": 43.2,
+    "t": "2026-09-28T09:25:00Z",
+    "dir": 71,
+    "dirLabel": "ENE",
+    "avg": 23.7,
+    "gust": 32.0,
     "gustDir": null,
-    "min": 20.4,
-    "temp": 22.8,
+    "min": 12.2,
+    "temp": 22.7,
     "lum": null,
     "stale": false
    },

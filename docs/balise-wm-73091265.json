@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-29T21:45:20Z",
+ "generatedAt": "2026-09-29T22:02:52Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-09-29T21:43:00Z",
-  "dir": 270,
-  "dirLabel": "O",
-  "avg": 5.6,
-  "gust": 7.4,
+  "t": "2026-09-29T22:01:00Z",
+  "dir": 216,
+  "dirLabel": "SO",
+  "avg": 1.9,
+  "gust": 5.6,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-09-27T21:48:00Z",
-   "dir": 306,
-   "avg": 16.7,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-09-27T22:00:00Z",
-   "dir": 300,
-   "avg": 13.0,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-09-27T22:18:00Z",
    "dir": 310,
@@ -1168,14 +1152,6 @@
    "temp": null
   },
   {
-   "t": "2026-09-29T09:56:00Z",
-   "dir": 150,
-   "avg": 24.1,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-09-29T10:02:00Z",
    "dir": 144,
    "avg": 25.9,
@@ -2124,6 +2100,30 @@
    "dir": 270,
    "avg": 5.6,
    "gust": 7.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-29T21:49:00Z",
+   "dir": 243,
+   "avg": 5.6,
+   "gust": 5.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-29T21:55:00Z",
+   "dir": 157,
+   "avg": 1.9,
+   "gust": 3.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-09-29T22:01:00Z",
+   "dir": 216,
+   "avg": 1.9,
+   "gust": 5.6,
    "min": null,
    "temp": null
   }

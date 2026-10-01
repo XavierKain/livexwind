@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-01T21:56:00Z",
-    "dir": 264,
-    "dirLabel": "O",
-    "avg": 7.4,
-    "gust": 7.4,
+    "t": "2026-10-01T22:14:00Z",
+    "dir": 226,
+    "dirLabel": "SO",
+    "avg": 9.3,
+    "gust": 9.3,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,8 +45,8 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-01T21:55:00Z",
-    "dir": 46,
+    "t": "2026-10-01T22:13:00Z",
+    "dir": 40,
     "dirLabel": "NE",
     "avg": 3.7,
     "gust": 5.6,
@@ -103,18 +103,18 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-01T21:57:00Z",
-    "dir": 109,
-    "dirLabel": "ESE",
-    "avg": 17.2,
-    "gust": 20.7,
+    "t": "2026-10-01T22:08:00Z",
+    "dir": 79,
+    "dirLabel": "E",
+    "avg": 15.4,
+    "gust": 15.7,
     "gustDir": null,
-    "min": 8.9,
+    "min": 7.4,
     "temp": 23.3,
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 60
   },
   {
    "key": "wg-12491",

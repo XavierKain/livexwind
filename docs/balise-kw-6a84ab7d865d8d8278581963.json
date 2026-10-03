@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-03T12:51:15Z",
+ "generatedAt": "2026-10-03T13:15:40Z",
  "balise": {
   "id": 3357180078,
   "code": "6a84ab7d865d8d8278581963",
@@ -21,7 +21,7 @@
   "lum": null,
   "stale": false
  },
- "period": 600,
+ "period": 840,
  "silence": 1500,
  "history": [
   {
@@ -1055,14 +1055,6 @@
    "gust": 36.7,
    "min": 18.7,
    "temp": null
-  },
-  {
-   "t": "2026-10-03T00:55:00Z",
-   "dir": 78,
-   "avg": 31.7,
-   "gust": 40.0,
-   "min": 25.2,
-   "temp": 24.3
   }
  ]
 }

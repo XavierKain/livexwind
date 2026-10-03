@@ -6,15 +6,15 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-03T06:22:00Z",
+    "t": "2026-10-03T06:42:00Z",
     "dir": 90,
     "dirLabel": "E",
-    "avg": 11.0,
-    "gust": 15.0,
+    "avg": 9.0,
+    "gust": 12.0,
     "gustDir": 90,
     "gustDirLabel": "E",
-    "min": 7.0,
-    "temp": 17.0,
+    "min": 6.0,
+    "temp": 18.0,
     "lum": 65.0,
     "stale": false
    },
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-03T06:25:00Z",
-    "dir": 32,
-    "dirLabel": "NNE",
-    "avg": 5.6,
-    "gust": 7.4,
+    "t": "2026-10-03T06:47:00Z",
+    "dir": 42,
+    "dirLabel": "NE",
+    "avg": 9.3,
+    "gust": 16.7,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,10 +45,10 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-03T06:21:00Z",
+    "t": "2026-10-03T06:48:00Z",
     "dir": 38,
     "dirLabel": "NE",
-    "avg": 18.5,
+    "avg": 20.4,
     "gust": 22.2,
     "gustDir": null,
     "min": null,
@@ -114,7 +114,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 300
   },
   {
    "key": "wg-12491",

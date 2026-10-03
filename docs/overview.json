@@ -6,15 +6,15 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-03T15:12:00Z",
+    "t": "2026-10-03T15:32:00Z",
     "dir": 44,
     "dirLabel": "NE",
-    "avg": 7.0,
-    "gust": 14.0,
-    "gustDir": 66,
-    "gustDirLabel": "ENE",
-    "min": 0.0,
-    "temp": 26.0,
+    "avg": 12.0,
+    "gust": 20.0,
+    "gustDir": 44,
+    "gustDirLabel": "NE",
+    "min": 6.0,
+    "temp": 27.0,
     "lum": 70.0,
     "stale": false
    },
@@ -26,30 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-03T15:14:00Z",
-    "dir": 15,
+    "t": "2026-10-03T15:36:00Z",
+    "dir": 32,
     "dirLabel": "NNE",
-    "avg": 7.4,
-    "gust": 11.1,
-    "gustDir": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 360
-  },
-  {
-   "key": "wm-73091277",
-   "id": 73091277,
-   "name": "Semaphore d'Etel",
-   "provider": "wm",
-   "current": {
-    "t": "2026-10-03T15:12:00Z",
-    "dir": 60,
-    "dirLabel": "ENE",
-    "avg": 24.1,
-    "gust": 27.8,
+    "avg": 9.3,
+    "gust": 16.7,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -57,6 +38,25 @@
     "stale": false
    },
    "period": 240
+  },
+  {
+   "key": "wm-73091277",
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "provider": "wm",
+   "current": {
+    "t": "2026-10-03T15:34:00Z",
+    "dir": 67,
+    "dirLabel": "ENE",
+    "avg": 22.2,
+    "gust": 27.8,
+    "gustDir": null,
+    "min": null,
+    "temp": null,
+    "lum": null,
+    "stale": false
+   },
+   "period": 120
   },
   {
    "key": "wg-2667",
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-03T15:19:00Z",
-    "dir": 101,
+    "t": "2026-10-03T15:39:00Z",
+    "dir": 87,
     "dirLabel": "E",
     "avg": 38.2,
-    "gust": 59.3,
+    "gust": 60.9,
     "gustDir": null,
-    "min": 26.9,
-    "temp": 25.2,
+    "min": 31.7,
+    "temp": 25.3,
     "lum": null,
     "stale": false
    },

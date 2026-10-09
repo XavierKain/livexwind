@@ -43,6 +43,40 @@ struct WindguruClient: Sendable {
         return reading
     }
 
+    /// Historique récent, en un seul appel.
+    ///
+    /// windguru refuse notre serveur depuis le 25/09/2026 — 403 sur chaque
+    /// requête, pour un volume d'appels qui était le nôtre. Le téléphone, lui,
+    /// a toujours le droit de lire : c'est donc lui qui va chercher la courbe,
+    /// mais **une fois** quand on ouvre la balise, pas une fois par minute. Les
+    /// relevés qui suivent viennent s'y ajouter tout seuls.
+    ///
+    /// Les séries arrivent en colonnes parallèles, indexées par `unixtime`.
+    func history(id: Int, hours: Int = 48, step: Int = 10) async throws -> [WindReading] {
+        let now = Date()
+        let from = Self.stamp(now.addingTimeInterval(-Double(hours) * 3600))
+        let to = Self.stamp(now)
+
+        // `vars` limite les colonnes renvoyées — leur propre documentation
+        // prévient que cette requête peut être lourde, autant ne pas demander
+        // ce qu'on n'affiche pas. L'horodatage est toujours inclus d'office.
+        let query = "q=station_data&id_station=\(id)&from=\(from)&to=\(to)"
+            + "&avg_minutes=\(step)&vars=wind_avg,wind_max,wind_min,wind_direction,temperature"
+        let (data, _) = try await URLSession.shared.data(for: request(query, timeout: 25))
+        let series = try JSONDecoder().decode(SeriesPayload.self, from: data)
+        return series.readings
+    }
+
+    /// « 2026-10-09T07:30:00.000Z », encodé pour la requête.
+    private static func stamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
+        return formatter.string(from: date)
+            .addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""
+    }
+
     // MARK: Décodage
 
     private struct StationPayload: Decodable {
@@ -62,6 +96,43 @@ struct WindguruClient: Sendable {
                 return "\(spot) — \(station)"
             }
             return station.isEmpty ? (spot.isEmpty ? "Station \(id_station ?? 0)" : spot) : station
+        }
+    }
+
+    /// Séries de l'historique : des colonnes parallèles, pas des objets.
+    /// Une station peut manquer un capteur, d'où les tableaux plus courts que
+    /// les autres et les trous à l'intérieur.
+    private struct SeriesPayload: Decodable {
+        let unixtime: [Double]?
+        let wind_avg: [Double?]?
+        let wind_max: [Double?]?
+        let wind_min: [Double?]?
+        let wind_direction: [Double?]?
+        let temperature: [Double?]?
+
+        private func at(_ column: [Double?]?, _ index: Int) -> Double? {
+            guard let column, index < column.count else { return nil }
+            return column[index]
+        }
+
+        var readings: [WindReading] {
+            (unixtime ?? []).enumerated().compactMap { index, stamp in
+                let average = at(wind_avg, index)
+                let gust = at(wind_max, index)
+                guard average != nil || gust != nil else { return nil }
+                let direction = at(wind_direction, index).map { ((Int($0) % 360) + 360) % 360 }
+                return WindReading(
+                    date: Date(timeIntervalSince1970: stamp),
+                    directionDegrees: direction,
+                    directionLabel: nil,
+                    averageKmh: average.map { $0 * WindguruClient.knotToKmh },
+                    gustKmh: gust.map { $0 * WindguruClient.knotToKmh },
+                    gustDirectionDegrees: nil,
+                    minKmh: at(wind_min, index).map { $0 * WindguruClient.knotToKmh },
+                    temperature: at(temperature, index),
+                    luminosity: nil
+                )
+            }
         }
     }
 

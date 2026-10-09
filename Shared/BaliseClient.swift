@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Récupère le relevé d'une balise FFVL.
 ///
@@ -152,6 +153,53 @@ struct BaliseClient: Sendable {
         return try? await fetchFeed()
     }
 
+    // MARK: - Historique lu en direct
+
+    /// Combien de temps sans nouvel appel direct, et à partir de quel trou on
+    /// se décide. Un appel ramène 48 h : il n'y a aucune raison de le refaire
+    /// tant que la courbe se complète toute seule avec les relevés du moment.
+    private static let historyEvery: TimeInterval = 15 * 60
+    private static let historyHole: TimeInterval = 3600
+
+    /// Historique pris à la source, quand c'est à nous de le faire.
+    ///
+    /// windguru refuse notre serveur depuis le 25/09/2026 : son flux est figé,
+    /// et la courbe de ces balises serait vide. Le téléphone, lui, a toujours
+    /// le droit de lire. Alors il lit — mais une fois à l'ouverture et pas une
+    /// fois par minute, sous peine de se faire fermer la porte à son tour.
+    ///
+    /// Les autres sources passent par le serveur, qui les relève pour tout le
+    /// monde : rien à aller chercher ici.
+    private func directHistory(completing known: [WindReading]) async -> [WindReading] {
+        guard balise.provider == .windguru else { return [] }
+
+        let tail = known.last?.date ?? .distantPast
+        let incomplete = known.count < 20
+            || Date().timeIntervalSince(tail) > Self.historyHole
+        guard incomplete,
+              SharedStore.shared.mayFetchHistory(key: balise.key, every: Self.historyEvery)
+        else { return [] }
+
+        do {
+            return try await WindguruClient.shared.history(id: sourceID)
+        } catch {
+            // Surtout pas en silence : c'est exactement comme ça que le refus
+            // de windguru au serveur est passé inaperçu quatorze jours.
+            Logger.balise.warning(
+                "historique windguru \(sourceID, privacy: .public) indisponible : \(error.localizedDescription, privacy: .public)")
+            return []
+        }
+    }
+
+    /// Deux historiques en un, sans doublon, dans l'ordre.
+    private static func merge(_ first: [WindReading], _ second: [WindReading]) -> [WindReading] {
+        guard !first.isEmpty || !second.isEmpty else { return [] }
+        var byDate: [Date: WindReading] = [:]
+        for reading in first { byDate[reading.date] = reading }
+        for reading in second { byDate[reading.date] = reading }
+        return byDate.values.sorted { $0.date < $1.date }
+    }
+
     // MARK: - Instantané complet
 
     /// Scraping direct pour la valeur la plus fraîche, flux pour l'historique,
@@ -163,7 +211,11 @@ struct BaliseClient: Sendable {
         let feed = await feedTask
         let cached = SharedStore.shared.loadSnapshot(key: balise.key)
 
-        var history = feed?.history ?? cached?.history ?? []
+        // On réunit au lieu de choisir : le flux du serveur et ce qu'on a
+        // accumulé ici ne se recouvrent pas toujours — c'est tout l'intérêt
+        // quand le serveur n'a plus le droit de lire la source.
+        var history = Self.merge(feed?.history ?? [], cached?.history ?? [])
+        history = Self.merge(history, await directHistory(completing: history))
         if let live {
             history.removeAll { abs($0.date.timeIntervalSince(live.date)) < 60 }
             history.append(live)
@@ -227,6 +279,12 @@ private actor ServerReach {
     func note(reachable: Bool) {
         mutedUntil = reachable ? nil : Date().addingTimeInterval(Self.pause)
     }
+}
+
+extension Logger {
+    /// Journal de l'app, lisible dans Console.app. Une lecture qui échoue doit
+    /// laisser une trace quelque part.
+    static let balise = Logger(subsystem: "fr.livexwind", category: "balise")
 }
 
 enum WindError: Error, LocalizedError {

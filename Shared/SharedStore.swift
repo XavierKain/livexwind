@@ -11,6 +11,7 @@ struct SharedStore {
 
     private let defaults: UserDefaults
     private let snapshotKey = "wind.snapshot"
+    private let historyKey = "wind.history.fetchedAt"
     private let unitKey = "wind.unit"
     private let alertSettingsKey = "wind.alerts.settings"
     private let alertStateKey = "wind.alerts.state"
@@ -95,6 +96,19 @@ struct SharedStore {
     func loadSnapshot(key: String) -> WindSnapshot? {
         guard let data = defaults.data(forKey: "\(snapshotKey).\(key)") else { return nil }
         return try? JSONDecoder().decode(WindSnapshot.self, from: data)
+    }
+
+    /// Dernier appel à l'historique direct d'une source, par balise.
+    ///
+    /// Persisté, et pas seulement gardé en mémoire : un widget est un processus
+    /// qui naît et meurt à chaque rafraîchissement, il redemanderait sinon la
+    /// courbe complète toutes les cinq minutes.
+    func mayFetchHistory(key: String, every seconds: TimeInterval) -> Bool {
+        let stamp = "\(historyKey).\(key)"
+        let last = defaults.object(forKey: stamp) as? Date
+        guard last == nil || Date().timeIntervalSince(last!) >= seconds else { return false }
+        defaults.set(Date(), forKey: stamp)
+        return true
     }
 
     func save(snapshot: WindSnapshot) {

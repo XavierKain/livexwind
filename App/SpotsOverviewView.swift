@@ -109,7 +109,7 @@ private struct SpotRow: View {
                         // partir.
                         let blind = snapshot?.alertsAreBlind == true
                         Image(systemName: blind ? "bell.badge.slash.fill" : "bell.fill")
-                            .foregroundStyle(blind ? .secondary : .orange)
+                            .foregroundStyle(blind ? Color.secondary : Color.orange)
                     }
                     if isOffline, let snapshot {
                         Image(systemName: "bolt.horizontal.circle")

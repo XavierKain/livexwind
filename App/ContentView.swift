@@ -142,12 +142,23 @@ struct ContentView: View {
     private var alertsCard: some View {
         Button { showAlerts = true } label: {
             HStack(spacing: 12) {
-                Image(systemName: store.alerts.enabled ? "bell.badge.fill" : "bell.slash")
+                Image(systemName: alertsAreBlind ? "bell.badge.slash.fill"
+                      : store.alerts.enabled ? "bell.badge.fill" : "bell.slash")
                     .font(.title3)
                     .foregroundStyle(store.alerts.enabled ? Color.orange : .secondary)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Alertes de seuil").font(.headline).foregroundStyle(.primary)
                     Text(alertsSummary).font(.caption).foregroundStyle(.secondary)
+                    // Un seuil armé qui ne peut pas se déclencher doit le dire :
+                    // sans ça on compte dessus, et on ne saura jamais qu'il
+                    // n'est jamais parti.
+                    if alertsAreBlind {
+                        Label("Ne peut pas se déclencher — \(store.snapshot.blindText)",
+                              systemImage: "exclamationmark.triangle.fill")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 Spacer()
                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
@@ -156,6 +167,12 @@ struct ContentView: View {
             .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 18))
         }
         .buttonStyle(.plain)
+    }
+
+    /// Seuils armés sur une balise que le serveur ne reçoit plus : ils ne
+    /// partiront pas, app fermée.
+    private var alertsAreBlind: Bool {
+        store.alerts.enabled && store.snapshot.alertsAreBlind
     }
 
     private var alertsSummary: String {

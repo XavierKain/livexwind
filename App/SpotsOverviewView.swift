@@ -104,7 +104,12 @@ private struct SpotRow: View {
                     .lineLimit(1)
                 HStack(spacing: 5) {
                     if hasAlerts {
-                        Image(systemName: "bell.fill").foregroundStyle(.orange)
+                        // Cloche barrée quand le serveur ne reçoit plus la
+                        // balise : le seuil est bien armé, mais il ne peut pas
+                        // partir.
+                        let blind = snapshot?.alertsAreBlind == true
+                        Image(systemName: blind ? "bell.badge.slash.fill" : "bell.fill")
+                            .foregroundStyle(blind ? .secondary : .orange)
                     }
                     if isOffline, let snapshot {
                         Image(systemName: "bolt.horizontal.circle")

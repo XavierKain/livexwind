@@ -25,6 +25,15 @@ struct AlertSettingsView: View {
                               systemImage: "exclamationmark.triangle")
                             .font(.caption).foregroundStyle(.orange)
                     }
+                    // Les seuils sont évalués par le serveur, app fermée. S'il
+                    // ne reçoit plus la balise, le réglage reste là, l'alerte ne
+                    // part jamais, et rien ne le disait.
+                    if store.alerts.enabled && store.snapshot.alertsAreBlind {
+                        Label("Ces seuils ne peuvent pas se déclencher : \(store.snapshot.blindText). L'écran reste à jour, les notifications non.",
+                              systemImage: "bell.badge.slash")
+                            .font(.caption).foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     Picker("Basé sur", selection: $store.alerts.useGusts) {
                         Text("Vent moyen").tag(false)
                         Text("Rafales").tag(true)

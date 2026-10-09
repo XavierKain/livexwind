@@ -82,6 +82,10 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// était déclarée muette les deux tiers du temps quand un seul chiffre
     /// servait aux deux questions.
     var silenceSeconds: Double?
+    /// Dernière fois que **le serveur** a obtenu un relevé de cette balise.
+    /// Distinct de `fetchedAt`, qui dit quand *nous* avons regardé : c'est
+    /// l'écart entre les deux qui révèle un serveur devenu aveugle.
+    var serverSeenAt: Date?
 
     static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
         WindSnapshot(
@@ -151,6 +155,26 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// Notre copie a vieilli, et on n'a pas encore relu la balise. Ce n'est pas
     /// un verdict sur elle : ça s'annonce « actualisation… », pas « hors ligne ».
     var isOutdated: Bool { isStale() && !isOffline }
+
+    /// On lit cette balise, le serveur non.
+    ///
+    /// Alertes de seuil et activité en direct partent de lui, app fermée : s'il
+    /// ne reçoit plus la balise, elles ne partiront pas, même si l'écran montre
+    /// du vent parfaitement frais. C'est le cas depuis que windguru refuse son
+    /// IP — et rien ne le disait. Un seuil armé qui ne peut pas se déclencher
+    /// doit l'annoncer, sinon on compte dessus pour rien.
+    var alertsAreBlind: Bool {
+        guard let serverSeenAt, !isStale() else { return false }
+        return Date().timeIntervalSince(serverSeenAt) > max(silenceLimit * 3, 3600)
+    }
+
+    /// « le serveur ne la reçoit plus depuis 3 h », « …depuis 14 jours ».
+    var blindText: String {
+        guard let serverSeenAt else { return "le serveur ne la reçoit pas" }
+        let hours = Int(Date().timeIntervalSince(serverSeenAt) / 3600)
+        if hours < 48 { return "le serveur ne la reçoit plus depuis \(max(1, hours)) h" }
+        return "le serveur ne la reçoit plus depuis \(hours / 24) jours"
+    }
 
     /// « hors ligne depuis 23 min », « hors ligne depuis 3 h ».
     var offlineText: String {

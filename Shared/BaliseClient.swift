@@ -247,7 +247,8 @@ struct BaliseClient: Sendable {
             history: history,
             fetchedAt: observedAt,
             periodSeconds: feed?.periodSeconds ?? cached?.periodSeconds ?? 600,
-            silenceSeconds: feed?.silenceSeconds ?? cached?.silenceSeconds
+            silenceSeconds: feed?.silenceSeconds ?? cached?.silenceSeconds,
+            serverSeenAt: feed?.serverSeenAt ?? cached?.serverSeenAt
         )
         SharedStore.shared.save(snapshot: snapshot)
         return snapshot
@@ -465,7 +466,8 @@ struct FeedPayload: Decodable {
             history: readings,
             fetchedAt: Self.stamp(checkedAt) ?? Self.stamp(generatedAt) ?? .now,
             periodSeconds: period ?? 600,
-            silenceSeconds: silence
+            silenceSeconds: silence,
+            serverSeenAt: Self.stamp(generatedAt)
         )
     }
 

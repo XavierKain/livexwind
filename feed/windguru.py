@@ -21,11 +21,15 @@ propre index : un balayage lent et repris d'exécution en exécution des fiches
 from __future__ import annotations
 
 import json
+import logging
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+
+log = logging.getLogger("livexwind.windguru")
 
 BASE = "https://www.windguru.cz/int/iapi.php"
 HEADERS = {
@@ -41,6 +45,65 @@ INDEX_PATH = Path.home() / "xklip" / "data" / "windguru_index.json"
 
 COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
            "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"]
+
+
+# --- Refus de la source -----------------------------------------------------
+#
+# windguru nous a fermé `iapi.php` le 25/09/2026 : HTTP 403 « forbidden » sur
+# chaque appel, alors que les pages HTML continuaient de répondre. Nos appels se
+# comptaient en milliers par jour — deux par relevé et par balise, plus vingt par
+# affichage de carte. Personne ne l'a vu pendant quatorze jours : `_get` avalait
+# l'exception, `latest()` renvoyait None, et le serveur se contentait de
+# reconduire un flux figé.
+#
+# Deux conséquences tirées de là : on le dit, et on cesse de frapper à une porte
+# qu'on vient de nous fermer.
+
+REFUSAL_CODES = (401, 403, 429)
+MUTE_AFTER_REFUSAL = 600     # on laisse la source respirer avant de réessayer
+STATION_TTL = 24 * 3600      # nom, position, altitude : ça ne bouge pas
+
+_refusal: dict = {"message": None, "since": None, "count": 0, "muted_until": 0.0}
+_station_cache: dict = {}
+
+
+def status() -> dict:
+    """État de la source, tel que /api/health doit pouvoir le montrer."""
+    if not _refusal["message"]:
+        return {"ok": True}
+    return {"ok": False,
+            "message": _refusal["message"],
+            "since": _refusal["since"],
+            "count": _refusal["count"],
+            "muted_for": max(0, int(_refusal["muted_until"] - time.time()))}
+
+
+def available() -> bool:
+    """Faux tant que la source vient de nous refuser l'accès."""
+    return time.time() >= _refusal["muted_until"]
+
+
+def _note(exc: Exception, what: str):
+    message = f"HTTP {exc.code}" if isinstance(exc, HTTPError) else f"{type(exc).__name__}: {exc}"
+    refused = isinstance(exc, HTTPError) and exc.code in REFUSAL_CODES
+    first = _refusal["message"] != message
+    _refusal["message"] = message
+    _refusal["count"] = 1 if first else _refusal["count"] + 1
+    if first:
+        _refusal["since"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    if refused:
+        _refusal["muted_until"] = time.time() + MUTE_AFTER_REFUSAL
+    # Bruyant la première fois, discret ensuite : le journal doit porter le
+    # diagnostic sans se remplir d'une ligne toutes les 25 secondes.
+    (log.warning if first else log.debug)(
+        "windguru refuse %s (%s) — %de fois depuis %s",
+        what, message, _refusal["count"], _refusal["since"])
+
+
+def _clear():
+    if _refusal["message"]:
+        log.warning("windguru répond de nouveau (après %d refus)", _refusal["count"])
+    _refusal.update(message=None, since=None, count=0, muted_until=0.0)
 
 
 def _get(params: str, timeout: int = 25):
@@ -64,14 +127,26 @@ def _label(payload: dict) -> str:
 
 
 def station(station_id: int) -> dict | None:
-    """Fiche de la station, ou None si l'identifiant n'existe pas."""
+    """Fiche de la station, ou None si l'identifiant n'existe pas.
+
+    Gardée en cache : le nom, la position et l'altitude d'une station ne
+    changent pas, et la redemander à chaque relevé doublait sans rien y gagner
+    le nombre d'appels à une API qui n'est pas la nôtre.
+    """
+    cached = _station_cache.get(station_id)
+    if cached and time.time() - cached[0] < STATION_TTL:
+        return cached[1]
+    if not available():
+        return None
     try:
         payload = _get(f"q=station&id_station={station_id}&weather=false")
-    except Exception:
+        _clear()
+    except Exception as exc:
+        _note(exc, f"la fiche de la station {station_id}")
         return None
     if not isinstance(payload, dict) or not payload.get("id_station"):
         return None
-    return {
+    fiche = {
         "id": int(payload["id_station"]),
         "name": _label(payload),
         "lat": payload.get("lat"),
@@ -79,6 +154,8 @@ def station(station_id: int) -> dict | None:
         "altitude": payload.get("alt"),
         "url": f"https://www.windguru.cz/station/{station_id}",
     }
+    _station_cache[station_id] = (time.time(), fiche)
+    return fiche
 
 
 def _reading(avg, mx, mn, direction, temp, stamp: float, pressure=None) -> dict:
@@ -99,9 +176,13 @@ def _reading(avg, mx, mn, direction, temp, stamp: float, pressure=None) -> dict:
 
 
 def latest(station_id: int) -> dict | None:
+    if not available():
+        return None
     try:
         d = _get(f"q=station_data_current&id_station={station_id}")
-    except Exception:
+        _clear()
+    except Exception as exc:
+        _note(exc, f"le relevé de la station {station_id}")
         return None
     if not isinstance(d, dict) or d.get("wind_avg") is None:
         return None
@@ -115,9 +196,13 @@ def history(station_id: int, hours: int = 48) -> list[dict]:
     now = datetime.now(timezone.utc)
     frm = quote((now - timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%S.000Z"), safe="")
     to = quote(now.strftime("%Y-%m-%dT%H:%M:%S.000Z"), safe="")
+    if not available():
+        return []
     try:
         d = _get(f"q=station_data&id_station={station_id}&from={frm}&to={to}&avg_minutes=10", timeout=45)
-    except Exception:
+        _clear()
+    except Exception as exc:
+        _note(exc, f"l'historique de la station {station_id}")
         return []
 
     stamps = d.get("unixtime") or []

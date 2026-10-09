@@ -334,6 +334,29 @@ def tracked_balises() -> tuple[list, int]:
 
 # -------------------------------------------------------------------------- api
 
+def stale_feeds(balises: list, hours: float = 1.0) -> list:
+    """Flux qu'on n'a pas pu réécrire depuis longtemps.
+
+    Une source qui cesse de répondre ne casse rien de visible : le flux garde
+    son dernier relevé, l'API reste verte, et l'app affiche une courbe qui ne
+    bouge plus. windguru nous a fermé son API le 25/09/2026 et ça n'a été vu
+    que quatorze jours plus tard. Ce que `pusher_age` fait pour la boucle, ceci
+    le fait pour chaque source.
+    """
+    figes = []
+    for balise in balises:
+        feed = cached_feed(balise.get("provider", "ffvl"), balise_code(balise))
+        stored = feed.get("generatedAt")
+        if not stored:
+            continue
+        age = (time.time() - iso_to_epoch(stored)) / 3600
+        if age >= hours:
+            figes.append({"balise": balise_key(balise),
+                          "stored_hours_ago": round(age, 1),
+                          "last_check": feed.get("checkedAt")})
+    return sorted(figes, key=lambda e: -e["stored_hours_ago"])
+
+
 @app.route("/api/health")
 def health():
     state = load_json(STATE_PATH, {})
@@ -348,6 +371,10 @@ def health():
                     "last_push": state.get("last_push"),
                     "pusher_age": round(time.time() - _pusher_beat["at"], 1)
                                   if _pusher_beat["at"] else None,
+                    # Une boucle vivante ne suffit pas : encore faut-il que les
+                    # sources répondent, et que les flux avancent.
+                    "sources": {"wg": windguru.status()},
+                    "stale_feeds": stale_feeds(balises),
                     "windguru_index": windguru.index_progress(),
                     "ffvl_index": ffvl_index.progress()})
 

@@ -141,29 +141,36 @@ struct ContentView: View {
 
     private var alertsCard: some View {
         Button { showAlerts = true } label: {
-            HStack(spacing: 12) {
-                Image(systemName: alertsAreBlind ? "bell.badge.slash.fill"
-                      : store.alerts.enabled ? "bell.badge.fill" : "bell.slash")
-                    .font(.title3)
-                    .foregroundStyle(store.alerts.enabled ? Color.orange : .secondary)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Alertes de seuil").font(.headline).foregroundStyle(.primary)
-                    Text(alertsSummary).font(.caption).foregroundStyle(.secondary)
-                    // Un seuil armé qui ne peut pas se déclencher doit le dire :
-                    // sans ça on compte dessus, et on ne saura jamais qu'il
-                    // n'est jamais parti.
-                    if alertsAreBlind {
-                        Label("Ne peut pas se déclencher — \(store.snapshot.blindText)",
-                              systemImage: "exclamationmark.triangle.fill")
-                            .font(.caption2.weight(.medium))
-                            .foregroundStyle(.orange)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Image(systemName: alertsAreBlind ? "bell.badge.slash.fill"
+                          : store.alerts.enabled ? "bell.badge.fill" : "bell.slash")
+                        .font(.title3)
+                        .foregroundStyle(store.alerts.enabled ? Color.orange : .secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Alertes de seuil").font(.headline).foregroundStyle(.primary)
+                        Text(alertsSummary).font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
+                }
+                // Sur sa propre ligne, pleine largeur. Coincé entre le résumé et
+                // le chevron, cet avertissement imposait sa largeur idéale —
+                // une seule ligne — à toute la carte, et l'écran se mettait à
+                // défiler latéralement.
+                if alertsAreBlind {
+                    HStack(alignment: .top, spacing: 5) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                        Text("Ne peut pas se déclencher — \(store.snapshot.blindText)")
                             .fixedSize(horizontal: false, vertical: true)
                     }
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.orange)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
             }
             .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 18))
         }
         .buttonStyle(.plain)

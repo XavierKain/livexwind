@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-12T06:12:00Z",
+    "t": "2026-10-12T06:32:00Z",
     "dir": 202,
     "dirLabel": "SSO",
-    "avg": 11.0,
-    "gust": 15.0,
+    "avg": 14.0,
+    "gust": 20.0,
     "gustDir": 202,
     "gustDirLabel": "SSO",
-    "min": 7.0,
+    "min": 10.0,
     "temp": 18.0,
-    "lum": 25.0,
+    "lum": 65.0,
     "stale": false
    },
    "period": 600
@@ -45,7 +45,7 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-12T06:20:00Z",
+    "t": "2026-10-12T06:36:00Z",
     "dir": 223,
     "dirLabel": "SO",
     "avg": 29.6,

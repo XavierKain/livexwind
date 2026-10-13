@@ -3,18 +3,18 @@
   {
    "key": "ffvl-64",
    "id": 64,
-   "name": "Balise 64",
+   "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": null,
-    "dir": null,
-    "dirLabel": null,
-    "avg": null,
-    "gust": null,
-    "gustDir": null,
-    "gustDirLabel": null,
-    "min": null,
-    "temp": null,
+    "t": "2026-10-13T05:54:00Z",
+    "dir": 134,
+    "dirLabel": "SE",
+    "avg": 14.0,
+    "gust": 16.0,
+    "gustDir": 134,
+    "gustDirLabel": "SE",
+    "min": 12.0,
+    "temp": 17.0,
     "lum": null,
     "stale": false
    },
@@ -45,18 +45,18 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-13T05:39:00Z",
-    "dir": 259,
-    "dirLabel": "O",
-    "avg": 14.8,
-    "gust": 16.7,
+    "t": "2026-10-13T06:04:00Z",
+    "dir": 255,
+    "dirLabel": "OSO",
+    "avg": 18.5,
+    "gust": 20.4,
     "gustDir": null,
     "min": null,
     "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 120
   },
   {
    "key": "wg-2667",

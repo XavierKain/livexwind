@@ -1,26 +1,6 @@
 {
  "spots": [
   {
-   "key": "ffvl-64",
-   "id": 64,
-   "name": "Balise 64",
-   "provider": "ffvl",
-   "current": {
-    "t": null,
-    "dir": null,
-    "dirLabel": null,
-    "avg": null,
-    "gust": null,
-    "gustDir": null,
-    "gustDirLabel": null,
-    "min": null,
-    "temp": null,
-    "lum": null,
-    "stale": false
-   },
-   "period": 600
-  },
-  {
    "key": "wm-73091265",
    "id": 73091265,
    "name": "Isthme",
@@ -45,11 +25,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-13T04:41:00Z",
-    "dir": 266,
-    "dirLabel": "O",
-    "avg": 25.9,
-    "gust": 27.8,
+    "t": "2026-10-13T05:05:00Z",
+    "dir": 258,
+    "dirLabel": "OSO",
+    "avg": 14.8,
+    "gust": 16.7,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -103,18 +83,18 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-13T04:42:00Z",
-    "dir": 61,
+    "t": "2026-10-13T05:02:00Z",
+    "dir": 66,
     "dirLabel": "ENE",
-    "avg": 10.7,
-    "gust": 12.6,
+    "avg": 7.4,
+    "gust": 4.6,
     "gustDir": null,
-    "min": 7.4,
+    "min": 4.3,
     "temp": 19.6,
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 180
   },
   {
    "key": "wg-12491",

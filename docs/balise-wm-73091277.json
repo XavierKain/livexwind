@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T12:11:09Z",
+ "generatedAt": "2026-10-16T12:35:11Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,36 +9,20 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-10-16T12:06:00Z",
-  "dir": 12,
+  "t": "2026-10-16T12:32:00Z",
+  "dir": 21,
   "dirLabel": "NNE",
-  "avg": 25.9,
-  "gust": 31.5,
+  "avg": 27.8,
+  "gust": 35.2,
   "gustDir": null,
   "min": null,
   "temp": null,
   "lum": null,
   "stale": false
  },
- "period": 120,
+ "period": 240,
  "silence": 960,
  "history": [
-  {
-   "t": "2026-10-14T12:21:00Z",
-   "dir": 163,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-14T12:31:00Z",
-   "dir": 162,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-14T12:47:00Z",
    "dir": 165,
@@ -1176,33 +1160,9 @@
    "temp": null
   },
   {
-   "t": "2026-10-16T00:13:00Z",
-   "dir": 270,
-   "avg": 16.7,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-16T00:19:00Z",
    "dir": 271,
    "avg": 16.7,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-16T00:23:00Z",
-   "dir": 274,
-   "avg": 16.7,
-   "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-16T00:29:00Z",
-   "dir": 271,
-   "avg": 14.8,
    "gust": 16.7,
    "min": null,
    "temp": null
@@ -2164,6 +2124,38 @@
    "dir": 12,
    "avg": 25.9,
    "gust": 31.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-16T12:16:00Z",
+   "dir": 16,
+   "avg": 22.2,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-16T12:20:00Z",
+   "dir": 15,
+   "avg": 20.4,
+   "gust": 29.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-16T12:24:00Z",
+   "dir": 16,
+   "avg": 20.4,
+   "gust": 27.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-16T12:32:00Z",
+   "dir": 21,
+   "avg": 27.8,
+   "gust": 35.2,
    "min": null,
    "temp": null
   }

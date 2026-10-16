@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T16:19:26Z",
+ "generatedAt": "2026-10-16T16:29:33Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -155,5 +155,6 @@
    "min": null,
    "temp": 25.6
   }
- ]
+ ],
+ "checkedAt": "2026-10-16T16:39:36Z"
 }

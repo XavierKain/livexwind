@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T08:54:49Z",
+ "generatedAt": "2026-10-17T09:15:54Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,30 +9,21 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-10-17T08:54:00Z",
-  "dir": 92,
-  "dirLabel": "E",
+  "t": "2026-10-17T09:15:00Z",
+  "dir": 105,
+  "dirLabel": "ESE",
   "avg": 6.5,
-  "gust": 14.4,
+  "gust": 17.6,
   "gustDir": null,
-  "min": 3.1,
-  "temp": 22.1,
-  "pressure": 1021.2,
+  "min": 1.5,
+  "temp": 22.5,
+  "pressure": 1021.1,
   "lum": null,
   "stale": false
  },
- "period": 60,
+ "period": 300,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-10-15T09:00:00Z",
-   "dir": 80,
-   "avg": 32.8,
-   "gust": 47.4,
-   "min": 18.1,
-   "temp": 23.8,
-   "pressure": null
-  },
   {
    "t": "2026-10-15T09:20:00Z",
    "dir": 90,
@@ -1225,37 +1216,12 @@
    "temp": 22.1
   },
   {
-   "t": "2026-10-16T20:55:00Z",
-   "dir": 82,
-   "avg": 13.0,
-   "gust": 27.4,
-   "min": 6.5,
-   "temp": 22
-  },
-  {
    "t": "2026-10-16T21:00:00Z",
    "dir": 77,
    "avg": 14.3,
    "gust": 24.4,
    "min": 8.9,
    "temp": 21.9,
-   "pressure": null
-  },
-  {
-   "t": "2026-10-16T21:06:00Z",
-   "dir": 82,
-   "avg": 16.1,
-   "gust": 24.1,
-   "min": 9.6,
-   "temp": 22
-  },
-  {
-   "t": "2026-10-16T21:10:00Z",
-   "dir": 79,
-   "avg": 18.3,
-   "gust": 28.3,
-   "min": 13.0,
-   "temp": 22,
    "pressure": null
   },
   {
@@ -2197,6 +2163,38 @@
    "gust": 14.4,
    "min": 3.1,
    "temp": 22.1
+  },
+  {
+   "t": "2026-10-17T08:59:00Z",
+   "dir": 115,
+   "avg": 6.5,
+   "gust": 14.4,
+   "min": 4.6,
+   "temp": 22.2
+  },
+  {
+   "t": "2026-10-17T09:04:00Z",
+   "dir": 166,
+   "avg": 8.0,
+   "gust": 14.4,
+   "min": 3.1,
+   "temp": 22.2
+  },
+  {
+   "t": "2026-10-17T09:09:00Z",
+   "dir": 106,
+   "avg": 8.0,
+   "gust": 6.5,
+   "min": 0.0,
+   "temp": 22.3
+  },
+  {
+   "t": "2026-10-17T09:15:00Z",
+   "dir": 105,
+   "avg": 6.5,
+   "gust": 17.6,
+   "min": 1.5,
+   "temp": 22.5
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T14:02:20Z",
+ "generatedAt": "2026-10-17T14:18:24Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,15 +9,15 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-10-17T14:01:00Z",
-  "dir": 264,
-  "dirLabel": "O",
-  "avg": 9.6,
-  "gust": 17.6,
+  "t": "2026-10-17T14:17:00Z",
+  "dir": 246,
+  "dirLabel": "OSO",
+  "avg": 8.0,
+  "gust": 13.0,
   "gustDir": null,
-  "min": 6.5,
-  "temp": 22.1,
-  "pressure": 1018.5,
+  "min": 4.6,
+  "temp": 21.9,
+  "pressure": 1018.4,
   "lum": null,
   "stale": false
  },
@@ -1216,23 +1216,6 @@
    "pressure": null
   },
   {
-   "t": "2026-10-17T02:06:00Z",
-   "dir": 73,
-   "avg": 11.1,
-   "gust": 17.6,
-   "min": 8.0,
-   "temp": 21.6
-  },
-  {
-   "t": "2026-10-17T02:10:00Z",
-   "dir": 90,
-   "avg": 10.6,
-   "gust": 13.3,
-   "min": 3.5,
-   "temp": 21.6,
-   "pressure": null
-  },
-  {
    "t": "2026-10-17T02:17:00Z",
    "dir": 67,
    "avg": 6.5,
@@ -2101,6 +2084,30 @@
    "gust": 17.6,
    "min": 6.5,
    "temp": 22.1
+  },
+  {
+   "t": "2026-10-17T14:07:00Z",
+   "dir": 259,
+   "avg": 9.6,
+   "gust": 13.0,
+   "min": 6.5,
+   "temp": 22.1
+  },
+  {
+   "t": "2026-10-17T14:12:00Z",
+   "dir": 245,
+   "avg": 9.6,
+   "gust": 13.0,
+   "min": 6.5,
+   "temp": 22
+  },
+  {
+   "t": "2026-10-17T14:17:00Z",
+   "dir": 246,
+   "avg": 8.0,
+   "gust": 13.0,
+   "min": 4.6,
+   "temp": 21.9
   }
  ]
 }

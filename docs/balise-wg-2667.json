@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T14:08:53Z",
+ "generatedAt": "2026-10-18T14:30:02Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,39 +9,21 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-10-18T14:08:00Z",
-  "dir": 122,
-  "dirLabel": "ESE",
-  "avg": 0.0,
-  "gust": 0.0,
+  "t": "2026-10-18T14:30:00Z",
+  "dir": 244,
+  "dirLabel": "OSO",
+  "avg": 1.5,
+  "gust": 3.1,
   "gustDir": null,
   "min": 0.0,
-  "temp": 20.6,
-  "pressure": 1014.4,
+  "temp": 21.3,
+  "pressure": 1014.1,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "silence": 690,
  "history": [
-  {
-   "t": "2026-10-16T14:20:00Z",
-   "dir": 85,
-   "avg": 15.4,
-   "gust": 28.7,
-   "min": 6.3,
-   "temp": 24.5,
-   "pressure": null
-  },
-  {
-   "t": "2026-10-16T14:30:00Z",
-   "dir": 79,
-   "avg": 18.1,
-   "gust": 29.8,
-   "min": 9.3,
-   "temp": 24.2,
-   "pressure": null
-  },
   {
    "t": "2026-10-16T14:49:00Z",
    "dir": 102,
@@ -1187,38 +1169,12 @@
    "pressure": null
   },
   {
-   "t": "2026-10-18T02:10:00Z",
-   "dir": 112,
-   "avg": 5.4,
-   "gust": 8.7,
-   "min": 1.5,
-   "temp": 20.7,
-   "pressure": null
-  },
-  {
    "t": "2026-10-18T02:15:00Z",
    "dir": 105,
    "avg": 4.6,
    "gust": 9.6,
    "min": 0.0,
    "temp": 20.7
-  },
-  {
-   "t": "2026-10-18T02:20:00Z",
-   "dir": 107,
-   "avg": 3.0,
-   "gust": 5.2,
-   "min": 0.0,
-   "temp": 20.8,
-   "pressure": null
-  },
-  {
-   "t": "2026-10-18T02:26:00Z",
-   "dir": 158,
-   "avg": 1.5,
-   "gust": 3.1,
-   "min": 0.0,
-   "temp": 20.8
   },
   {
    "t": "2026-10-18T02:30:00Z",
@@ -1963,6 +1919,38 @@
    "gust": 0.0,
    "min": 0.0,
    "temp": 20.6
+  },
+  {
+   "t": "2026-10-18T14:13:00Z",
+   "dir": 259,
+   "avg": 0.0,
+   "gust": 6.5,
+   "min": 0.0,
+   "temp": 21.2
+  },
+  {
+   "t": "2026-10-18T14:18:00Z",
+   "dir": 233,
+   "avg": 1.5,
+   "gust": 3.1,
+   "min": 0.0,
+   "temp": 21.1
+  },
+  {
+   "t": "2026-10-18T14:24:00Z",
+   "dir": 220,
+   "avg": 1.5,
+   "gust": 1.5,
+   "min": 0.0,
+   "temp": 21.2
+  },
+  {
+   "t": "2026-10-18T14:30:00Z",
+   "dir": 244,
+   "avg": 1.5,
+   "gust": 3.1,
+   "min": 0.0,
+   "temp": 21.3
   }
  ]
 }

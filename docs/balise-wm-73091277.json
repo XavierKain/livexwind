@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T08:21:27Z",
+ "generatedAt": "2026-10-18T08:44:53Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,28 +9,20 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-10-18T08:14:00Z",
-  "dir": 11,
+  "t": "2026-10-18T08:39:00Z",
+  "dir": 0,
   "dirLabel": "N",
-  "avg": 14.8,
-  "gust": 16.7,
+  "avg": 11.1,
+  "gust": 13.0,
   "gustDir": null,
   "min": null,
   "temp": null,
   "lum": null,
   "stale": false
  },
- "period": 120,
+ "period": 240,
  "silence": 1050,
  "history": [
-  {
-   "t": "2026-10-16T08:34:00Z",
-   "dir": 335,
-   "avg": 27.8,
-   "gust": 33.3,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-16T08:50:00Z",
    "dir": 9,
@@ -1176,26 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-17T20:23:00Z",
-   "dir": 17,
-   "avg": 16.7,
-   "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-17T20:30:00Z",
    "dir": 17,
    "avg": 18.5,
    "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-17T20:40:00Z",
-   "dir": 15,
-   "avg": 16.7,
-   "gust": 22.2,
    "min": null,
    "temp": null
   },
@@ -1880,14 +1856,6 @@
    "temp": null
   },
   {
-   "t": "2026-10-18T05:29:00Z",
-   "dir": 6,
-   "avg": 14.8,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-18T05:35:00Z",
    "dir": 4,
    "avg": 14.8,
@@ -2084,6 +2052,38 @@
    "dir": 11,
    "avg": 14.8,
    "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-18T08:22:00Z",
+   "dir": 5,
+   "avg": 13.0,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-18T08:31:00Z",
+   "dir": 358,
+   "avg": 11.1,
+   "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-18T08:35:00Z",
+   "dir": 9,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-18T08:39:00Z",
+   "dir": 0,
+   "avg": 11.1,
+   "gust": 13.0,
    "min": null,
    "temp": null
   }

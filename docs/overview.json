@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-19T19:22:00Z",
+    "t": "2026-10-19T19:42:00Z",
     "dir": 90,
     "dirLabel": "E",
-    "avg": 8.0,
-    "gust": 10.0,
+    "avg": 10.0,
+    "gust": 12.0,
     "gustDir": 90,
     "gustDirLabel": "E",
-    "min": 7.0,
+    "min": 8.0,
     "temp": 12.0,
     "lum": null,
     "stale": false
@@ -45,18 +45,18 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-19T19:22:00Z",
-    "dir": 49,
+    "t": "2026-10-19T19:39:00Z",
+    "dir": 48,
     "dirLabel": "NE",
     "avg": 13.0,
-    "gust": 16.7,
+    "gust": 14.8,
     "gustDir": null,
     "min": null,
     "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 180
   },
   {
    "key": "wg-2667",
@@ -64,15 +64,15 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-10-19T19:25:00Z",
-    "dir": 82,
-    "dirLabel": "E",
-    "avg": 3.1,
-    "gust": 0.0,
+    "t": "2026-10-19T19:42:00Z",
+    "dir": 72,
+    "dirLabel": "ENE",
+    "avg": 4.6,
+    "gust": 6.5,
     "gustDir": null,
     "min": 0.0,
-    "temp": 19.1,
-    "pressure": 1015.5,
+    "temp": 18.4,
+    "pressure": 1015.7,
     "lum": null,
     "stale": false
    },
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-19T19:26:00Z",
-    "dir": 82,
-    "dirLabel": "E",
-    "avg": 5.7,
-    "gust": 6.1,
+    "t": "2026-10-19T19:48:00Z",
+    "dir": 74,
+    "dirLabel": "ENE",
+    "avg": 8.9,
+    "gust": 9.3,
     "gustDir": null,
     "min": 4.3,
-    "temp": 19.1,
+    "temp": 18.3,
     "lum": null,
     "stale": false
    },
@@ -142,19 +142,19 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-10-19T19:23:00Z",
+    "t": "2026-10-19T19:47:00Z",
     "dir": 253,
     "dirLabel": "OSO",
     "avg": 0.0,
     "gust": 0.0,
     "gustDir": null,
     "min": 0.0,
-    "temp": 18.3,
+    "temp": 18,
     "pressure": null,
     "lum": null,
     "stale": false
    },
-   "period": 180
+   "period": 300
   },
   {
    "key": "wg-3275",

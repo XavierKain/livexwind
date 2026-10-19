@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-19T22:25:00Z",
-    "dir": 17,
+    "t": "2026-10-19T22:47:00Z",
+    "dir": 21,
     "dirLabel": "NNE",
-    "avg": 13.0,
-    "gust": 14.8,
+    "avg": 9.3,
+    "gust": 13.0,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -64,15 +64,15 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-10-19T22:25:00Z",
-    "dir": 164,
-    "dirLabel": "SSE",
-    "avg": 9.6,
-    "gust": 16.1,
+    "t": "2026-10-19T22:50:00Z",
+    "dir": 216,
+    "dirLabel": "SO",
+    "avg": 14.4,
+    "gust": 20.9,
     "gustDir": null,
-    "min": 6.5,
-    "temp": 19.4,
-    "pressure": 1017,
+    "min": 11.1,
+    "temp": 19.7,
+    "pressure": 1016.9,
     "lum": null,
     "stale": false
    },
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-19T22:31:00Z",
-    "dir": 176,
-    "dirLabel": "S",
-    "avg": 15.4,
-    "gust": 24.1,
+    "t": "2026-10-19T22:52:00Z",
+    "dir": 221,
+    "dirLabel": "SO",
+    "avg": 20.4,
+    "gust": 25.6,
     "gustDir": null,
-    "min": 7.4,
-    "temp": 19.6,
+    "min": 13.9,
+    "temp": 19.7,
     "lum": null,
     "stale": false
    },
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-10-19T22:32:00Z",
+    "t": "2026-10-19T22:49:00Z",
     "dir": 253,
     "dirLabel": "OSO",
-    "avg": 3.6,
-    "gust": 6.8,
+    "avg": 16.9,
+    "gust": 19.1,
     "gustDir": null,
-    "min": 0.0,
-    "temp": 18.3,
+    "min": 14.7,
+    "temp": 18.9,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -174,7 +174,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 120
+   "period": 180
   }
  ]
 }

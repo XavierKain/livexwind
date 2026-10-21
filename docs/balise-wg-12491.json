@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T06:34:27Z",
+ "generatedAt": "2026-10-21T06:55:26Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -57,7 +57,17 @@
    "avg": 15.9,
    "gust": 27.0,
    "min": null,
-   "temp": 18.8
+   "temp": 18.8,
+   "pressure": null
+  },
+  {
+   "t": "2026-10-20T06:00:00Z",
+   "dir": 222,
+   "avg": 20.6,
+   "gust": 33.2,
+   "min": null,
+   "temp": 18.9,
+   "pressure": null
   },
   {
    "t": "2026-10-20T07:00:00Z",
@@ -65,7 +75,8 @@
    "avg": 19.1,
    "gust": 31.3,
    "min": null,
-   "temp": 19.1
+   "temp": 19.1,
+   "pressure": null
   },
   {
    "t": "2026-10-20T08:00:00Z",
@@ -73,7 +84,8 @@
    "avg": 17.2,
    "gust": 28.5,
    "min": null,
-   "temp": 18.7
+   "temp": 18.7,
+   "pressure": null
   },
   {
    "t": "2026-10-20T10:00:00Z",
@@ -81,7 +93,8 @@
    "avg": 18.7,
    "gust": 28.9,
    "min": null,
-   "temp": 19.7
+   "temp": 19.7,
+   "pressure": null
   },
   {
    "t": "2026-10-20T14:00:00Z",
@@ -89,7 +102,8 @@
    "avg": 22.4,
    "gust": 35.2,
    "min": null,
-   "temp": 20.9
+   "temp": 20.9,
+   "pressure": null
   },
   {
    "t": "2026-10-20T17:00:00Z",
@@ -97,7 +111,8 @@
    "avg": 19.1,
    "gust": 27.4,
    "min": null,
-   "temp": 19.5
+   "temp": 19.5,
+   "pressure": null
   },
   {
    "t": "2026-10-20T22:00:00Z",
@@ -105,7 +120,8 @@
    "avg": 18.7,
    "gust": 30.9,
    "min": null,
-   "temp": 18.5
+   "temp": 18.5,
+   "pressure": null
   },
   {
    "t": "2026-10-20T23:00:00Z",
@@ -113,7 +129,8 @@
    "avg": 19.1,
    "gust": 25.6,
    "min": null,
-   "temp": 18.4
+   "temp": 18.4,
+   "pressure": null
   },
   {
    "t": "2026-10-21T06:00:00Z",

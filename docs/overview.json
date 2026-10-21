@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-21T11:12:00Z",
+    "t": "2026-10-21T11:32:00Z",
     "dir": 292,
     "dirLabel": "ONO",
-    "avg": 50.0,
+    "avg": 52.0,
     "gust": 62.0,
-    "gustDir": 292,
-    "gustDirLabel": "ONO",
-    "min": 40.0,
+    "gustDir": 314,
+    "gustDirLabel": "NO",
+    "min": 44.0,
     "temp": 16.0,
     "lum": 100.0,
     "stale": false
@@ -26,8 +26,8 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-21T11:11:00Z",
-    "dir": 293,
+    "t": "2026-10-21T11:31:00Z",
+    "dir": 290,
     "dirLabel": "ONO",
     "avg": 48.2,
     "gust": 53.7,
@@ -45,18 +45,18 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-21T11:09:00Z",
-    "dir": 289,
+    "t": "2026-10-21T11:25:00Z",
+    "dir": 287,
     "dirLabel": "ONO",
-    "avg": 55.6,
-    "gust": 63.0,
+    "avg": 48.2,
+    "gust": 51.9,
     "gustDir": null,
     "min": null,
     "temp": null,
     "lum": null,
     "stale": false
    },
-   "period": 120
+   "period": 240
   },
   {
    "key": "wg-2667",
@@ -64,14 +64,14 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-10-21T11:10:00Z",
-    "dir": 288,
-    "dirLabel": "ONO",
+    "t": "2026-10-21T11:31:00Z",
+    "dir": 268,
+    "dirLabel": "O",
     "avg": 19.4,
-    "gust": 24.1,
+    "gust": 28.9,
     "gustDir": null,
-    "min": 14.4,
-    "temp": 19.2,
+    "min": 13.0,
+    "temp": 19.1,
     "pressure": 1027.3,
     "lum": null,
     "stale": false
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-10-21T11:14:00Z",
-    "dir": 260,
-    "dirLabel": "O",
-    "avg": 21.9,
-    "gust": 27.2,
+    "t": "2026-10-21T11:34:00Z",
+    "dir": 255,
+    "dirLabel": "OSO",
+    "avg": 25.2,
+    "gust": 30.6,
     "gustDir": null,
-    "min": 13.9,
-    "temp": 19.2,
+    "min": 17.2,
+    "temp": 19.1,
     "lum": null,
     "stale": false
    },
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-10-21T11:13:00Z",
+    "t": "2026-10-21T11:30:00Z",
     "dir": 253,
     "dirLabel": "OSO",
-    "avg": 12.2,
-    "gust": 20.9,
+    "avg": 16.9,
+    "gust": 22.6,
     "gustDir": null,
-    "min": 3.6,
-    "temp": 19,
+    "min": 11.5,
+    "temp": 19.3,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -174,7 +174,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 780
+   "period": 600
   }
  ]
 }

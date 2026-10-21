@@ -6,15 +6,15 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-21T04:52:00Z",
+    "t": "2026-10-21T05:12:00Z",
     "dir": 292,
     "dirLabel": "ONO",
     "avg": 43.0,
-    "gust": 52.0,
-    "gustDir": 292,
-    "gustDirLabel": "ONO",
-    "min": 36.0,
-    "temp": 15.0,
+    "gust": 63.0,
+    "gustDir": 314,
+    "gustDirLabel": "NO",
+    "min": 37.0,
+    "temp": 14.0,
     "lum": null,
     "stale": false
    },
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-21T04:58:00Z",
-    "dir": 297,
+    "t": "2026-10-21T05:16:00Z",
+    "dir": 302,
     "dirLabel": "ONO",
-    "avg": 57.4,
-    "gust": 64.8,
+    "avg": 55.6,
+    "gust": 61.1,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,8 +45,8 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-21T04:58:00Z",
-    "dir": 305,
+    "t": "2026-10-21T05:14:00Z",
+    "dir": 308,
     "dirLabel": "NO",
     "avg": 57.4,
     "gust": 64.8,
@@ -64,7 +64,7 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-10-21T04:59:00Z",
+    "t": "2026-10-21T05:01:00Z",
     "dir": 327,
     "dirLabel": "NNO",
     "avg": 1.5,
@@ -72,11 +72,11 @@
     "gustDir": null,
     "min": null,
     "temp": null,
-    "pressure": 1024,
+    "pressure": 1024.1,
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 60
   },
   {
    "key": "kw-6a84ad4f865d8d8278583ca6",
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-10-21T05:01:00Z",
+    "t": "2026-10-21T05:20:00Z",
     "dir": 253,
     "dirLabel": "OSO",
     "avg": 0.0,
     "gust": 0.0,
     "gustDir": null,
     "min": 0.0,
-    "temp": 15.4,
+    "temp": 15.3,
     "pressure": null,
     "lum": null,
     "stale": false

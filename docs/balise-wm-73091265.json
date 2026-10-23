@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T14:07:06Z",
+ "generatedAt": "2026-10-23T14:32:14Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-10-23T14:04:00Z",
-  "dir": 299,
+  "t": "2026-10-23T14:30:00Z",
+  "dir": 302,
   "dirLabel": "ONO",
-  "avg": 53.7,
-  "gust": 64.8,
+  "avg": 40.7,
+  "gust": 46.3,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 360,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-10-21T14:19:00Z",
-   "dir": 279,
-   "avg": 40.7,
-   "gust": 46.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-21T14:30:00Z",
-   "dir": 280,
-   "avg": 38.9,
-   "gust": 48.2,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-21T14:45:00Z",
    "dir": 277,
@@ -1176,34 +1160,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-23T02:11:00Z",
-   "dir": 253,
-   "avg": 85.2,
-   "gust": 109.3,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-23T02:15:00Z",
    "dir": 252,
    "avg": 68.5,
    "gust": 85.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T02:21:00Z",
-   "dir": 251,
-   "avg": 68.5,
-   "gust": 85.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T02:27:00Z",
-   "dir": 254,
-   "avg": 75.9,
-   "gust": 88.9,
    "min": null,
    "temp": null
   },
@@ -2124,6 +2084,38 @@
    "dir": 299,
    "avg": 53.7,
    "gust": 64.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T14:10:00Z",
+   "dir": 294,
+   "avg": 57.4,
+   "gust": 68.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T14:16:00Z",
+   "dir": 308,
+   "avg": 42.6,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T14:24:00Z",
+   "dir": 305,
+   "avg": 42.6,
+   "gust": 48.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T14:30:00Z",
+   "dir": 302,
+   "avg": 40.7,
+   "gust": 46.3,
    "min": null,
    "temp": null
   }

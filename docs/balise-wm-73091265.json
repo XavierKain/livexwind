@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T07:18:06Z",
+ "generatedAt": "2026-10-23T07:41:33Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-10-23T07:15:00Z",
+  "t": "2026-10-23T07:40:00Z",
   "dir": 288,
   "dirLabel": "ONO",
-  "avg": 77.8,
-  "gust": 92.6,
+  "avg": 74.1,
+  "gust": 88.9,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -21,16 +21,8 @@
   "stale": false
  },
  "period": 240,
- "silence": 780,
+ "silence": 690,
  "history": [
-  {
-   "t": "2026-10-21T07:30:00Z",
-   "dir": 295,
-   "avg": 40.7,
-   "gust": 50.0,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-21T07:49:00Z",
    "dir": 291,
@@ -1176,42 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-22T19:20:00Z",
-   "dir": 210,
-   "avg": 44.4,
-   "gust": 55.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-22T19:25:00Z",
-   "dir": 208,
-   "avg": 46.3,
-   "gust": 53.7,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-22T19:30:00Z",
    "dir": 208,
    "avg": 50.0,
    "gust": 66.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-22T19:35:00Z",
-   "dir": 211,
-   "avg": 50.0,
-   "gust": 59.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-22T19:40:00Z",
-   "dir": 210,
-   "avg": 50.0,
-   "gust": 68.5,
    "min": null,
    "temp": null
   },
@@ -2188,6 +2148,38 @@
    "dir": 288,
    "avg": 77.8,
    "gust": 92.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T07:21:00Z",
+   "dir": 292,
+   "avg": 83.3,
+   "gust": 96.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T07:27:00Z",
+   "dir": 291,
+   "avg": 79.6,
+   "gust": 90.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T07:34:00Z",
+   "dir": 285,
+   "avg": 88.9,
+   "gust": 96.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T07:40:00Z",
+   "dir": 288,
+   "avg": 74.1,
+   "gust": 88.9,
    "min": null,
    "temp": null
   }

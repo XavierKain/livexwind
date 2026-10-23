@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T15:31:38Z",
+ "generatedAt": "2026-10-23T15:53:18Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-10-23T15:29:00Z",
-  "dir": 302,
+  "t": "2026-10-23T15:51:00Z",
+  "dir": 296,
   "dirLabel": "ONO",
   "avg": 57.4,
-  "gust": 68.5,
+  "gust": 64.8,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,14 +23,6 @@
  "period": 240,
  "silence": 780,
  "history": [
-  {
-   "t": "2026-10-21T15:48:00Z",
-   "dir": 284,
-   "avg": 48.2,
-   "gust": 51.9,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-21T16:00:00Z",
    "dir": 283,
@@ -1176,34 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-23T03:36:00Z",
-   "dir": 272,
-   "avg": 98.2,
-   "gust": 122.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T03:42:00Z",
-   "dir": 273,
-   "avg": 94.5,
-   "gust": 122.2,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-23T03:48:00Z",
    "dir": 282,
    "avg": 96.3,
    "gust": 113.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T03:52:00Z",
-   "dir": 275,
-   "avg": 92.6,
-   "gust": 109.3,
    "min": null,
    "temp": null
   },
@@ -1920,14 +1888,6 @@
    "temp": null
   },
   {
-   "t": "2026-10-23T12:39:00Z",
-   "dir": 297,
-   "avg": 70.4,
-   "gust": 85.2,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-23T12:47:00Z",
    "dir": 302,
    "avg": 66.7,
@@ -2172,6 +2132,38 @@
    "dir": 302,
    "avg": 57.4,
    "gust": 68.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T15:35:00Z",
+   "dir": 300,
+   "avg": 61.1,
+   "gust": 64.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T15:39:00Z",
+   "dir": 301,
+   "avg": 61.1,
+   "gust": 66.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T15:45:00Z",
+   "dir": 298,
+   "avg": 63.0,
+   "gust": 72.2,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-23T15:51:00Z",
+   "dir": 296,
+   "avg": 57.4,
+   "gust": 64.8,
    "min": null,
    "temp": null
   }

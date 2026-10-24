@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T10:50:17Z",
+ "generatedAt": "2026-10-24T11:13:37Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,10 +9,10 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-10-24T10:47:00Z",
-  "dir": 244,
+  "t": "2026-10-24T11:11:00Z",
+  "dir": 239,
   "dirLabel": "OSO",
-  "avg": 42.6,
+  "avg": 40.7,
   "gust": 46.3,
   "gustDir": null,
   "min": null,
@@ -23,14 +23,6 @@
  "period": 240,
  "silence": 600,
  "history": [
-  {
-   "t": "2026-10-22T11:00:00Z",
-   "dir": 222,
-   "avg": 25.9,
-   "gust": 33.3,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-22T11:16:00Z",
    "dir": 220,
@@ -1176,42 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-23T22:51:00Z",
-   "dir": 279,
-   "avg": 42.6,
-   "gust": 50.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T22:55:00Z",
-   "dir": 285,
-   "avg": 46.3,
-   "gust": 51.9,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-23T23:01:00Z",
    "dir": 287,
    "avg": 40.7,
    "gust": 46.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T23:05:00Z",
-   "dir": 287,
-   "avg": 44.4,
-   "gust": 48.2,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-23T23:11:00Z",
-   "dir": 286,
-   "avg": 42.6,
-   "gust": 50.0,
    "min": null,
    "temp": null
   },
@@ -2147,6 +2107,38 @@
    "t": "2026-10-24T10:47:00Z",
    "dir": 244,
    "avg": 42.6,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-24T10:53:00Z",
+   "dir": 245,
+   "avg": 40.7,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-24T10:59:00Z",
+   "dir": 243,
+   "avg": 38.9,
+   "gust": 46.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-24T11:05:00Z",
+   "dir": 238,
+   "avg": 44.4,
+   "gust": 50.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-24T11:11:00Z",
+   "dir": 239,
+   "avg": 40.7,
    "gust": 46.3,
    "min": null,
    "temp": null

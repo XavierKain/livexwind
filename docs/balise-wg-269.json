@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T06:55:28Z",
+ "generatedAt": "2026-10-25T07:20:08Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-10-25T06:54:00Z",
+  "t": "2026-10-25T07:19:00Z",
   "dir": 133,
   "dirLabel": "SE",
   "avg": 0.0,
   "gust": 0.0,
   "gustDir": null,
   "min": 0.0,
-  "temp": 13.1,
+  "temp": 13,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -24,23 +24,6 @@
  "period": 360,
  "silence": 690,
  "history": [
-  {
-   "t": "2026-10-23T07:00:00Z",
-   "dir": 253,
-   "avg": 0.0,
-   "gust": 0.2,
-   "min": 0.0,
-   "temp": 16.3,
-   "pressure": null
-  },
-  {
-   "t": "2026-10-23T07:16:00Z",
-   "dir": 253,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 16.3
-  },
   {
    "t": "2026-10-23T07:30:00Z",
    "dir": 253,
@@ -1271,38 +1254,12 @@
    "pressure": null
   },
   {
-   "t": "2026-10-24T19:06:00Z",
-   "dir": 133,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 19
-  },
-  {
-   "t": "2026-10-24T19:10:00Z",
-   "dir": 133,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 19,
-   "pressure": null
-  },
-  {
    "t": "2026-10-24T19:19:00Z",
    "dir": 133,
    "avg": 0.0,
    "gust": 0.0,
    "min": 0.0,
    "temp": 18.8
-  },
-  {
-   "t": "2026-10-24T19:20:00Z",
-   "dir": 133,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 18.8,
-   "pressure": null
   },
   {
    "t": "2026-10-24T19:26:00Z",
@@ -2227,6 +2184,38 @@
    "gust": 0.0,
    "min": 0.0,
    "temp": 13.1
+  },
+  {
+   "t": "2026-10-25T07:01:00Z",
+   "dir": 133,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 13.1
+  },
+  {
+   "t": "2026-10-25T07:07:00Z",
+   "dir": 133,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 13.1
+  },
+  {
+   "t": "2026-10-25T07:13:00Z",
+   "dir": 133,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 13
+  },
+  {
+   "t": "2026-10-25T07:19:00Z",
+   "dir": 133,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 13
   }
  ]
 }

@@ -86,7 +86,16 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// Distinct de `fetchedAt`, qui dit quand *nous* avons regardé : c'est
     /// l'écart entre les deux qui révèle un serveur devenu aveugle.
     var serverSeenAt: Date?
+    /// Jeu de démonstration : des chiffres plausibles affichés faute de mieux.
+    ///
+    /// Optionnel, et pas un simple `Bool`, pour qu'un instantané mis en cache
+    /// avant l'existence de ce champ continue de se décoder.
+    var isPlaceholder: Bool?
 
+    /// Ce que montre un écran qui n'a encore rien, et la vignette de la galerie
+    /// de widgets. **Jamais** un relevé : `hasReading` est là pour que personne
+    /// ne les confonde — une balise muette affichait ces chiffres-là, pastille
+    /// verte et heure du moment, comme s'ils venaient d'elle.
     static func placeholder(balise: Balise = .pyla) -> WindSnapshot {
         WindSnapshot(
             baliseID: balise.id,
@@ -109,9 +118,13 @@ struct WindSnapshot: Codable, Hashable, Sendable {
                                    minKmh: max(0, base - 4),
                                    temperature: 23)
             },
-            fetchedAt: .now
+            fetchedAt: .now,
+            isPlaceholder: true
         )
     }
+
+    /// Vrai quand ce qu'on affiche vient vraiment de la balise.
+    var hasReading: Bool { isPlaceholder != true }
 
     /// Prochaine publication attendue, d'après la cadence propre à la balise.
     var nextExpectedUpdate: Date {
@@ -141,7 +154,11 @@ struct WindSnapshot: Codable, Hashable, Sendable {
     /// quart d'heure est débranchée ou en panne — mieux vaut griser sa valeur
     /// que la laisser passer pour le vent actuel.
     func isStale(at date: Date = Date()) -> Bool {
-        date.timeIntervalSince(current.date) > silenceLimit
+        // Une maquette n'est le vent d'aucun moment : widget, complication et
+        // montre s'en remettent à ceci pour afficher un tiret plutôt que ses
+        // chiffres inventés.
+        guard hasReading else { return true }
+        return date.timeIntervalSince(current.date) > silenceLimit
     }
 
     /// Balise muette — verdict rendu à l'instant où on l'a lue, pas maintenant.

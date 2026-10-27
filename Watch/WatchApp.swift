@@ -89,7 +89,8 @@ struct WatchMainView: View {
 
             HStack(alignment: .center, spacing: 8) {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text(store.unit.format(kmh: reading.averageKmh))
+                    Text(store.snapshot.hasReading
+                         ? store.unit.format(kmh: reading.averageKmh) : "—")
                         .font(.system(size: 44, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .foregroundStyle(color)

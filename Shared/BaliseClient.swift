@@ -462,12 +462,16 @@ struct FeedPayload: Decodable {
             altitude: balise.altitude,
             latitude: balise.lat,
             longitude: balise.lon,
+            // Un flux sans aucun relevé n'en devient pas un : il emprunte les
+            // chiffres de la maquette pour avoir une forme valide, et doit donc
+            // être marqué comme tel.
             current: latest ?? WindSnapshot.placeholder(balise: identity).current,
             history: readings,
             fetchedAt: Self.stamp(checkedAt) ?? Self.stamp(generatedAt) ?? .now,
             periodSeconds: period ?? 600,
             silenceSeconds: silence,
-            serverSeenAt: Self.stamp(generatedAt)
+            serverSeenAt: Self.stamp(generatedAt),
+            isPlaceholder: latest == nil ? true : nil
         )
     }
 

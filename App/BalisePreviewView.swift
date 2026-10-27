@@ -124,7 +124,10 @@ struct BalisePreviewView: View {
     private func load() async {
         isLoading = true
         let loaded = await BaliseClient(balise: balise).loadSnapshot()
-        snapshot = loaded.current.averageKmh == nil && loaded.history.isEmpty ? nil : loaded
+        // `loadSnapshot` rend une maquette quand elle n'a rien trouvé : la
+        // laisser passer affichait 11 nds de vent inventé sur une balise muette.
+        snapshot = loaded.hasReading && !(loaded.current.averageKmh == nil && loaded.history.isEmpty)
+            ? loaded : nil
         isLoading = false
     }
 }

@@ -173,7 +173,9 @@ final class WindStore: ObservableObject {
                 }
             }
             for await (key, snapshot) in group {
-                fresh[key] = snapshot
+                // Une maquette n'est pas un relevé : mieux vaut une ligne à
+                // « — » qu'une ligne qui invente du vent.
+                if snapshot.hasReading { fresh[key] = snapshot }
             }
         }
         overview = fresh
@@ -305,7 +307,7 @@ final class WindStore: ObservableObject {
         let previous = snapshot
         snapshot = fresh
         overview[catalog.selectedKey] = fresh
-        lastError = fresh.current.averageKmh == nil ? "Relevé indisponible" : nil
+        lastError = fresh.hasReading && fresh.current.averageKmh == nil ? "Relevé indisponible" : nil
         WidgetCenter.shared.reloadAllTimelines()
 
         if fresh.current.date != previous.current.date || force {

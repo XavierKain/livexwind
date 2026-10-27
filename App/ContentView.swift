@@ -12,18 +12,26 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
-                    header
-                    // Grisé et estompé dès que le relevé n'est plus le vent du
-                    // moment — balise muette ou copie pas encore rafraîchie.
-                    // La valeur reste lisible, elle ne se fait juste pas passer
-                    // pour actuelle.
-                    CompassDial(reading: store.snapshot.current, unit: store.unit,
-                                isOffline: store.snapshot.isStale())
-                        .padding(.top, 4)
-                    unitPicker
-                    WindMetricsRow(reading: store.snapshot.current, unit: store.unit,
-                                   isOffline: store.snapshot.isStale())
-                    WindChartCard(snapshot: store.snapshot, unit: store.unit)
+                    // Rien à montrer, donc on ne montre rien. Tant qu'aucune
+                    // lecture n'a abouti, l'instantané n'est qu'une maquette :
+                    // l'afficher revenait à inventer du vent, pastille verte et
+                    // heure du moment à l'appui.
+                    if store.snapshot.hasReading {
+                        header
+                        // Grisé et estompé dès que le relevé n'est plus le vent
+                        // du moment — balise muette ou copie pas rafraîchie. La
+                        // valeur reste lisible, elle ne se fait juste pas passer
+                        // pour actuelle.
+                        CompassDial(reading: store.snapshot.current, unit: store.unit,
+                                    isOffline: store.snapshot.isStale())
+                            .padding(.top, 4)
+                        unitPicker
+                        WindMetricsRow(reading: store.snapshot.current, unit: store.unit,
+                                       isOffline: store.snapshot.isStale())
+                        WindChartCard(snapshot: store.snapshot, unit: store.unit)
+                    } else {
+                        noReading
+                    }
                     alertsCard
                     if let coordinate = baliseCoordinate {
                         BaliseMapCard(balise: store.balise, coordinate: coordinate)
@@ -94,6 +102,27 @@ struct ContentView: View {
     }
 
     // MARK: Sections
+
+    /// Écran d'une balise dont on n'a rien — ni lecture directe, ni flux
+    /// serveur, ni cache. Le dire, plutôt que de meubler.
+    private var noReading: some View {
+        VStack(spacing: 10) {
+            Image(systemName: store.isLoading ? "arrow.triangle.2.circlepath" : "wind")
+                .font(.system(size: 38))
+                .foregroundStyle(.secondary)
+            Text(store.isLoading ? "Relevé en cours…" : "Aucun relevé")
+                .font(.headline)
+            Text(store.isLoading
+                 ? "Première lecture de cette balise."
+                 : "\(store.balise.provider.label) ne publie rien pour cette balise — elle est muette à la source, pas seulement ici.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 44)
+    }
 
     /// Trois états, et un seul se dit « hors ligne ».
     ///

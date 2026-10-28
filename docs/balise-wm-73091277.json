@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-28T16:31:35Z",
+ "generatedAt": "2026-10-28T16:56:09Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,36 +9,20 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-10-28T16:28:00Z",
-  "dir": 223,
+  "t": "2026-10-28T16:52:00Z",
+  "dir": 227,
   "dirLabel": "SO",
   "avg": 7.4,
-  "gust": 9.3,
+  "gust": 7.4,
   "gustDir": null,
   "min": null,
   "temp": null,
   "lum": null,
   "stale": false
  },
- "period": 360,
- "silence": 600,
+ "period": 240,
+ "silence": 780,
  "history": [
-  {
-   "t": "2026-10-26T16:33:00Z",
-   "dir": 213,
-   "avg": 35.2,
-   "gust": 40.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-26T16:45:00Z",
-   "dir": 212,
-   "avg": 37.0,
-   "gust": 40.7,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-26T17:05:00Z",
    "dir": 205,
@@ -1184,32 +1168,8 @@
    "temp": null
   },
   {
-   "t": "2026-10-28T04:37:00Z",
-   "dir": 58,
-   "avg": 5.6,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-28T04:43:00Z",
-   "dir": 63,
-   "avg": 5.6,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-28T04:49:00Z",
    "dir": 70,
-   "avg": 5.6,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-28T04:55:00Z",
-   "dir": 66,
    "avg": 5.6,
    "gust": 5.6,
    "min": null,
@@ -2124,6 +2084,38 @@
    "dir": 223,
    "avg": 7.4,
    "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-28T16:34:00Z",
+   "dir": 217,
+   "avg": 7.4,
+   "gust": 7.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-28T16:42:00Z",
+   "dir": 221,
+   "avg": 7.4,
+   "gust": 7.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-28T16:48:00Z",
+   "dir": 223,
+   "avg": 5.6,
+   "gust": 7.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-28T16:52:00Z",
+   "dir": 227,
+   "avg": 7.4,
+   "gust": 7.4,
    "min": null,
    "temp": null
   }

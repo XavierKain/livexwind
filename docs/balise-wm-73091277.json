@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T00:09:46Z",
+ "generatedAt": "2026-10-31T00:31:12Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,8 +9,8 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-10-31T00:08:00Z",
-  "dir": 51,
+  "t": "2026-10-31T00:28:00Z",
+  "dir": 46,
   "dirLabel": "NE",
   "avg": 16.7,
   "gust": 18.5,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 600,
  "history": [
-  {
-   "t": "2026-10-29T00:15:00Z",
-   "dir": 58,
-   "avg": 16.7,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-29T00:31:00Z",
-   "dir": 57,
-   "avg": 14.8,
-   "gust": 16.7,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-29T00:45:00Z",
    "dir": 56,
@@ -1176,26 +1160,10 @@
    "temp": null
   },
   {
-   "t": "2026-10-30T12:14:00Z",
-   "dir": 82,
-   "avg": 14.8,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-30T12:20:00Z",
    "dir": 66,
    "avg": 16.7,
    "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-30T12:26:00Z",
-   "dir": 53,
-   "avg": 13.0,
-   "gust": 18.5,
    "min": null,
    "temp": null
   },
@@ -1912,14 +1880,6 @@
    "temp": null
   },
   {
-   "t": "2026-10-30T21:14:00Z",
-   "dir": 40,
-   "avg": 13.0,
-   "gust": 14.8,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-30T21:20:00Z",
    "dir": 39,
    "avg": 13.0,
@@ -2162,6 +2122,38 @@
   {
    "t": "2026-10-31T00:08:00Z",
    "dir": 51,
+   "avg": 16.7,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-31T00:12:00Z",
+   "dir": 51,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-31T00:18:00Z",
+   "dir": 48,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-31T00:24:00Z",
+   "dir": 46,
+   "avg": 14.8,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-10-31T00:28:00Z",
+   "dir": 46,
    "avg": 16.7,
    "gust": 18.5,
    "min": null,

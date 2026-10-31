@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-10-31T06:12:00Z",
-    "dir": 202,
-    "dirLabel": "SSO",
-    "avg": 7.0,
-    "gust": 10.0,
+    "t": "2026-10-31T06:32:00Z",
+    "dir": 180,
+    "dirLabel": "S",
+    "avg": 5.0,
+    "gust": 7.0,
     "gustDir": 180,
     "gustDirLabel": "S",
-    "min": 5.0,
-    "temp": 9.0,
-    "lum": 65.0,
+    "min": 3.0,
+    "temp": 8.0,
+    "lum": 70.0,
     "stale": false
    },
    "period": 600
@@ -26,8 +26,8 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-10-31T07:15:00Z",
-    "dir": 68,
+    "t": "2026-10-31T07:37:00Z",
+    "dir": 70,
     "dirLabel": "ENE",
     "avg": 9.3,
     "gust": 13.0,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-10-31T07:15:00Z",
-    "dir": 49,
+    "t": "2026-10-31T07:37:00Z",
+    "dir": 52,
     "dirLabel": "NE",
     "avg": 16.7,
-    "gust": 18.5,
+    "gust": 22.2,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -114,7 +114,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 60
+   "period": 300
   },
   {
    "key": "wg-12491",
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-10-31T07:19:00Z",
+    "t": "2026-10-31T07:40:00Z",
     "dir": 83,
     "dirLabel": "E",
-    "avg": 11.5,
-    "gust": 23.0,
+    "avg": 11.9,
+    "gust": 22.3,
     "gustDir": null,
-    "min": 7.2,
-    "temp": 19.8,
+    "min": 6.1,
+    "temp": 19.9,
     "pressure": null,
     "lum": null,
     "stale": false

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-01T05:02:27Z",
+ "generatedAt": "2026-11-01T05:26:06Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-11-01T05:00:00Z",
-  "dir": 43,
+  "t": "2026-11-01T05:24:00Z",
+  "dir": 36,
   "dirLabel": "NE",
-  "avg": 11.1,
-  "gust": 14.8,
+  "avg": 7.4,
+  "gust": 13.0,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 960,
  "history": [
-  {
-   "t": "2026-10-30T05:05:00Z",
-   "dir": 63,
-   "avg": 3.7,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-30T05:17:00Z",
-   "dir": 61,
-   "avg": 7.4,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-10-30T05:37:00Z",
    "dir": 57,
@@ -1184,31 +1168,7 @@
    "temp": null
   },
   {
-   "t": "2026-10-31T17:06:00Z",
-   "dir": 53,
-   "avg": 7.4,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-31T17:12:00Z",
-   "dir": 61,
-   "avg": 7.4,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-10-31T17:16:00Z",
-   "dir": 65,
-   "avg": 7.4,
-   "gust": 13.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-10-31T17:22:00Z",
    "dir": 65,
    "avg": 7.4,
    "gust": 13.0,
@@ -1936,14 +1896,6 @@
    "temp": null
   },
   {
-   "t": "2026-11-01T02:14:00Z",
-   "dir": 38,
-   "avg": 5.6,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-01T02:20:00Z",
    "dir": 44,
    "avg": 5.6,
@@ -2172,6 +2124,38 @@
    "dir": 43,
    "avg": 11.1,
    "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-01T05:06:00Z",
+   "dir": 47,
+   "avg": 11.1,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-01T05:12:00Z",
+   "dir": 46,
+   "avg": 9.3,
+   "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-01T05:18:00Z",
+   "dir": 38,
+   "avg": 5.6,
+   "gust": 9.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-01T05:24:00Z",
+   "dir": 36,
+   "avg": 7.4,
+   "gust": 13.0,
    "min": null,
    "temp": null
   }

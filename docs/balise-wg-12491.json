@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-06T17:37:21Z",
+ "generatedAt": "2026-11-06T17:57:50Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -30,7 +30,8 @@
    "avg": 3.5,
    "gust": 5.0,
    "min": null,
-   "temp": 14.7
+   "temp": 14.7,
+   "pressure": null
   },
   {
    "t": "2026-11-06T00:00:00Z",
@@ -38,7 +39,8 @@
    "avg": 3.0,
    "gust": 3.9,
    "min": null,
-   "temp": 14.6
+   "temp": 14.6,
+   "pressure": null
   },
   {
    "t": "2026-11-06T05:00:00Z",
@@ -46,7 +48,8 @@
    "avg": 3.9,
    "gust": 4.6,
    "min": null,
-   "temp": 15.6
+   "temp": 15.6,
+   "pressure": null
   },
   {
    "t": "2026-11-06T08:00:00Z",
@@ -54,7 +57,8 @@
    "avg": 13.0,
    "gust": 18.3,
    "min": null,
-   "temp": 17.4
+   "temp": 17.4,
+   "pressure": null
   },
   {
    "t": "2026-11-06T17:00:00Z",

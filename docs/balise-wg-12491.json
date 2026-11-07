@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07T16:33:49Z",
+ "generatedAt": "2026-11-07T20:52:34Z",
  "balise": {
   "id": 12491,
   "name": "Tarifa — WMO",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/12491"
  },
  "current": {
-  "t": "2026-11-07T14:00:00Z",
-  "dir": 85,
+  "t": "2026-11-07T20:00:00Z",
+  "dir": 84,
   "dirLabel": "E",
-  "avg": 32.8,
-  "gust": 47.6,
+  "avg": 35.9,
+  "gust": 50.0,
   "gustDir": null,
   "min": null,
-  "temp": 20.6,
+  "temp": 19,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -107,7 +107,14 @@
    "gust": 47.6,
    "min": null,
    "temp": 20.6
+  },
+  {
+   "t": "2026-11-07T20:00:00Z",
+   "dir": 84,
+   "avg": 35.9,
+   "gust": 50.0,
+   "min": null,
+   "temp": 19
   }
- ],
- "checkedAt": "2026-11-07T20:31:59Z"
+ ]
 }

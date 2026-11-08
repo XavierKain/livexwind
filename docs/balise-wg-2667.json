@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-08T07:22:40Z",
+ "generatedAt": "2026-11-08T07:43:01Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,15 +9,15 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-11-08T04:34:00Z",
-  "dir": 89,
+  "t": "2026-11-08T07:42:00Z",
+  "dir": 96,
   "dirLabel": "E",
   "avg": 40.4,
-  "gust": null,
+  "gust": 51.5,
   "gustDir": null,
-  "min": null,
-  "temp": null,
-  "pressure": 1018.2,
+  "min": 32.0,
+  "temp": 19.9,
+  "pressure": 1019.1,
   "lum": null,
   "stale": false
  },
@@ -1150,36 +1150,11 @@
    "temp": 19.6
   },
   {
-   "t": "2026-11-07T19:25:00Z",
-   "dir": 44,
-   "avg": 30.6,
-   "gust": 43.5,
-   "min": 16.1,
-   "temp": 19.7
-  },
-  {
    "t": "2026-11-07T19:30:00Z",
    "dir": 78,
    "avg": 30.9,
    "gust": 44.1,
    "min": 16.1,
-   "temp": 19.6,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-07T19:35:00Z",
-   "dir": 68,
-   "avg": 32.0,
-   "gust": 53.3,
-   "min": 16.1,
-   "temp": 19.6
-  },
-  {
-   "t": "2026-11-07T19:40:00Z",
-   "dir": 78,
-   "avg": 32.8,
-   "gust": 45.9,
-   "min": 19.6,
    "temp": 19.6,
    "pressure": null
   },
@@ -2068,44 +2043,12 @@
    "pressure": null
   },
   {
-   "t": "2026-11-08T04:24:00Z",
-   "dir": 89,
-   "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": 19.6
-  },
-  {
    "t": "2026-11-08T04:25:00Z",
    "dir": 89,
    "avg": 40.4,
    "gust": 59.6,
    "min": 46.9,
    "temp": 19.6
-  },
-  {
-   "t": "2026-11-08T04:26:00Z",
-   "dir": 89,
-   "avg": 40.4,
-   "gust": 59.6,
-   "min": 46.9,
-   "temp": null
-  },
-  {
-   "t": "2026-11-08T04:27:00Z",
-   "dir": 89,
-   "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-08T04:29:00Z",
-   "dir": 89,
-   "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
   },
   {
    "t": "2026-11-08T04:30:00Z",
@@ -2117,36 +2060,44 @@
    "pressure": null
   },
   {
-   "t": "2026-11-08T04:31:00Z",
-   "dir": 89,
+   "t": "2026-11-08T07:38:00Z",
+   "dir": 96,
    "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
+   "gust": 59.4,
+   "min": 22.6,
+   "temp": 19.9
   },
   {
-   "t": "2026-11-08T04:32:00Z",
-   "dir": 89,
+   "t": "2026-11-08T07:39:00Z",
+   "dir": 98,
    "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
+   "gust": 59.4,
+   "min": 25.9,
+   "temp": 19.9
   },
   {
-   "t": "2026-11-08T04:33:00Z",
-   "dir": 89,
+   "t": "2026-11-08T07:40:00Z",
+   "dir": 98,
    "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
+   "gust": 54.6,
+   "min": 24.1,
+   "temp": 19.9
   },
   {
-   "t": "2026-11-08T04:34:00Z",
-   "dir": 89,
+   "t": "2026-11-08T07:41:00Z",
+   "dir": 64,
    "avg": 40.4,
-   "gust": null,
-   "min": null,
-   "temp": null
+   "gust": 58.0,
+   "min": 33.9,
+   "temp": 19.9
+  },
+  {
+   "t": "2026-11-08T07:42:00Z",
+   "dir": 96,
+   "avg": 40.4,
+   "gust": 51.5,
+   "min": 32.0,
+   "temp": 19.9
   }
  ]
 }

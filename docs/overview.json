@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-11-09T20:52:00Z",
-    "dir": 202,
-    "dirLabel": "SSO",
-    "avg": 27.0,
-    "gust": 38.0,
+    "t": "2026-11-09T21:12:00Z",
+    "dir": 180,
+    "dirLabel": "S",
+    "avg": 25.0,
+    "gust": 34.0,
     "gustDir": 202,
     "gustDirLabel": "SSO",
-    "min": 17.0,
+    "min": 16.0,
     "temp": 18.0,
     "lum": null,
     "stale": false
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-11-09T21:03:00Z",
-    "dir": 72,
+    "t": "2026-11-09T21:19:00Z",
+    "dir": 74,
     "dirLabel": "ENE",
     "avg": 9.3,
-    "gust": 13.0,
+    "gust": 11.1,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-11-09T21:04:00Z",
-    "dir": 50,
-    "dirLabel": "NE",
-    "avg": 14.8,
-    "gust": 16.7,
+    "t": "2026-11-09T21:20:00Z",
+    "dir": 64,
+    "dirLabel": "ENE",
+    "avg": 13.0,
+    "gust": 14.8,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -64,7 +64,7 @@
    "name": "Tarifa — Campo de Futbol",
    "provider": "wg",
    "current": {
-    "t": "2026-11-09T21:05:00Z",
+    "t": "2026-11-09T21:20:00Z",
     "dir": 247,
     "dirLabel": "OSO",
     "avg": 0.0,
@@ -72,11 +72,11 @@
     "gustDir": null,
     "min": 0.0,
     "temp": 19.3,
-    "pressure": 1020.7,
+    "pressure": 1020.8,
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 240
   },
   {
    "key": "kw-6a84ad4f865d8d8278583ca6",
@@ -103,14 +103,14 @@
    "name": "Balneario Tarifa",
    "provider": "kw",
    "current": {
-    "t": "2026-11-09T21:05:00Z",
+    "t": "2026-11-09T21:25:00Z",
     "dir": 247,
     "dirLabel": "OSO",
     "avg": 4.3,
     "gust": 4.6,
     "gustDir": null,
     "min": 4.3,
-    "temp": 19.3,
+    "temp": 19.5,
     "lum": null,
     "stale": false
    },
@@ -142,19 +142,19 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-11-09T21:03:00Z",
+    "t": "2026-11-09T21:25:00Z",
     "dir": 233,
     "dirLabel": "SO",
-    "avg": 4.3,
-    "gust": 5.8,
+    "avg": 1.4,
+    "gust": 2.5,
     "gustDir": null,
-    "min": 3.6,
-    "temp": 19.1,
+    "min": 0.0,
+    "temp": 19,
     "pressure": null,
     "lum": null,
     "stale": false
    },
-   "period": 300
+   "period": 120
   },
   {
    "key": "wg-3275",

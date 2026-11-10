@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-10T09:55:29Z",
+ "generatedAt": "2026-11-10T10:21:21Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-11-10T09:54:00Z",
+  "t": "2026-11-10T10:07:00Z",
   "dir": 233,
   "dirLabel": "SO",
-  "avg": 3.6,
-  "gust": 6.8,
+  "avg": 5.0,
+  "gust": 6.5,
   "gustDir": null,
-  "min": 1.4,
-  "temp": 19.6,
+  "min": 3.6,
+  "temp": 19.5,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -24,24 +24,6 @@
  "period": 360,
  "silence": 690,
  "history": [
-  {
-   "t": "2026-11-08T10:00:00Z",
-   "dir": 103,
-   "avg": 21.3,
-   "gust": 43.3,
-   "min": 9.6,
-   "temp": 21.6,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-08T10:20:00Z",
-   "dir": 103,
-   "avg": 21.1,
-   "gust": 44.4,
-   "min": 10.0,
-   "temp": 22,
-   "pressure": null
-  },
   {
    "t": "2026-11-08T10:30:00Z",
    "dir": 103,
@@ -1276,28 +1258,11 @@
    "temp": 19
   },
   {
-   "t": "2026-11-09T21:57:00Z",
-   "dir": 233,
-   "avg": 1.1,
-   "gust": 2.5,
-   "min": 0.0,
-   "temp": 18.9
-  },
-  {
    "t": "2026-11-09T22:00:00Z",
    "dir": 233,
    "avg": 2.0,
    "gust": 3.5,
    "min": 0.7,
-   "temp": 19,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-09T22:10:00Z",
-   "dir": 233,
-   "avg": 2.8,
-   "gust": 5.0,
-   "min": 0.9,
    "temp": 19,
    "pressure": null
   },
@@ -1308,15 +1273,6 @@
    "gust": 6.1,
    "min": 2.9,
    "temp": 19
-  },
-  {
-   "t": "2026-11-09T22:20:00Z",
-   "dir": 233,
-   "avg": 3.3,
-   "gust": 5.2,
-   "min": 1.5,
-   "temp": 19,
-   "pressure": null
   },
   {
    "t": "2026-11-09T22:26:00Z",
@@ -2047,6 +2003,22 @@
    "gust": 6.8,
    "min": 1.4,
    "temp": 19.6
+  },
+  {
+   "t": "2026-11-10T10:01:00Z",
+   "dir": 233,
+   "avg": 4.7,
+   "gust": 6.8,
+   "min": 2.5,
+   "temp": 19.5
+  },
+  {
+   "t": "2026-11-10T10:07:00Z",
+   "dir": 233,
+   "avg": 5.0,
+   "gust": 6.5,
+   "min": 3.6,
+   "temp": 19.5
   }
  ]
 }

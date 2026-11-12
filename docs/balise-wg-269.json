@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T20:47:33Z",
+ "generatedAt": "2026-11-12T21:09:38Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-11-12T20:46:00Z",
+  "t": "2026-11-12T21:08:00Z",
   "dir": 193,
   "dirLabel": "SSO",
-  "avg": 0.0,
-  "gust": 0.0,
+  "avg": 2.1,
+  "gust": 4.3,
   "gustDir": null,
-  "min": 0.0,
-  "temp": 18.3,
+  "min": 0.4,
+  "temp": 18.1,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -24,24 +24,6 @@
  "period": 300,
  "silence": 600,
  "history": [
-  {
-   "t": "2026-11-10T20:50:00Z",
-   "dir": 233,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 19,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-10T21:00:00Z",
-   "dir": 233,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 18.8,
-   "pressure": null
-  },
   {
    "t": "2026-11-10T21:20:00Z",
    "dir": 233,
@@ -1290,15 +1272,6 @@
    "temp": 18.3
   },
   {
-   "t": "2026-11-12T08:50:00Z",
-   "dir": 193,
-   "avg": 8.0,
-   "gust": 14.3,
-   "min": 3.7,
-   "temp": 18.4,
-   "pressure": null
-  },
-  {
    "t": "2026-11-12T09:00:00Z",
    "dir": 193,
    "avg": 3.9,
@@ -1306,14 +1279,6 @@
    "min": 0.2,
    "temp": 18.4,
    "pressure": null
-  },
-  {
-   "t": "2026-11-12T09:07:00Z",
-   "dir": 193,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 18.4
   },
   {
    "t": "2026-11-12T09:10:00Z",
@@ -2336,6 +2301,38 @@
    "gust": 0.0,
    "min": 0.0,
    "temp": 18.3
+  },
+  {
+   "t": "2026-11-12T20:52:00Z",
+   "dir": 193,
+   "avg": 3.2,
+   "gust": 7.6,
+   "min": 0.0,
+   "temp": 18.3
+  },
+  {
+   "t": "2026-11-12T20:58:00Z",
+   "dir": 193,
+   "avg": 2.5,
+   "gust": 7.6,
+   "min": 0.0,
+   "temp": 18.2
+  },
+  {
+   "t": "2026-11-12T21:03:00Z",
+   "dir": 193,
+   "avg": 1.8,
+   "gust": 4.3,
+   "min": 0.0,
+   "temp": 18.2
+  },
+  {
+   "t": "2026-11-12T21:08:00Z",
+   "dir": 193,
+   "avg": 2.1,
+   "gust": 4.3,
+   "min": 0.4,
+   "temp": 18.1
   }
  ]
 }

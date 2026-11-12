@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T06:14:20Z",
+ "generatedAt": "2026-11-12T06:35:27Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,15 +9,15 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-11-12T06:14:00Z",
-  "dir": 227,
-  "dirLabel": "SO",
-  "avg": 17.6,
-  "gust": 25.9,
+  "t": "2026-11-12T06:34:00Z",
+  "dir": 275,
+  "dirLabel": "O",
+  "avg": 19.4,
+  "gust": 22.6,
   "gustDir": null,
-  "min": 8.0,
+  "min": 11.1,
   "temp": 19.6,
-  "pressure": 1004.9,
+  "pressure": 1005.1,
   "lum": null,
   "stale": false
  },
@@ -454,6 +454,22 @@
    "avg": 17.6,
    "gust": 25.9,
    "min": 8.0,
+   "temp": 19.6
+  },
+  {
+   "t": "2026-11-12T06:24:00Z",
+   "dir": 335,
+   "avg": 16.1,
+   "gust": 28.9,
+   "min": 11.1,
+   "temp": 19.6
+  },
+  {
+   "t": "2026-11-12T06:34:00Z",
+   "dir": 275,
+   "avg": 19.4,
+   "gust": 22.6,
+   "min": 11.1,
    "temp": 19.6
   }
  ]

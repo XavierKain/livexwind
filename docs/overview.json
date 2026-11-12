@@ -6,14 +6,14 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-11-12T01:02:00Z",
-    "dir": 44,
-    "dirLabel": "NE",
-    "avg": 14.0,
-    "gust": 19.0,
+    "t": "2026-11-12T01:22:00Z",
+    "dir": 66,
+    "dirLabel": "ENE",
+    "avg": 16.0,
+    "gust": 23.0,
     "gustDir": 44,
     "gustDirLabel": "NE",
-    "min": 10.0,
+    "min": 11.0,
     "temp": 14.0,
     "lum": null,
     "stale": false
@@ -114,7 +114,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 180
+   "period": 300
   },
   {
    "key": "wg-12491",
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-11-12T01:06:00Z",
+    "t": "2026-11-12T01:29:00Z",
     "dir": 193,
     "dirLabel": "SSO",
-    "avg": 0.0,
-    "gust": 0.0,
+    "avg": 8.3,
+    "gust": 19.1,
     "gustDir": null,
     "min": 0.0,
-    "temp": 18.5,
+    "temp": 18.3,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -162,15 +162,15 @@
    "name": "Zahara de los Atunes — Zahara",
    "provider": "wg",
    "current": {
-    "t": "2026-11-12T01:02:00Z",
-    "dir": 293,
+    "t": "2026-11-12T01:24:00Z",
+    "dir": 295,
     "dirLabel": "ONO",
-    "avg": 17.6,
-    "gust": 45.0,
+    "avg": 16.1,
+    "gust": 22.6,
     "gustDir": null,
-    "min": 22.6,
-    "temp": 19.7,
-    "pressure": 1002.4,
+    "min": 4.6,
+    "temp": 19.4,
+    "pressure": 1002.6,
     "lum": null,
     "stale": false
    },

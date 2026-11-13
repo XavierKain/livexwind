@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T10:25:00Z",
+ "generatedAt": "2026-11-13T10:47:17Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -24,15 +24,6 @@
  "period": 240,
  "silence": 2040,
  "history": [
-  {
-   "t": "2026-11-11T10:30:00Z",
-   "dir": 84,
-   "avg": 28.2,
-   "gust": 40.2,
-   "min": 11.9,
-   "temp": 20,
-   "pressure": null
-  },
   {
    "t": "2026-11-11T10:48:00Z",
    "dir": 84,

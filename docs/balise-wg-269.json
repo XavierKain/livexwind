@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T12:48:11Z",
+ "generatedAt": "2026-11-13T13:12:03Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-11-13T12:47:00Z",
+  "t": "2026-11-13T13:11:00Z",
   "dir": 193,
   "dirLabel": "SSO",
-  "avg": 11.1,
-  "gust": 13.3,
+  "avg": 6.1,
+  "gust": 10.4,
   "gustDir": null,
-  "min": 9.4,
-  "temp": 19.5,
+  "min": 2.5,
+  "temp": 19.6,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -24,15 +24,6 @@
  "period": 180,
  "silence": 1050,
  "history": [
-  {
-   "t": "2026-11-11T13:00:00Z",
-   "dir": 93,
-   "avg": 15.2,
-   "gust": 22.0,
-   "min": 9.4,
-   "temp": 20.1,
-   "pressure": null
-  },
   {
    "t": "2026-11-11T13:20:00Z",
    "dir": 93,
@@ -1257,45 +1248,11 @@
    "temp": 17.6
   },
   {
-   "t": "2026-11-13T00:50:00Z",
-   "dir": 193,
-   "avg": 5.0,
-   "gust": 10.7,
-   "min": 1.5,
-   "temp": 17.6,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-13T00:59:00Z",
-   "dir": 193,
-   "avg": 7.9,
-   "gust": 11.9,
-   "min": 2.9,
-   "temp": 17.5
-  },
-  {
    "t": "2026-11-13T01:00:00Z",
    "dir": 193,
    "avg": 4.6,
    "gust": 9.1,
    "min": 1.5,
-   "temp": 17.5,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-13T01:05:00Z",
-   "dir": 193,
-   "avg": 5.8,
-   "gust": 8.6,
-   "min": 1.8,
-   "temp": 17.5
-  },
-  {
-   "t": "2026-11-13T01:10:00Z",
-   "dir": 193,
-   "avg": 3.5,
-   "gust": 7.2,
-   "min": 1.1,
    "temp": 17.5,
    "pressure": null
   },
@@ -1992,6 +1949,38 @@
    "gust": 13.3,
    "min": 9.4,
    "temp": 19.5
+  },
+  {
+   "t": "2026-11-13T12:53:00Z",
+   "dir": 193,
+   "avg": 18.0,
+   "gust": 22.6,
+   "min": 11.9,
+   "temp": 19.5
+  },
+  {
+   "t": "2026-11-13T12:59:00Z",
+   "dir": 193,
+   "avg": 21.2,
+   "gust": 24.8,
+   "min": 18.0,
+   "temp": 19.6
+  },
+  {
+   "t": "2026-11-13T13:05:00Z",
+   "dir": 193,
+   "avg": 1.8,
+   "gust": 7.2,
+   "min": 0.0,
+   "temp": 19.7
+  },
+  {
+   "t": "2026-11-13T13:11:00Z",
+   "dir": 193,
+   "avg": 6.1,
+   "gust": 10.4,
+   "min": 2.5,
+   "temp": 19.6
   }
  ]
 }

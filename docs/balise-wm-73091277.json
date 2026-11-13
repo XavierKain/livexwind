@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T00:13:07Z",
+ "generatedAt": "2026-11-13T00:36:58Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-11-13T00:11:00Z",
-  "dir": 18,
+  "t": "2026-11-13T00:35:00Z",
+  "dir": 30,
   "dirLabel": "NNE",
-  "avg": 13.0,
-  "gust": 14.8,
+  "avg": 14.8,
+  "gust": 16.7,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 960,
  "history": [
-  {
-   "t": "2026-11-11T00:18:00Z",
-   "dir": 134,
-   "avg": 5.6,
-   "gust": 5.6,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-11T00:30:00Z",
-   "dir": 130,
-   "avg": 9.3,
-   "gust": 11.1,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-11-11T00:50:00Z",
    "dir": 153,
@@ -1184,34 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-11-12T12:22:00Z",
-   "dir": 42,
-   "avg": 40.7,
-   "gust": 51.9,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-12T12:26:00Z",
-   "dir": 44,
-   "avg": 40.7,
-   "gust": 46.3,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-12T12:30:00Z",
    "dir": 43,
    "avg": 44.4,
    "gust": 50.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-12T12:36:00Z",
-   "dir": 43,
-   "avg": 37.0,
-   "gust": 42.6,
    "min": null,
    "temp": null
   },
@@ -2140,6 +2100,38 @@
    "dir": 18,
    "avg": 13.0,
    "gust": 14.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-13T00:17:00Z",
+   "dir": 25,
+   "avg": 16.7,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-13T00:23:00Z",
+   "dir": 24,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-13T00:29:00Z",
+   "dir": 27,
+   "avg": 16.7,
+   "gust": 18.5,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-13T00:35:00Z",
+   "dir": 30,
+   "avg": 14.8,
+   "gust": 16.7,
    "min": null,
    "temp": null
   }

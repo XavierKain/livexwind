@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14T22:10:07Z",
+ "generatedAt": "2026-11-14T22:29:34Z",
  "balise": {
   "id": 3357180078,
   "code": "6a84ab7d865d8d8278581963",
@@ -584,5 +584,6 @@
    "min": null,
    "temp": null
   }
- ]
+ ],
+ "checkedAt": "2026-11-14T22:30:24Z"
 }

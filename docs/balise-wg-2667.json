@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T04:11:51Z",
+ "generatedAt": "2026-11-15T04:32:39Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,19 +9,19 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-11-15T04:11:00Z",
-  "dir": 80,
-  "dirLabel": "E",
-  "avg": 6.5,
-  "gust": 9.6,
+  "t": "2026-11-15T04:29:00Z",
+  "dir": 68,
+  "dirLabel": "ENE",
+  "avg": 8.0,
+  "gust": null,
   "gustDir": null,
-  "min": 4.6,
-  "temp": 15.2,
-  "pressure": 1024.7,
+  "min": null,
+  "temp": null,
+  "pressure": 1024.5,
   "lum": null,
   "stale": false
  },
- "period": 300,
+ "period": 120,
  "silence": 600,
  "history": [
   {
@@ -612,23 +612,6 @@
    "gust": 19.4,
    "min": 9.6,
    "temp": 19.9
-  },
-  {
-   "t": "2026-11-14T16:20:00Z",
-   "dir": 267,
-   "avg": 14.4,
-   "gust": 19.1,
-   "min": 9.8,
-   "temp": 19.9,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-14T16:27:00Z",
-   "dir": 266,
-   "avg": 14.4,
-   "gust": 20.9,
-   "min": 8.0,
-   "temp": 19.8
   },
   {
    "t": "2026-11-14T16:30:00Z",
@@ -1484,14 +1467,6 @@
    "pressure": null
   },
   {
-   "t": "2026-11-15T01:12:00Z",
-   "dir": 66,
-   "avg": 6.5,
-   "gust": 9.6,
-   "min": 6.5,
-   "temp": 15.2
-  },
-  {
    "t": "2026-11-15T01:18:00Z",
    "dir": 61,
    "avg": 8.0,
@@ -1507,14 +1482,6 @@
    "min": 3.1,
    "temp": 15.3,
    "pressure": null
-  },
-  {
-   "t": "2026-11-15T01:24:00Z",
-   "dir": 53,
-   "avg": 6.5,
-   "gust": 6.5,
-   "min": 3.1,
-   "temp": 15.4
   },
   {
    "t": "2026-11-15T01:29:00Z",
@@ -1803,6 +1770,38 @@
    "gust": 9.6,
    "min": 4.6,
    "temp": 15.2
+  },
+  {
+   "t": "2026-11-15T04:16:00Z",
+   "dir": 68,
+   "avg": 8.0,
+   "gust": 6.5,
+   "min": 6.5,
+   "temp": 15.2
+  },
+  {
+   "t": "2026-11-15T04:22:00Z",
+   "dir": 68,
+   "avg": 8.0,
+   "gust": null,
+   "min": null,
+   "temp": 15.2
+  },
+  {
+   "t": "2026-11-15T04:27:00Z",
+   "dir": 68,
+   "avg": 8.0,
+   "gust": null,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-15T04:29:00Z",
+   "dir": 68,
+   "avg": 8.0,
+   "gust": null,
+   "min": null,
+   "temp": null
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-17T19:35:32Z",
+ "generatedAt": "2026-11-17T19:53:28Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,39 +9,21 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-11-17T19:34:00Z",
+  "t": "2026-11-17T19:52:00Z",
   "dir": 193,
   "dirLabel": "SSO",
-  "avg": 20.5,
-  "gust": 27.0,
+  "avg": 16.9,
+  "gust": 21.6,
   "gustDir": null,
-  "min": 15.1,
+  "min": 13.6,
   "temp": 18.8,
   "pressure": null,
   "lum": null,
   "stale": false
  },
- "period": 120,
+ "period": 300,
  "silence": 1140,
  "history": [
-  {
-   "t": "2026-11-15T19:40:00Z",
-   "dir": 193,
-   "avg": 0.0,
-   "gust": 0.4,
-   "min": 0.0,
-   "temp": 16.5,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-15T19:50:00Z",
-   "dir": 193,
-   "avg": 0.0,
-   "gust": 0.0,
-   "min": 0.0,
-   "temp": 16.5,
-   "pressure": null
-  },
   {
    "t": "2026-11-15T20:00:00Z",
    "dir": 193,
@@ -1312,38 +1294,12 @@
    "pressure": null
   },
   {
-   "t": "2026-11-17T07:38:00Z",
-   "dir": 193,
-   "avg": 14.7,
-   "gust": 17.6,
-   "min": 11.5,
-   "temp": 15.1
-  },
-  {
-   "t": "2026-11-17T07:40:00Z",
-   "dir": 193,
-   "avg": 14.6,
-   "gust": 17.6,
-   "min": 11.1,
-   "temp": 15.1,
-   "pressure": null
-  },
-  {
    "t": "2026-11-17T07:48:00Z",
    "dir": 193,
    "avg": 13.3,
    "gust": 16.2,
    "min": 8.6,
    "temp": 15.2
-  },
-  {
-   "t": "2026-11-17T07:50:00Z",
-   "dir": 193,
-   "avg": 14.1,
-   "gust": 17.2,
-   "min": 10.0,
-   "temp": 15.2,
-   "pressure": null
   },
   {
    "t": "2026-11-17T07:59:00Z",
@@ -2312,6 +2268,30 @@
    "avg": 20.5,
    "gust": 27.0,
    "min": 15.1,
+   "temp": 18.8
+  },
+  {
+   "t": "2026-11-17T19:40:00Z",
+   "dir": 193,
+   "avg": 21.2,
+   "gust": 28.0,
+   "min": 15.5,
+   "temp": 18.8
+  },
+  {
+   "t": "2026-11-17T19:46:00Z",
+   "dir": 193,
+   "avg": 21.2,
+   "gust": 25.9,
+   "min": 17.3,
+   "temp": 18.8
+  },
+  {
+   "t": "2026-11-17T19:52:00Z",
+   "dir": 193,
+   "avg": 16.9,
+   "gust": 21.6,
+   "min": 13.6,
    "temp": 18.8
   }
  ]

@@ -6,19 +6,19 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-11-18T06:23:00Z",
+    "t": "2026-11-18T06:43:00Z",
     "dir": 270,
     "dirLabel": "O",
-    "avg": 45.0,
-    "gust": 53.0,
+    "avg": 46.0,
+    "gust": 51.0,
     "gustDir": 270,
     "gustDirLabel": "O",
-    "min": 40.0,
+    "min": 37.0,
     "temp": 16.0,
-    "lum": null,
+    "lum": 5.0,
     "stale": false
    },
-   "period": 600
+   "period": 540
   },
   {
    "key": "wm-73091265",
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-11-18T06:24:00Z",
-    "dir": 249,
+    "t": "2026-11-18T06:40:00Z",
+    "dir": 253,
     "dirLabel": "OSO",
-    "avg": 35.2,
-    "gust": 42.6,
+    "avg": 38.9,
+    "gust": 50.0,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-11-18T06:23:00Z",
-    "dir": 247,
-    "dirLabel": "OSO",
-    "avg": 51.9,
-    "gust": 57.4,
+    "t": "2026-11-18T06:40:00Z",
+    "dir": 259,
+    "dirLabel": "O",
+    "avg": 59.3,
+    "gust": 66.7,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -76,7 +76,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 60
+   "period": 120
   },
   {
    "key": "kw-6a84ad4f865d8d8278583ca6",
@@ -114,7 +114,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 60
+   "period": 240
   },
   {
    "key": "wg-12491",
@@ -162,15 +162,15 @@
    "name": "Zahara de los Atunes — Zahara",
    "provider": "wg",
    "current": {
-    "t": "2026-11-18T06:25:00Z",
-    "dir": 235,
+    "t": "2026-11-18T06:49:00Z",
+    "dir": 233,
     "dirLabel": "SO",
-    "avg": 27.4,
-    "gust": 30.6,
+    "avg": 30.6,
+    "gust": 38.5,
     "gustDir": null,
-    "min": 20.9,
-    "temp": 19.4,
-    "pressure": 1016.6,
+    "min": 24.1,
+    "temp": 19.5,
+    "pressure": 1016.7,
     "lum": null,
     "stale": false
    },

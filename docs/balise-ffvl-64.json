@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T09:08:10Z",
+ "generatedAt": "2026-11-18T09:29:11Z",
  "balise": {
   "id": 64,
   "name": "Pyla Pilat",
@@ -9,14 +9,14 @@
   "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
  },
  "current": {
-  "t": "2026-11-18T09:03:00Z",
+  "t": "2026-11-18T09:23:00Z",
   "dir": 270,
   "dirLabel": "O",
-  "avg": 44.0,
-  "gust": 50.0,
-  "gustDir": 270,
-  "gustDirLabel": "O",
-  "min": 38.0,
+  "avg": 43.0,
+  "gust": 53.0,
+  "gustDir": 292,
+  "gustDirLabel": "ONO",
+  "min": 37.0,
   "temp": 16.0,
   "lum": 100.0,
   "stale": false
@@ -24,14 +24,6 @@
  "period": 600,
  "silence": 1860,
  "history": [
-  {
-   "t": "2026-11-16T09:22:00Z",
-   "dir": 180,
-   "avg": 15.0,
-   "gust": 24.0,
-   "min": 8.0,
-   "temp": 14.0
-  },
   {
    "t": "2026-11-16T09:32:00Z",
    "dir": 180,
@@ -1105,14 +1097,6 @@
    "temp": 16.0
   },
   {
-   "t": "2026-11-17T21:12:00Z",
-   "dir": 202,
-   "avg": 27.0,
-   "gust": 38.0,
-   "min": 17.0,
-   "temp": 16.0
-  },
-  {
    "t": "2026-11-17T21:22:00Z",
    "dir": 202,
    "avg": 26.0,
@@ -1614,6 +1598,22 @@
    "avg": 44.0,
    "gust": 50.0,
    "min": 38.0,
+   "temp": 16.0
+  },
+  {
+   "t": "2026-11-18T09:13:00Z",
+   "dir": 270,
+   "avg": 43.0,
+   "gust": 49.0,
+   "min": 38.0,
+   "temp": 16.0
+  },
+  {
+   "t": "2026-11-18T09:23:00Z",
+   "dir": 270,
+   "avg": 43.0,
+   "gust": 53.0,
+   "min": 37.0,
    "temp": 16.0
   }
  ]

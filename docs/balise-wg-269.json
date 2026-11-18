@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T09:29:52Z",
+ "generatedAt": "2026-11-18T09:53:39Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -24,24 +24,6 @@
  "period": 60,
  "silence": 960,
  "history": [
-  {
-   "t": "2026-11-16T09:30:00Z",
-   "dir": 193,
-   "avg": 0.2,
-   "gust": 0.6,
-   "min": 0.0,
-   "temp": 14.5,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-16T09:50:00Z",
-   "dir": 193,
-   "avg": 0.9,
-   "gust": 1.7,
-   "min": 0.6,
-   "temp": 14.9,
-   "pressure": null
-  },
   {
    "t": "2026-11-16T10:00:00Z",
    "dir": 193,
@@ -1284,23 +1266,6 @@
    "avg": 23.3,
    "gust": 29.6,
    "min": 16.3,
-   "temp": 18.9,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-17T21:37:00Z",
-   "dir": 193,
-   "avg": 22.6,
-   "gust": 32.4,
-   "min": 14.4,
-   "temp": 18.9
-  },
-  {
-   "t": "2026-11-17T21:40:00Z",
-   "dir": 193,
-   "avg": 22.4,
-   "gust": 28.9,
-   "min": 14.3,
    "temp": 18.9,
    "pressure": null
   },

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-19T03:54:21Z",
+ "generatedAt": "2026-11-19T04:13:40Z",
  "balise": {
   "id": 3357180078,
   "code": "6a84ab7d865d8d8278581963",
@@ -21,17 +21,9 @@
   "lum": null,
   "stale": false
  },
- "period": 300,
+ "period": 900,
  "silence": 1410,
  "history": [
-  {
-   "t": "2026-11-17T04:01:00Z",
-   "dir": 49,
-   "avg": 4.3,
-   "gust": 4.6,
-   "min": 4.3,
-   "temp": 14.9
-  },
   {
    "t": "2026-11-17T04:15:00Z",
    "dir": 333,
@@ -969,14 +961,6 @@
    "temp": null
   },
   {
-   "t": "2026-11-18T15:55:00Z",
-   "dir": 248,
-   "avg": 31.7,
-   "gust": null,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-18T16:00:00Z",
    "dir": 248,
    "avg": 31.7,
@@ -984,5 +968,6 @@
    "min": null,
    "temp": null
   }
- ]
+ ],
+ "checkedAt": "2026-11-19T04:14:31Z"
 }

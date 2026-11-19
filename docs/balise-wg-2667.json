@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-19T03:53:50Z",
+ "generatedAt": "2026-11-19T04:11:38Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -21,18 +21,9 @@
   "lum": null,
   "stale": false
  },
- "period": 240,
+ "period": 660,
  "silence": 1770,
  "history": [
-  {
-   "t": "2026-11-17T04:00:00Z",
-   "dir": 37,
-   "avg": 0.0,
-   "gust": 0.6,
-   "min": 0.2,
-   "temp": 14.9,
-   "pressure": null
-  },
   {
    "t": "2026-11-17T04:15:00Z",
    "dir": 333,
@@ -1021,14 +1012,6 @@
    "avg": 32.0,
    "gust": 33.9,
    "min": 17.6,
-   "temp": 19.9
-  },
-  {
-   "t": "2026-11-18T15:56:00Z",
-   "dir": 248,
-   "avg": 27.4,
-   "gust": null,
-   "min": null,
    "temp": 19.9
   },
   {

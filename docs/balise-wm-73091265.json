@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-21T20:44:19Z",
+ "generatedAt": "2026-11-21T21:06:13Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,10 +9,10 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-11-21T20:42:00Z",
-  "dir": 121,
+  "t": "2026-11-21T21:04:00Z",
+  "dir": 120,
   "dirLabel": "ESE",
-  "avg": 37.0,
+  "avg": 35.2,
   "gust": 44.4,
   "gustDir": null,
   "min": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 600,
  "history": [
-  {
-   "t": "2026-11-19T20:46:00Z",
-   "dir": 267,
-   "avg": 44.4,
-   "gust": 50.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-19T21:04:00Z",
-   "dir": 264,
-   "avg": 46.3,
-   "gust": 50.0,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-11-19T21:16:00Z",
    "dir": 267,
@@ -1168,31 +1152,7 @@
    "temp": null
   },
   {
-   "t": "2026-11-21T08:50:00Z",
-   "dir": 107,
-   "avg": 14.8,
-   "gust": 18.5,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-21T08:56:00Z",
-   "dir": 107,
-   "avg": 14.8,
-   "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-21T09:02:00Z",
-   "dir": 110,
-   "avg": 16.7,
-   "gust": 20.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-21T09:06:00Z",
    "dir": 110,
    "avg": 16.7,
    "gust": 20.4,
@@ -1920,14 +1880,6 @@
    "temp": null
   },
   {
-   "t": "2026-11-21T18:04:00Z",
-   "dir": 108,
-   "avg": 27.8,
-   "gust": 35.2,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-21T18:10:00Z",
    "dir": 107,
    "avg": 27.8,
@@ -2155,6 +2107,38 @@
    "t": "2026-11-21T20:42:00Z",
    "dir": 121,
    "avg": 37.0,
+   "gust": 44.4,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T20:46:00Z",
+   "dir": 123,
+   "avg": 35.2,
+   "gust": 42.6,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T20:52:00Z",
+   "dir": 121,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T20:58:00Z",
+   "dir": 119,
+   "avg": 35.2,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T21:04:00Z",
+   "dir": 120,
+   "avg": 35.2,
    "gust": 44.4,
    "min": null,
    "temp": null

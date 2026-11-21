@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-21T21:43:37Z",
+ "generatedAt": "2026-11-21T22:05:43Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-11-21T21:40:00Z",
-  "dir": 135,
+  "t": "2026-11-21T22:04:00Z",
+  "dir": 137,
   "dirLabel": "SE",
-  "avg": 50.0,
-  "gust": 64.8,
+  "avg": 44.4,
+  "gust": 51.9,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -21,24 +21,8 @@
   "stale": false
  },
  "period": 240,
- "silence": 870,
+ "silence": 600,
  "history": [
-  {
-   "t": "2026-11-19T21:46:00Z",
-   "dir": 254,
-   "avg": 46.3,
-   "gust": 53.7,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-19T22:04:00Z",
-   "dir": 277,
-   "avg": 40.7,
-   "gust": 48.2,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-11-19T22:16:00Z",
    "dir": 268,
@@ -1168,22 +1152,6 @@
    "temp": null
   },
   {
-   "t": "2026-11-21T09:52:00Z",
-   "dir": 131,
-   "avg": 24.1,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-21T09:58:00Z",
-   "dir": 128,
-   "avg": 25.9,
-   "gust": 31.5,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-21T10:04:00Z",
    "dir": 127,
    "avg": 22.2,
@@ -2140,6 +2108,38 @@
    "dir": 135,
    "avg": 50.0,
    "gust": 64.8,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T21:46:00Z",
+   "dir": 142,
+   "avg": 42.6,
+   "gust": 51.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T21:52:00Z",
+   "dir": 139,
+   "avg": 40.7,
+   "gust": 53.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T21:58:00Z",
+   "dir": 133,
+   "avg": 51.9,
+   "gust": 59.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-21T22:04:00Z",
+   "dir": 137,
+   "avg": 44.4,
+   "gust": 51.9,
    "min": null,
    "temp": null
   }

@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-11-22T07:03:00Z",
+    "t": "2026-11-22T07:23:00Z",
     "dir": 292,
     "dirLabel": "ONO",
     "avg": 70.0,
     "gust": 83.0,
     "gustDir": 292,
     "gustDirLabel": "ONO",
-    "min": 58.0,
-    "temp": 13.0,
-    "lum": 45.0,
+    "min": 56.0,
+    "temp": 14.0,
+    "lum": 65.0,
     "stale": false
    },
    "period": 600
@@ -26,10 +26,10 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-11-22T07:11:00Z",
-    "dir": 287,
+    "t": "2026-11-22T07:35:00Z",
+    "dir": 284,
     "dirLabel": "ONO",
-    "avg": 51.9,
+    "avg": 55.6,
     "gust": 59.3,
     "gustDir": null,
     "min": null,
@@ -37,7 +37,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 360
   },
   {
    "key": "wm-73091277",
@@ -45,11 +45,11 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-11-22T07:12:00Z",
-    "dir": 286,
+    "t": "2026-11-22T07:36:00Z",
+    "dir": 289,
     "dirLabel": "ONO",
     "avg": 64.8,
-    "gust": 70.4,
+    "gust": 72.2,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -114,7 +114,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 60
+   "period": 180
   },
   {
    "key": "wg-12491",
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-11-22T07:14:00Z",
+    "t": "2026-11-22T07:33:00Z",
     "dir": 193,
     "dirLabel": "SSO",
     "avg": 0.0,
     "gust": 0.0,
     "gustDir": null,
     "min": 0.0,
-    "temp": 15,
+    "temp": 14.8,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -162,15 +162,15 @@
    "name": "Zahara de los Atunes — Zahara",
    "provider": "wg",
    "current": {
-    "t": "2026-11-22T07:18:00Z",
-    "dir": 1,
-    "dirLabel": "N",
+    "t": "2026-11-22T07:36:00Z",
+    "dir": 70,
+    "dirLabel": "ENE",
     "avg": 4.6,
-    "gust": 14.4,
+    "gust": 9.6,
     "gustDir": null,
-    "min": 3.1,
-    "temp": 14.5,
-    "pressure": 1022.9,
+    "min": 1.5,
+    "temp": 14.3,
+    "pressure": 1023.2,
     "lum": null,
     "stale": false
    },

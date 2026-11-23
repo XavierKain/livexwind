@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-23T20:20:52Z",
+ "generatedAt": "2026-11-23T20:44:43Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,30 +9,21 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-11-23T20:20:00Z",
-  "dir": 349,
-  "dirLabel": "N",
+  "t": "2026-11-23T20:44:00Z",
+  "dir": 122,
+  "dirLabel": "ESE",
   "avg": 6.5,
-  "gust": 8.0,
+  "gust": 9.6,
   "gustDir": null,
-  "min": 3.1,
-  "temp": 17.2,
-  "pressure": 1018.5,
+  "min": 0.0,
+  "temp": 17.9,
+  "pressure": 1018.7,
   "lum": null,
   "stale": false
  },
  "period": 60,
- "silence": 870,
+ "silence": 600,
  "history": [
-  {
-   "t": "2026-11-21T20:30:00Z",
-   "dir": 238,
-   "avg": 11.1,
-   "gust": 13.3,
-   "min": 8.1,
-   "temp": 19.6,
-   "pressure": null
-  },
   {
    "t": "2026-11-21T20:47:00Z",
    "dir": 193,
@@ -1262,23 +1253,6 @@
    "pressure": null
   },
   {
-   "t": "2026-11-23T08:36:00Z",
-   "dir": 64,
-   "avg": 1.5,
-   "gust": 3.1,
-   "min": 3.1,
-   "temp": 16
-  },
-  {
-   "t": "2026-11-23T08:40:00Z",
-   "dir": 78,
-   "avg": 2.4,
-   "gust": 3.5,
-   "min": 2.6,
-   "temp": 16.2,
-   "pressure": null
-  },
-  {
    "t": "2026-11-23T08:47:00Z",
    "dir": 98,
    "avg": 3.1,
@@ -2107,14 +2081,6 @@
    "pressure": null
   },
   {
-   "t": "2026-11-23T17:24:00Z",
-   "dir": 56,
-   "avg": 3.1,
-   "gust": 9.6,
-   "min": 1.5,
-   "temp": 18.4
-  },
-  {
    "t": "2026-11-23T17:30:00Z",
    "dir": 357,
    "avg": 3.5,
@@ -2331,6 +2297,38 @@
    "gust": 8.0,
    "min": 3.1,
    "temp": 17.2
+  },
+  {
+   "t": "2026-11-23T20:26:00Z",
+   "dir": 307,
+   "avg": 4.6,
+   "gust": 8.0,
+   "min": 1.5,
+   "temp": 17.7
+  },
+  {
+   "t": "2026-11-23T20:32:00Z",
+   "dir": 18,
+   "avg": 4.6,
+   "gust": 8.0,
+   "min": 0.0,
+   "temp": 18.1
+  },
+  {
+   "t": "2026-11-23T20:38:00Z",
+   "dir": 53,
+   "avg": 4.6,
+   "gust": 17.8,
+   "min": 6.5,
+   "temp": 18.2
+  },
+  {
+   "t": "2026-11-23T20:44:00Z",
+   "dir": 122,
+   "avg": 6.5,
+   "gust": 9.6,
+   "min": 0.0,
+   "temp": 17.9
   }
  ]
 }

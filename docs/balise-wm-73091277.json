@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-24T12:01:33Z",
+ "generatedAt": "2026-11-24T12:23:05Z",
  "balise": {
   "id": 73091277,
   "name": "Semaphore d'Etel",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
  },
  "current": {
-  "t": "2026-11-24T11:56:00Z",
-  "dir": 122,
+  "t": "2026-11-24T12:20:00Z",
+  "dir": 116,
   "dirLabel": "ESE",
-  "avg": 29.6,
-  "gust": 33.3,
+  "avg": 33.3,
+  "gust": 40.7,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -21,24 +21,8 @@
   "stale": false
  },
  "period": 120,
- "silence": 780,
+ "silence": 960,
  "history": [
-  {
-   "t": "2026-11-22T12:05:00Z",
-   "dir": 289,
-   "avg": 53.7,
-   "gust": 63.0,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-22T12:19:00Z",
-   "dir": 289,
-   "avg": 63.0,
-   "gust": 70.4,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-11-22T12:33:00Z",
    "dir": 291,
@@ -1176,26 +1160,10 @@
    "temp": null
   },
   {
-   "t": "2026-11-24T00:11:00Z",
-   "dir": 159,
-   "avg": 29.6,
-   "gust": 33.3,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-24T00:15:00Z",
    "dir": 162,
    "avg": 29.6,
    "gust": 33.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-24T00:21:00Z",
-   "dir": 161,
-   "avg": 29.6,
-   "gust": 31.5,
    "min": null,
    "temp": null
   },
@@ -1928,14 +1896,6 @@
    "temp": null
   },
   {
-   "t": "2026-11-24T09:14:00Z",
-   "dir": 115,
-   "avg": 24.1,
-   "gust": 27.8,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-24T09:20:00Z",
    "dir": 112,
    "avg": 24.1,
@@ -2164,6 +2124,30 @@
    "dir": 122,
    "avg": 29.6,
    "gust": 33.3,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-24T12:06:00Z",
+   "dir": 120,
+   "avg": 33.3,
+   "gust": 40.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-24T12:14:00Z",
+   "dir": 119,
+   "avg": 33.3,
+   "gust": 38.9,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-24T12:20:00Z",
+   "dir": 116,
+   "avg": 33.3,
+   "gust": 40.7,
    "min": null,
    "temp": null
   }

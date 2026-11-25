@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-25T20:42:47Z",
+ "generatedAt": "2026-11-25T21:01:36Z",
  "balise": {
   "id": 269,
   "name": "Tarifa Spin Out — Playa de Valdevaqueros",
@@ -9,14 +9,14 @@
   "url": "https://www.windguru.cz/station/269"
  },
  "current": {
-  "t": "2026-11-25T20:42:00Z",
+  "t": "2026-11-25T21:01:00Z",
   "dir": 193,
   "dirLabel": "SSO",
   "avg": 0.0,
   "gust": 0.0,
   "gustDir": null,
   "min": 0.0,
-  "temp": 15,
+  "temp": 14.7,
   "pressure": null,
   "lum": null,
   "stale": false
@@ -24,14 +24,6 @@
  "period": 360,
  "silence": 690,
  "history": [
-  {
-   "t": "2026-11-23T20:50:00Z",
-   "dir": 193,
-   "avg": 15.5,
-   "gust": 30.6,
-   "min": 8.3,
-   "temp": 17.3
-  },
   {
    "t": "2026-11-23T21:02:00Z",
    "dir": 193,
@@ -1185,22 +1177,6 @@
    "temp": 13.3
   },
   {
-   "t": "2026-11-25T08:51:00Z",
-   "dir": 193,
-   "avg": 3.6,
-   "gust": 6.1,
-   "min": 1.4,
-   "temp": 13.5
-  },
-  {
-   "t": "2026-11-25T08:58:00Z",
-   "dir": 193,
-   "avg": 5.4,
-   "gust": 9.7,
-   "min": 2.9,
-   "temp": 13.5
-  },
-  {
    "t": "2026-11-25T09:04:00Z",
    "dir": 193,
    "avg": 6.8,
@@ -2087,6 +2063,30 @@
    "gust": 0.0,
    "min": 0.0,
    "temp": 15
+  },
+  {
+   "t": "2026-11-25T20:48:00Z",
+   "dir": 193,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 15
+  },
+  {
+   "t": "2026-11-25T20:54:00Z",
+   "dir": 193,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 15
+  },
+  {
+   "t": "2026-11-25T21:01:00Z",
+   "dir": 193,
+   "avg": 0.0,
+   "gust": 0.0,
+   "min": 0.0,
+   "temp": 14.7
   }
  ]
 }

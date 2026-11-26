@@ -9,6 +9,22 @@
    "url": "https://www.balisemeteo.com/balise.php?idBalise=64"
   },
   {
+   "id": 73091265,
+   "name": "Isthme",
+   "lat": 47.550833,
+   "lon": -3.134722,
+   "altitude": null,
+   "url": "https://www.windmorbihan.com/?spot=isthme"
+  },
+  {
+   "id": 73091277,
+   "name": "Semaphore d'Etel",
+   "lat": 47.646112,
+   "lon": -3.214433,
+   "altitude": null,
+   "url": "https://www.windmorbihan.com/?spot=semaphore-d-etel"
+  },
+  {
    "id": 2667,
    "name": "Tarifa — Campo de Futbol",
    "lat": 36.02441,

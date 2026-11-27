@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-27T15:53:06Z",
+ "generatedAt": "2026-11-27T16:13:25Z",
  "balise": {
   "id": 2667,
   "name": "Tarifa — Campo de Futbol",
@@ -9,30 +9,21 @@
   "url": "https://www.windguru.cz/station/2667"
  },
  "current": {
-  "t": "2026-11-27T15:52:00Z",
-  "dir": 109,
-  "dirLabel": "ESE",
-  "avg": 6.5,
-  "gust": 13.0,
+  "t": "2026-11-27T16:12:00Z",
+  "dir": 63,
+  "dirLabel": "ENE",
+  "avg": 8.0,
+  "gust": 9.6,
   "gustDir": null,
-  "min": 1.5,
-  "temp": 17.5,
-  "pressure": 1022,
+  "min": 0.0,
+  "temp": 17.3,
+  "pressure": 1022.3,
   "lum": null,
   "stale": false
  },
  "period": 300,
  "silence": 690,
  "history": [
-  {
-   "t": "2026-11-25T16:00:00Z",
-   "dir": 268,
-   "avg": 22.6,
-   "gust": 30.7,
-   "min": 14.4,
-   "temp": 16.9,
-   "pressure": null
-  },
   {
    "t": "2026-11-25T16:19:00Z",
    "dir": 248,
@@ -1143,37 +1134,12 @@
    "temp": 9.3
   },
   {
-   "t": "2026-11-27T03:55:00Z",
-   "dir": 65,
-   "avg": 8.0,
-   "gust": 8.0,
-   "min": 1.5,
-   "temp": 9.1
-  },
-  {
    "t": "2026-11-27T04:00:00Z",
    "dir": 75,
    "avg": 6.7,
    "gust": 8.7,
    "min": 3.5,
    "temp": 9.1,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-27T04:07:00Z",
-   "dir": 68,
-   "avg": 6.5,
-   "gust": 8.0,
-   "min": 3.1,
-   "temp": 9
-  },
-  {
-   "t": "2026-11-27T04:10:00Z",
-   "dir": 72,
-   "avg": 6.5,
-   "gust": 8.9,
-   "min": 3.5,
-   "temp": 8.9,
    "pressure": null
   },
   {
@@ -1889,6 +1855,38 @@
    "gust": 13.0,
    "min": 1.5,
    "temp": 17.5
+  },
+  {
+   "t": "2026-11-27T15:57:00Z",
+   "dir": 75,
+   "avg": 6.5,
+   "gust": 9.6,
+   "min": 0.0,
+   "temp": 17.5
+  },
+  {
+   "t": "2026-11-27T16:02:00Z",
+   "dir": 78,
+   "avg": 6.5,
+   "gust": 16.1,
+   "min": 6.5,
+   "temp": 17.4
+  },
+  {
+   "t": "2026-11-27T16:07:00Z",
+   "dir": 91,
+   "avg": 8.0,
+   "gust": 11.1,
+   "min": 0.0,
+   "temp": 17.3
+  },
+  {
+   "t": "2026-11-27T16:12:00Z",
+   "dir": 63,
+   "avg": 8.0,
+   "gust": 9.6,
+   "min": 0.0,
+   "temp": 17.3
   }
  ]
 }

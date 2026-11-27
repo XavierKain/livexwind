@@ -6,16 +6,16 @@
    "name": "Pyla Pilat",
    "provider": "ffvl",
    "current": {
-    "t": "2026-11-27T06:33:00Z",
+    "t": "2026-11-27T06:53:00Z",
     "dir": 134,
     "dirLabel": "SE",
-    "avg": 20.0,
-    "gust": 21.0,
+    "avg": 21.0,
+    "gust": 22.0,
     "gustDir": 134,
     "gustDirLabel": "SE",
-    "min": 19.0,
+    "min": 20.0,
     "temp": 2.0,
-    "lum": null,
+    "lum": 10.0,
     "stale": false
    },
    "period": 600
@@ -26,11 +26,11 @@
    "name": "Isthme",
    "provider": "wm",
    "current": {
-    "t": "2026-11-27T06:40:00Z",
+    "t": "2026-11-27T07:00:00Z",
     "dir": 161,
     "dirLabel": "SSE",
-    "avg": 16.7,
-    "gust": 20.4,
+    "avg": 20.4,
+    "gust": 22.2,
     "gustDir": null,
     "min": null,
     "temp": null,
@@ -45,10 +45,10 @@
    "name": "Semaphore d'Etel",
    "provider": "wm",
    "current": {
-    "t": "2026-11-27T06:41:00Z",
-    "dir": 160,
+    "t": "2026-11-27T06:59:00Z",
+    "dir": 152,
     "dirLabel": "SSE",
-    "avg": 33.3,
+    "avg": 31.5,
     "gust": 35.2,
     "gustDir": null,
     "min": null,
@@ -56,7 +56,7 @@
     "lum": null,
     "stale": false
    },
-   "period": 240
+   "period": 360
   },
   {
    "key": "wg-2667",
@@ -142,14 +142,14 @@
    "name": "Tarifa Spin Out — Playa de Valdevaqueros",
    "provider": "wg",
    "current": {
-    "t": "2026-11-27T06:45:00Z",
+    "t": "2026-11-27T07:04:00Z",
     "dir": 193,
     "dirLabel": "SSO",
     "avg": 0.0,
     "gust": 0.0,
     "gustDir": null,
     "min": 0.0,
-    "temp": 8.9,
+    "temp": 8.8,
     "pressure": null,
     "lum": null,
     "stale": false
@@ -162,15 +162,15 @@
    "name": "Zahara de los Atunes — Zahara",
    "provider": "wg",
    "current": {
-    "t": "2026-11-27T06:42:00Z",
-    "dir": 54,
+    "t": "2026-11-27T07:06:00Z",
+    "dir": 51,
     "dirLabel": "NE",
     "avg": 4.6,
-    "gust": 6.5,
+    "gust": 4.6,
     "gustDir": null,
     "min": 3.1,
     "temp": 10.1,
-    "pressure": 1017.2,
+    "pressure": 1017.3,
     "lum": null,
     "stale": false
    },

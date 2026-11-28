@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-28T08:55:21Z",
+ "generatedAt": "2026-11-28T09:17:19Z",
  "balise": {
   "id": 3275,
   "name": "Zahara de los Atunes — Zahara",
@@ -9,38 +9,21 @@
   "url": "https://www.windguru.cz/station/3275"
  },
  "current": {
-  "t": "2026-11-28T08:54:00Z",
-  "dir": 64,
-  "dirLabel": "ENE",
-  "avg": 4.6,
-  "gust": 6.5,
+  "t": "2026-11-28T09:16:00Z",
+  "dir": 101,
+  "dirLabel": "E",
+  "avg": 3.1,
+  "gust": 3.1,
   "gustDir": null,
-  "min": 4.6,
-  "temp": 14.5,
-  "pressure": 1019.1,
+  "min": 0.0,
+  "temp": 15.3,
+  "pressure": 1019.2,
   "lum": null,
   "stale": false
  },
- "period": 240,
+ "period": 300,
  "silence": 870,
  "history": [
-  {
-   "t": "2026-11-26T09:00:00Z",
-   "dir": 58,
-   "avg": 8.0,
-   "gust": 11.1,
-   "min": 4.1,
-   "temp": 12.6,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-26T09:17:00Z",
-   "dir": 22,
-   "avg": 4.6,
-   "gust": 8.0,
-   "min": 0.0,
-   "temp": 13
-  },
   {
    "t": "2026-11-26T09:30:00Z",
    "dir": 45,
@@ -1244,37 +1227,12 @@
    "temp": 13.7
   },
   {
-   "t": "2026-11-27T20:59:00Z",
-   "dir": 55,
-   "avg": 4.6,
-   "gust": 8.0,
-   "min": 4.6,
-   "temp": 12.9
-  },
-  {
    "t": "2026-11-27T21:00:00Z",
    "dir": 55,
    "avg": 4.6,
    "gust": 7.8,
    "min": 3.5,
    "temp": 13,
-   "pressure": null
-  },
-  {
-   "t": "2026-11-27T21:09:00Z",
-   "dir": 44,
-   "avg": 6.5,
-   "gust": 4.6,
-   "min": 1.5,
-   "temp": 12.9
-  },
-  {
-   "t": "2026-11-27T21:10:00Z",
-   "dir": 48,
-   "avg": 5.6,
-   "gust": 6.1,
-   "min": 2.2,
-   "temp": 12.8,
    "pressure": null
   },
   {
@@ -1594,6 +1552,38 @@
    "gust": 6.5,
    "min": 4.6,
    "temp": 14.5
+  },
+  {
+   "t": "2026-11-28T09:00:00Z",
+   "dir": 54,
+   "avg": 6.5,
+   "gust": 8.0,
+   "min": 4.6,
+   "temp": 14.7
+  },
+  {
+   "t": "2026-11-28T09:06:00Z",
+   "dir": 69,
+   "avg": 6.5,
+   "gust": 4.6,
+   "min": 3.1,
+   "temp": 15
+  },
+  {
+   "t": "2026-11-28T09:11:00Z",
+   "dir": 72,
+   "avg": 6.5,
+   "gust": 4.6,
+   "min": 1.5,
+   "temp": 15.2
+  },
+  {
+   "t": "2026-11-28T09:16:00Z",
+   "dir": 101,
+   "avg": 3.1,
+   "gust": 3.1,
+   "min": 0.0,
+   "temp": 15.3
   }
  ]
 }

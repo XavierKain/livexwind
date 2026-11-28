@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-28T03:48:25Z",
+ "generatedAt": "2026-11-28T04:09:57Z",
  "balise": {
   "id": 73091265,
   "name": "Isthme",
@@ -9,11 +9,11 @@
   "url": "https://www.windmorbihan.com/?spot=isthme"
  },
  "current": {
-  "t": "2026-11-28T03:45:00Z",
-  "dir": 164,
-  "dirLabel": "SSE",
-  "avg": 9.3,
-  "gust": 13.0,
+  "t": "2026-11-28T04:07:00Z",
+  "dir": 173,
+  "dirLabel": "S",
+  "avg": 14.8,
+  "gust": 18.5,
   "gustDir": null,
   "min": null,
   "temp": null,
@@ -23,22 +23,6 @@
  "period": 240,
  "silence": 1050,
  "history": [
-  {
-   "t": "2026-11-26T03:50:00Z",
-   "dir": 350,
-   "avg": 5.6,
-   "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-26T04:00:00Z",
-   "dir": 352,
-   "avg": 5.6,
-   "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
   {
    "t": "2026-11-26T04:16:00Z",
    "dir": 353,
@@ -1184,34 +1168,10 @@
    "temp": null
   },
   {
-   "t": "2026-11-27T15:50:00Z",
-   "dir": 153,
-   "avg": 7.4,
-   "gust": 9.3,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-27T15:59:00Z",
-   "dir": 154,
-   "avg": 7.4,
-   "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
    "t": "2026-11-27T16:00:00Z",
    "dir": 152,
    "avg": 5.6,
    "gust": 7.4,
-   "min": null,
-   "temp": null
-  },
-  {
-   "t": "2026-11-27T16:05:00Z",
-   "dir": 149,
-   "avg": 5.6,
-   "gust": 5.6,
    "min": null,
    "temp": null
   },
@@ -2252,6 +2212,38 @@
    "dir": 164,
    "avg": 9.3,
    "gust": 13.0,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-28T03:51:00Z",
+   "dir": 163,
+   "avg": 7.4,
+   "gust": 11.1,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-28T03:57:00Z",
+   "dir": 169,
+   "avg": 13.0,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-28T04:01:00Z",
+   "dir": 172,
+   "avg": 11.1,
+   "gust": 16.7,
+   "min": null,
+   "temp": null
+  },
+  {
+   "t": "2026-11-28T04:07:00Z",
+   "dir": 173,
+   "avg": 14.8,
+   "gust": 18.5,
    "min": null,
    "temp": null
   }
